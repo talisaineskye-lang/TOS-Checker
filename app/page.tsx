@@ -117,7 +117,10 @@ export default async function Page() {
             {vendors.length} vendor{vendors.length !== 1 ? 's' : ''}.
           </p>
         </div>
-        <a href="/admin" className="btn-secondary">Admin</a>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <a href="/onboarding" className="btn-secondary">Onboarding</a>
+          <a href="/admin" className="btn-secondary">Admin</a>
+        </div>
       </div>
 
       <section>
