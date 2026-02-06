@@ -7,11 +7,7 @@ import {
   CATEGORY_ORDER,
   getVendorBySlug,
 } from '@/lib/vendor-catalog';
-import { CATEGORY_DESCRIPTIONS, VendorCategory, VendorTemplate, CustomVendor } from '@/lib/types';
-
-function categoryToPath(category: VendorCategory): string {
-  return `~/VENDORS/${category.toUpperCase()}/`;
-}
+import { CATEGORY_LABELS, VendorCategory, VendorTemplate, CustomVendor } from '@/lib/types';
 import { SearchBar } from './SearchBar';
 import { VendorCard } from './VendorCard';
 import { CustomVendorForm } from './CustomVendorForm';
@@ -19,15 +15,12 @@ import { CustomVendorForm } from './CustomVendorForm';
 export function VendorGrid() {
   const router = useRouter();
 
-  // Start with no vendors selected
   const [selectedSlugs, setSelectedSlugs] = useState<Set<string>>(new Set());
-
   const [searchQuery, setSearchQuery] = useState('');
   const [customVendors, setCustomVendors] = useState<CustomVendor[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
-  // Filter vendors by search query
   const filteredVendors = useMemo(() => {
     if (!searchQuery.trim()) return VENDOR_CATALOG;
     const query = searchQuery.toLowerCase();
@@ -38,7 +31,6 @@ export function VendorGrid() {
     );
   }, [searchQuery]);
 
-  // Group filtered vendors by category
   const vendorsByCategory = useMemo(() => {
     const grouped: Record<VendorCategory, VendorTemplate[]> = {
       payment_finance: [],
@@ -97,7 +89,6 @@ export function VendorGrid() {
         throw new Error(data.error || 'Failed to complete onboarding');
       }
 
-      // Redirect to dashboard
       router.push('/');
       router.refresh();
     } catch (err) {
@@ -120,9 +111,17 @@ export function VendorGrid() {
     return count;
   }, [selectedSlugs, customVendors]);
 
+  const searchMeta = totalSelected > 0
+    ? `${totalSelected} selected \u00b7 ${totalDocs} docs`
+    : undefined;
+
   return (
     <div className="vendor-grid-container">
-      <SearchBar value={searchQuery} onChange={setSearchQuery} />
+      <SearchBar
+        value={searchQuery}
+        onChange={setSearchQuery}
+        meta={searchMeta}
+      />
 
       {CATEGORY_ORDER.map((category) => {
         const vendors = vendorsByCategory[category];
@@ -131,8 +130,7 @@ export function VendorGrid() {
         return (
           <section key={category} className="category-section">
             <div className="category-header">
-              <h2>{categoryToPath(category)}</h2>
-              <span className="category-description">{CATEGORY_DESCRIPTIONS[category]}</span>
+              <h2>{CATEGORY_LABELS[category]}</h2>
             </div>
             <div className="vendor-grid">
               {vendors.map((vendor) => (
@@ -148,17 +146,14 @@ export function VendorGrid() {
         );
       })}
 
-      <section className="category-section">
-        <h2>Custom Vendors</h2>
+      <section className="category-section custom-vendor-section">
+        <h2>Custom</h2>
         {customVendors.length > 0 && (
           <div className="custom-vendor-list">
             {customVendors.map((cv, i) => (
               <div key={i} className="custom-vendor-item">
                 <span className="custom-vendor-name">{cv.name}</span>
                 <span className="custom-vendor-url">{cv.baseUrl}</span>
-                <span className="custom-vendor-docs">
-                  {cv.documents.length} doc{cv.documents.length !== 1 ? 's' : ''}
-                </span>
                 <button
                   className="custom-vendor-remove"
                   onClick={() => handleRemoveCustom(i)}
@@ -175,18 +170,21 @@ export function VendorGrid() {
 
       {error && <p className="error-message">{error}</p>}
 
-      <div className="onboarding-actions">
-        <p className="selection-summary">
-          [{totalSelected}] vendors selected // {totalDocs} documents queued
-        </p>
+      <div className={`wd-action-bar ${totalSelected > 0 ? 'visible' : ''}`}>
+        <div className="wd-action-bar-info">
+          <span className="wd-action-bar-count">
+            <strong>{totalSelected}</strong> vendor{totalSelected !== 1 ? 's' : ''} selected
+          </span>
+          <span className="wd-action-bar-meta">
+            {totalDocs} document{totalDocs !== 1 ? 's' : ''} to monitor
+          </span>
+        </div>
         <button
           className="btn-primary"
           onClick={handleSubmit}
           disabled={totalSelected === 0 || isSubmitting}
         >
-          {isSubmitting
-            ? 'INITIALIZING...'
-            : `DEPLOY_MONITOR --vendors=${totalSelected}`}
+          {isSubmitting ? 'Deploying...' : 'Deploy monitors'}
         </button>
       </div>
     </div>

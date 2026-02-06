@@ -1,18 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { CustomVendor, DocumentType } from '@/lib/types';
+import { CustomVendor } from '@/lib/types';
 
 interface CustomVendorFormProps {
   onAdd: (vendor: CustomVendor) => void;
 }
 
 export function CustomVendorForm({ onAdd }: CustomVendorFormProps) {
-  const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState('');
-  const [baseUrl, setBaseUrl] = useState('');
-  const [tosUrl, setTosUrl] = useState('');
-  const [privacyUrl, setPrivacyUrl] = useState('');
+  const [url, setUrl] = useState('');
   const [error, setError] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -24,110 +21,50 @@ export function CustomVendorForm({ onAdd }: CustomVendorFormProps) {
       return;
     }
 
-    if (!baseUrl.trim()) {
-      setError('Base URL is required');
+    if (!url.trim()) {
+      setError('URL is required');
       return;
     }
 
     try {
-      new URL(baseUrl);
+      new URL(url);
     } catch {
-      setError('Invalid base URL');
-      return;
-    }
-
-    const documents: { type: DocumentType; url: string }[] = [];
-
-    if (tosUrl.trim()) {
-      try {
-        new URL(tosUrl);
-        documents.push({ type: 'tos', url: tosUrl.trim() });
-      } catch {
-        setError('Invalid Terms of Service URL');
-        return;
-      }
-    }
-
-    if (privacyUrl.trim()) {
-      try {
-        new URL(privacyUrl);
-        documents.push({ type: 'privacy', url: privacyUrl.trim() });
-      } catch {
-        setError('Invalid Privacy Policy URL');
-        return;
-      }
-    }
-
-    if (documents.length === 0) {
-      setError('At least one document URL is required');
+      setError('Invalid URL');
       return;
     }
 
     onAdd({
       name: name.trim(),
-      baseUrl: baseUrl.trim(),
-      documents,
+      baseUrl: url.trim(),
+      documents: [{ type: 'tos', url: url.trim() }],
     });
 
-    // Reset form
     setName('');
-    setBaseUrl('');
-    setTosUrl('');
-    setPrivacyUrl('');
-    setIsOpen(false);
+    setUrl('');
   };
 
-  if (!isOpen) {
-    return (
-      <button className="btn-secondary" onClick={() => setIsOpen(true)}>
-        + NEW_ENTRY
-      </button>
-    );
-  }
-
   return (
-    <form className="custom-vendor-form" onSubmit={handleSubmit}>
-      <div className="form-row">
+    <>
+      <form className="custom-vendor-form" onSubmit={handleSubmit}>
         <input
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="vendor_name"
+          placeholder="Vendor name"
           className="form-input"
         />
         <input
           type="url"
-          value={baseUrl}
-          onChange={(e) => setBaseUrl(e.target.value)}
-          placeholder="https://base.url"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          placeholder="https://example.com/terms"
           className="form-input"
         />
-      </div>
-      <div className="form-row">
-        <input
-          type="url"
-          value={tosUrl}
-          onChange={(e) => setTosUrl(e.target.value)}
-          placeholder="tos_url (optional)"
-          className="form-input"
-        />
-        <input
-          type="url"
-          value={privacyUrl}
-          onChange={(e) => setPrivacyUrl(e.target.value)}
-          placeholder="privacy_url (optional)"
-          className="form-input"
-        />
-      </div>
-      {error && <p className="form-error">{error}</p>}
-      <div className="form-actions">
-        <button type="button" className="btn-secondary" onClick={() => setIsOpen(false)}>
-          ABORT
-        </button>
         <button type="submit" className="btn-primary-small">
-          REGISTER
+          Add
         </button>
-      </div>
-    </form>
+      </form>
+      {error && <p className="form-error">{error}</p>}
+    </>
   );
 }

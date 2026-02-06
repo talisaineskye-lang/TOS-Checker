@@ -9,6 +9,15 @@ interface VendorCardProps {
   onToggle: (slug: string) => void;
 }
 
+const DOC_TYPE_LABELS: Record<string, string> = {
+  tos: 'TOS',
+  privacy: 'PRIVACY',
+  aup: 'AUP',
+  pricing: 'PRICING',
+  api_terms: 'API',
+  changelog: 'CHANGELOG',
+};
+
 export function VendorCard({ vendor, isSelected, onToggle }: VendorCardProps) {
   const [imgError, setImgError] = useState(false);
 
@@ -50,9 +59,15 @@ export function VendorCard({ vendor, isSelected, onToggle }: VendorCardProps) {
       )}
 
       <span className="vendor-card-name">{vendor.name}</span>
+
       <span className="vendor-card-doctypes">
-        {vendor.documents.map((d) => d.type.toUpperCase()).join(' | ')}
+        {vendor.documents.map((d) => (
+          <span key={d.type} className={`doc-tag doc-tag-${d.type}`}>
+            {DOC_TYPE_LABELS[d.type] || d.type.toUpperCase()}
+          </span>
+        ))}
       </span>
+
       <span className="vendor-card-docs">
         {vendor.documents.length} doc{vendor.documents.length !== 1 ? 's' : ''}
       </span>
