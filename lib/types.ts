@@ -10,7 +10,7 @@ export type VendorCategory =
   | 'ai_builders'
   | 'developer_tools';
 
-export type DocumentType = 'tos' | 'privacy' | 'aup' | 'pricing' | 'api_terms';
+export type DocumentType = 'tos' | 'privacy' | 'aup' | 'pricing' | 'api_terms' | 'changelog';
 
 export const CATEGORY_LABELS: Record<VendorCategory, string> = {
   payment_finance: 'Payment & Finance',
@@ -34,6 +34,7 @@ export const DOCUMENT_TYPE_LABELS: Record<DocumentType, string> = {
   aup: 'Acceptable Use Policy',
   pricing: 'Pricing',
   api_terms: 'API Terms',
+  changelog: 'Changelog',
 };
 
 // Template for vendor catalog (hardcoded data)

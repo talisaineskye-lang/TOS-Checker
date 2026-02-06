@@ -1,6 +1,6 @@
 // Risk bucket definitions for AI Builders change classification
 
-export type RiskBucket = 'ownership' | 'training' | 'visibility' | 'export' | 'pricing';
+export type RiskBucket = 'ownership' | 'training' | 'visibility' | 'export' | 'pricing' | 'deprecation';
 export type RiskPriority = 'critical' | 'high' | 'medium' | 'low';
 
 export interface RiskBucketConfig {
@@ -46,6 +46,13 @@ export const RISK_BUCKETS: Record<RiskBucket, RiskBucketConfig> = {
     color: 'purple',
     icon: '🟣',
     description: 'Pricing enforcement and limits',
+  },
+  deprecation: {
+    name: 'Deprecation & Retirement',
+    priority: 'high',
+    color: 'orange',
+    icon: '🟠',
+    description: 'Model or API version retirements and migration deadlines',
   },
 } as const;
 
@@ -137,12 +144,32 @@ export const RISK_KEYWORDS: Record<RiskBucket, string[]> = {
     'plan',
     'tier',
   ],
+  deprecation: [
+    'deprecated',
+    'deprecation',
+    'retirement',
+    'retired',
+    'end of life',
+    'end-of-life',
+    'sunset',
+    'sunsetted',
+    'discontinued',
+    'replaced by',
+    'migration required',
+    'no longer available',
+    'no longer supported',
+    'shutting down',
+    'will be removed',
+    'breaking change',
+    'legacy',
+  ],
 };
 
 // Priority order for bucket selection (highest priority first)
 export const BUCKET_PRIORITY_ORDER: RiskBucket[] = [
   'ownership',
   'training',
+  'deprecation',
   'visibility',
   'export',
   'pricing',

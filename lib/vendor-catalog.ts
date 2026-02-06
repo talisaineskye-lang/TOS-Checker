@@ -170,6 +170,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
       { type: 'privacy', url: 'https://openai.com/policies/privacy-policy' },
       { type: 'aup', url: 'https://openai.com/policies/usage-policies' },
       { type: 'api_terms', url: 'https://openai.com/policies/business-terms' },
+      { type: 'changelog', url: 'https://platform.openai.com/docs/deprecations' },
     ],
     isDefault: true,
   },
@@ -184,6 +185,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
       { type: 'privacy', url: 'https://www.anthropic.com/legal/privacy' },
       { type: 'aup', url: 'https://www.anthropic.com/legal/aup' },
       { type: 'api_terms', url: 'https://www.anthropic.com/legal/commercial-terms' },
+      { type: 'changelog', url: 'https://docs.anthropic.com/en/docs/about-claude/model-deprecations' },
     ],
   },
   {
@@ -197,6 +199,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
       { type: 'privacy', url: 'https://policies.google.com/privacy' },
       { type: 'aup', url: 'https://policies.google.com/terms/generative-ai' },
       { type: 'api_terms', url: 'https://ai.google.dev/terms' },
+      { type: 'changelog', url: 'https://ai.google.dev/gemini-api/docs/deprecations' },
     ],
   },
   {

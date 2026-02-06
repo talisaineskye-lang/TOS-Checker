@@ -54,6 +54,7 @@ Risk categories to consider:
 - visibility: Project privacy defaults, public/private settings
 - export: Can you leave the platform, self-host, data portability
 - pricing: Commercial use limits, pricing changes, usage quotas
+- deprecation: Model retirements, API version sunsets, migration deadlines
 
 Write a 1-2 sentence summary explaining what changed and why it matters to an indie developer using this tool. Be specific and direct. No jargon.
 
@@ -69,9 +70,11 @@ Respond with JSON only (no markdown):
 }
 
 Risk levels:
-- low: Minor wording changes, clarifications, no material impact
+- low: Minor wording changes, clarifications, no material impact, language/translation changes with no policy substance change
 - medium: Some changes that could affect users (visibility, export, pricing changes)
-- high: Ownership/IP changes, AI training policy changes, major restrictions`;
+- high: Ownership/IP changes, AI training policy changes, major restrictions, model deprecations or retirements
+
+IMPORTANT: If the changes are purely a language translation (e.g. Spanish to English, or any language switch) with no substantive policy changes, this is ALWAYS "low" risk.`;
 
   try {
     const message = await anthropic.messages.create({
@@ -86,10 +89,12 @@ Risk levels:
       suggestedRiskLevel: 'low' | 'medium' | 'high';
     };
 
-    // Use the higher risk level between keyword detection and LLM suggestion
-    const keywordRiskLevel = classification.riskLevel;
-    const llmRiskLevel = llmResult.suggestedRiskLevel;
-    const finalRiskLevel = getHigherRiskLevel(keywordRiskLevel, llmRiskLevel);
+    // Trust the LLM's risk assessment as primary signal — it understands context
+    // (e.g. translations, rewording) that keyword matching cannot distinguish
+    const finalRiskLevel = llmResult.suggestedRiskLevel;
+
+    // Derive priority from the LLM's risk level for consistency
+    const finalPriority = riskLevelToPriority(finalRiskLevel);
 
     // Generate title based on platform and primary bucket
     const title = generateAlertTitle(serviceName, classification.primaryBucket);
@@ -98,8 +103,8 @@ Risk levels:
       summary: llmResult.summary,
       riskLevel: finalRiskLevel,
       riskBucket: classification.primaryBucket,
-      riskPriority: classification.priority,
-      categories: classification.buckets, // Store all matched buckets
+      riskPriority: finalPriority,
+      categories: classification.buckets,
       title,
     };
   } catch {
@@ -117,10 +122,10 @@ Risk levels:
   }
 }
 
-function getHigherRiskLevel(
-  a: 'low' | 'medium' | 'high',
-  b: 'low' | 'medium' | 'high'
-): 'low' | 'medium' | 'high' {
-  const order = { low: 0, medium: 1, high: 2 };
-  return order[a] >= order[b] ? a : b;
+function riskLevelToPriority(level: 'low' | 'medium' | 'high'): RiskPriority {
+  switch (level) {
+    case 'high': return 'critical';
+    case 'medium': return 'medium';
+    case 'low': return 'low';
+  }
 }
