@@ -24,10 +24,10 @@ export default async function OnboardingPage() {
   return (
     <main className="onboarding-page">
       <header className="onboarding-header">
-        <h1>Select the tools you use</h1>
+        <h1>VENDOR MANIFEST</h1>
         <p className="subtitle">
-          We&apos;ll watch for changes to their Terms, Privacy Policy, Pricing, and Acceptable
-          Use — and tell you what actually matters.
+          Configure monitoring targets. We track Terms, Privacy, Pricing, and AUP
+          changes &mdash; flagging what matters.
         </p>
       </header>
 

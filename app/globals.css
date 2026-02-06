@@ -917,3 +917,382 @@ section {
   color: var(--accent);
   background: rgba(73, 212, 157, 0.1);
 }
+
+/* ============ NEOBRUTALISM ONBOARDING OVERHAUL ============ */
+
+.onboarding-page {
+  --neo-green: #22c55e;
+  --neo-bg: #0a0a0a;
+  --neo-panel: #111111;
+  --neo-border: #2a2a2a;
+  --neo-text: #e0e0e0;
+  --neo-muted: #666666;
+  --neo-font: var(--font-mono), 'JetBrains Mono', monospace;
+  font-family: var(--neo-font);
+  background: var(--neo-bg);
+  position: relative;
+}
+
+/* Nuclear border-radius reset */
+.onboarding-page *,
+.onboarding-page *::before,
+.onboarding-page *::after {
+  border-radius: 0 !important;
+}
+
+/* Scanline CRT overlay */
+.onboarding-page::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+}
+
+/* Header */
+.onboarding-page .onboarding-header h1 {
+  font-family: var(--neo-font);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--neo-green);
+}
+
+.onboarding-page .onboarding-header .subtitle {
+  font-family: var(--neo-font);
+  font-size: 14px;
+  color: var(--neo-muted);
+}
+
+/* Terminal search bar */
+.onboarding-page .search-bar {
+  max-width: 600px;
+  position: relative;
+}
+
+.onboarding-page .search-bar::before {
+  content: '>';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--neo-font);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--neo-green);
+  z-index: 1;
+}
+
+.onboarding-page .search-bar input {
+  width: 100%;
+  padding: 12px 16px 12px 24px;
+  border: none;
+  border-bottom: 1px solid var(--neo-border);
+  background: transparent;
+  color: var(--neo-text);
+  font-family: var(--neo-font);
+  font-size: 14px;
+  caret-color: var(--neo-green);
+}
+
+.onboarding-page .search-bar input:focus {
+  outline: none;
+  border-bottom-color: var(--neo-green);
+}
+
+.onboarding-page .search-bar input::placeholder {
+  color: transparent;
+}
+
+.onboarding-page .search-placeholder {
+  position: absolute;
+  left: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--neo-muted);
+  font-family: var(--neo-font);
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.onboarding-page .search-cursor {
+  color: var(--neo-green);
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Category headers -- folder/path style */
+.onboarding-page .category-header {
+  border-bottom: 1px solid var(--neo-border);
+  margin-bottom: 0;
+  padding-bottom: 8px;
+}
+
+.onboarding-page .category-section h2 {
+  font-family: var(--neo-font);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--neo-green);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.onboarding-page .category-description {
+  font-family: var(--neo-font);
+  font-size: 11px;
+  color: var(--neo-muted);
+}
+
+/* Vendor grid -> dense manifest list */
+.onboarding-page .vendor-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Vendor card -> manifest row (slot) */
+.onboarding-page .vendor-card {
+  flex-direction: row;
+  align-items: center;
+  text-align: left;
+  gap: 12px;
+  padding: 10px 16px;
+  background: transparent;
+  border: 1px dashed var(--neo-border);
+  border-bottom: none;
+  transition: all 0.1s ease;
+  position: relative;
+}
+
+.onboarding-page .vendor-grid .vendor-card:last-child {
+  border-bottom: 1px dashed var(--neo-border);
+}
+
+.onboarding-page .vendor-card:hover {
+  border-color: rgba(34, 197, 94, 0.4);
+  border-style: dashed;
+  transform: none;
+  background: rgba(34, 197, 94, 0.02);
+}
+
+.onboarding-page .vendor-card:hover + .vendor-card {
+  border-top-color: rgba(34, 197, 94, 0.4);
+}
+
+/* Selected slot */
+.onboarding-page .vendor-card.selected {
+  border: 2px solid var(--neo-green);
+  box-shadow: inset 0 0 20px rgba(34, 197, 94, 0.08);
+  background: rgba(34, 197, 94, 0.03);
+}
+
+.onboarding-page .vendor-card.selected + .vendor-card {
+  border-top: 1px dashed var(--neo-border);
+}
+
+.onboarding-page .vendor-grid .vendor-card.selected:last-child {
+  border-bottom: 2px solid var(--neo-green);
+}
+
+/* LED indicator replacing checkbox */
+.onboarding-page .vendor-card-checkbox {
+  position: relative;
+  top: auto;
+  right: auto;
+  width: 8px;
+  height: 8px;
+  border-radius: 50% !important;
+  background: var(--neo-border);
+  flex-shrink: 0;
+  order: -1;
+}
+
+.onboarding-page .vendor-card-checkbox input {
+  display: none;
+}
+
+.onboarding-page .vendor-card.selected .vendor-card-checkbox {
+  background: var(--neo-green);
+  box-shadow: 0 0 6px var(--neo-green), 0 0 12px rgba(34, 197, 94, 0.4);
+  animation: led-pulse 2s ease-in-out infinite;
+}
+
+@keyframes led-pulse {
+  0%, 100% {
+    box-shadow: 0 0 6px var(--neo-green), 0 0 12px rgba(34, 197, 94, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 3px var(--neo-green), 0 0 6px rgba(34, 197, 94, 0.2);
+  }
+}
+
+/* Pixelated vendor icons */
+.onboarding-page .vendor-card-logo {
+  width: 24px;
+  height: 24px;
+  image-rendering: pixelated;
+  filter: contrast(1.3) saturate(0.3) brightness(0.9);
+  background: transparent;
+}
+
+.onboarding-page .vendor-card-logo-fallback {
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+  font-family: var(--neo-font);
+  background: var(--neo-border);
+  color: var(--neo-green);
+}
+
+/* Vendor name -- bold uppercase */
+.onboarding-page .vendor-card-name {
+  font-family: var(--neo-font);
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--neo-text);
+  flex: 1;
+}
+
+/* Doc type badges */
+.onboarding-page .vendor-card-doctypes {
+  font-family: var(--neo-font);
+  font-size: 10px;
+  color: var(--neo-muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.onboarding-page .vendor-card-docs {
+  font-family: var(--neo-font);
+  font-size: 11px;
+  color: var(--neo-muted);
+  white-space: nowrap;
+}
+
+/* Custom vendor section */
+.onboarding-page .custom-vendor-list {
+  gap: 0;
+}
+
+.onboarding-page .custom-vendor-item {
+  border: 1px dashed var(--neo-border);
+  border-bottom: none;
+  background: transparent;
+  font-family: var(--neo-font);
+  font-size: 13px;
+}
+
+.onboarding-page .custom-vendor-item:last-child {
+  border-bottom: 1px dashed var(--neo-border);
+}
+
+.onboarding-page .custom-vendor-name {
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.onboarding-page .custom-vendor-form {
+  border: 1px solid var(--neo-border);
+  background: transparent;
+  padding: 16px;
+}
+
+.onboarding-page .form-input {
+  border: 1px solid var(--neo-border);
+  background: transparent;
+  color: var(--neo-text);
+  font-family: var(--neo-font);
+  font-size: 13px;
+}
+
+.onboarding-page .form-input:focus {
+  border-color: var(--neo-green);
+}
+
+.onboarding-page .form-input::placeholder {
+  color: var(--neo-muted);
+  font-family: var(--neo-font);
+}
+
+/* + NEW_ENTRY button */
+.onboarding-page .btn-secondary {
+  border: 1px dashed var(--neo-green);
+  background: transparent;
+  color: var(--neo-green);
+  font-family: var(--neo-font);
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 10px 20px;
+}
+
+.onboarding-page .btn-secondary:hover {
+  background: rgba(34, 197, 94, 0.05);
+  border-style: solid;
+}
+
+/* Primary button */
+.onboarding-page .btn-primary {
+  background: var(--neo-green);
+  color: #000;
+  font-family: var(--neo-font);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 2px solid var(--neo-green);
+}
+
+.onboarding-page .btn-primary:hover:not(:disabled) {
+  transform: none;
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+  background: transparent;
+  color: var(--neo-green);
+}
+
+.onboarding-page .btn-primary:disabled {
+  opacity: 0.3;
+  border-color: var(--neo-muted);
+  background: transparent;
+  color: var(--neo-muted);
+}
+
+.onboarding-page .btn-primary-small {
+  font-family: var(--neo-font);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border: 2px solid var(--neo-green);
+}
+
+/* Selection summary + actions */
+.onboarding-page .selection-summary {
+  font-family: var(--neo-font);
+  font-size: 13px;
+  color: var(--neo-muted);
+}
+
+.onboarding-page .error-message {
+  font-family: var(--neo-font);
+}

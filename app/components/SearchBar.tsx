@@ -13,9 +13,14 @@ export function SearchBar({ value, onChange, placeholder = 'Search vendors...' }
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
+        placeholder=""
         aria-label="Search vendors"
       />
+      {!value && (
+        <span className="search-placeholder">
+          {placeholder}<span className="search-cursor">_</span>
+        </span>
+      )}
     </div>
   );
 }

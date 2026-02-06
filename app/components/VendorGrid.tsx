@@ -7,7 +7,11 @@ import {
   CATEGORY_ORDER,
   getVendorBySlug,
 } from '@/lib/vendor-catalog';
-import { CATEGORY_LABELS, CATEGORY_DESCRIPTIONS, VendorCategory, VendorTemplate, CustomVendor } from '@/lib/types';
+import { CATEGORY_DESCRIPTIONS, VendorCategory, VendorTemplate, CustomVendor } from '@/lib/types';
+
+function categoryToPath(category: VendorCategory): string {
+  return `~/VENDORS/${category.toUpperCase()}/`;
+}
 import { SearchBar } from './SearchBar';
 import { VendorCard } from './VendorCard';
 import { CustomVendorForm } from './CustomVendorForm';
@@ -30,7 +34,7 @@ export function VendorGrid() {
     return VENDOR_CATALOG.filter(
       (v) =>
         v.name.toLowerCase().includes(query) ||
-        CATEGORY_LABELS[v.category].toLowerCase().includes(query)
+        v.category.toLowerCase().includes(query)
     );
   }, [searchQuery]);
 
@@ -127,7 +131,7 @@ export function VendorGrid() {
         return (
           <section key={category} className="category-section">
             <div className="category-header">
-              <h2>{CATEGORY_LABELS[category]}</h2>
+              <h2>{categoryToPath(category)}</h2>
               <span className="category-description">{CATEGORY_DESCRIPTIONS[category]}</span>
             </div>
             <div className="vendor-grid">
@@ -173,8 +177,7 @@ export function VendorGrid() {
 
       <div className="onboarding-actions">
         <p className="selection-summary">
-          {totalSelected} vendor{totalSelected !== 1 ? 's' : ''} selected &middot;{' '}
-          {totalDocs} document{totalDocs !== 1 ? 's' : ''} to monitor
+          [{totalSelected}] vendors selected // {totalDocs} documents queued
         </p>
         <button
           className="btn-primary"
@@ -182,8 +185,8 @@ export function VendorGrid() {
           disabled={totalSelected === 0 || isSubmitting}
         >
           {isSubmitting
-            ? 'Setting up...'
-            : `Start monitoring ${totalSelected} vendor${totalSelected !== 1 ? 's' : ''}`}
+            ? 'INITIALIZING...'
+            : `DEPLOY_MONITOR --vendors=${totalSelected}`}
         </button>
       </div>
     </div>

@@ -80,7 +80,7 @@ export function CustomVendorForm({ onAdd }: CustomVendorFormProps) {
   if (!isOpen) {
     return (
       <button className="btn-secondary" onClick={() => setIsOpen(true)}>
-        + Add custom vendor
+        + NEW_ENTRY
       </button>
     );
   }
@@ -92,14 +92,14 @@ export function CustomVendorForm({ onAdd }: CustomVendorFormProps) {
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Vendor name"
+          placeholder="vendor_name"
           className="form-input"
         />
         <input
           type="url"
           value={baseUrl}
           onChange={(e) => setBaseUrl(e.target.value)}
-          placeholder="https://example.com"
+          placeholder="https://base.url"
           className="form-input"
         />
       </div>
@@ -108,24 +108,24 @@ export function CustomVendorForm({ onAdd }: CustomVendorFormProps) {
           type="url"
           value={tosUrl}
           onChange={(e) => setTosUrl(e.target.value)}
-          placeholder="Terms of Service URL (optional)"
+          placeholder="tos_url (optional)"
           className="form-input"
         />
         <input
           type="url"
           value={privacyUrl}
           onChange={(e) => setPrivacyUrl(e.target.value)}
-          placeholder="Privacy Policy URL (optional)"
+          placeholder="privacy_url (optional)"
           className="form-input"
         />
       </div>
       {error && <p className="form-error">{error}</p>}
       <div className="form-actions">
         <button type="button" className="btn-secondary" onClick={() => setIsOpen(false)}>
-          Cancel
+          ABORT
         </button>
         <button type="submit" className="btn-primary-small">
-          Add Vendor
+          REGISTER
         </button>
       </div>
     </form>

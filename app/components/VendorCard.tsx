@@ -20,6 +20,7 @@ export function VendorCard({ vendor, isSelected, onToggle }: VendorCardProps) {
       onClick={() => onToggle(vendor.slug)}
       role="button"
       tabIndex={0}
+      aria-pressed={isSelected}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
@@ -49,6 +50,9 @@ export function VendorCard({ vendor, isSelected, onToggle }: VendorCardProps) {
       )}
 
       <span className="vendor-card-name">{vendor.name}</span>
+      <span className="vendor-card-doctypes">
+        {vendor.documents.map((d) => d.type.toUpperCase()).join(' | ')}
+      </span>
       <span className="vendor-card-docs">
         {vendor.documents.length} doc{vendor.documents.length !== 1 ? 's' : ''}
       </span>
