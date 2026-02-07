@@ -107,7 +107,13 @@ IMPORTANT: If the changes are purely a language translation (e.g. Spanish to Eng
       categories: classification.buckets,
       title,
     };
-  } catch {
+  } catch (err) {
+    // Log the actual error so we can diagnose API failures
+    console.error(
+      `[analyzer] Claude API failed for "${serviceName}":`,
+      err instanceof Error ? err.message : err
+    );
+
     // Fallback to keyword-only classification
     const title = generateAlertTitle(serviceName, classification.primaryBucket);
 
