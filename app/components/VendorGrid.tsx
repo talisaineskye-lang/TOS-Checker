@@ -270,7 +270,7 @@ export function VendorGrid() {
         {error && <p className="error-message">{error}</p>}
 
         <footer className="wd-footer">
-          <span>&copy; 2026 Watchdog</span>
+          <span>&copy; 2026 TOS Monitor</span>
           <div className="wd-footer-links">
             <a href="/">Dashboard</a>
             <a href="/admin">Admin</a>

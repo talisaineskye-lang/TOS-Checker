@@ -4,7 +4,7 @@ import { RawFeedItem } from './types';
 
 const parser = new Parser({
   timeout: 8000,
-  headers: { 'User-Agent': 'Watchdog/1.0' },
+  headers: { 'User-Agent': 'TOSMonitor/1.0' },
 });
 
 function stripHtml(html: string): string {
