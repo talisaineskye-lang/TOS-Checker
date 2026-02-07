@@ -108,107 +108,123 @@ export default async function Page() {
   const activeDocCount = documents.filter((d) => d.is_active).length;
 
   return (
-    <main>
-      <div className="dashboard-header">
-        <div>
-          <h1>TOS Change Monitor</h1>
-          <p>
-            Monitoring {activeDocCount} document{activeDocCount !== 1 ? 's' : ''} across{' '}
-            {vendors.length} vendor{vendors.length !== 1 ? 's' : ''}.
-          </p>
+    <main className="dashboard-page">
+      <nav className="wd-nav">
+        <div className="nav-inner">
+          <a href="/" className="nav-logo">
+            <span className="pulse-dot" />
+            Watchdog
+          </a>
+          <span className="nav-breadcrumb">/ dashboard</span>
+          <div className="wd-nav-right">
+            <a href="/onboarding" className="wd-nav-link">Onboarding</a>
+            <a href="/admin" className="wd-nav-link">Admin</a>
+          </div>
         </div>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <a href="/onboarding" className="btn-secondary">Onboarding</a>
-          <a href="/admin" className="btn-secondary">Admin</a>
+      </nav>
+
+      <div className="wrap">
+        <div className="db-header">
+          <div className="tag tag-green">Dashboard</div>
+          <h1>
+            Monitoring <span className="hl">{activeDocCount}</span> document{activeDocCount !== 1 ? 's' : ''} across{' '}
+            <span className="hl">{vendors.length}</span> vendor{vendors.length !== 1 ? 's' : ''}.
+          </h1>
         </div>
-      </div>
 
-      <section>
-        <h2>Tracked Vendors</h2>
-        {vendorError || docError ? (
-          <p className="empty">Failed to load vendors.</p>
-        ) : vendors.length === 0 ? (
-          <p className="empty">No vendors yet. Complete onboarding to get started.</p>
-        ) : (
-          <div className="vendor-list">
-            {vendors.map((vendor) => {
-              const vendorDocs = docsByVendor.get(vendor.id) || [];
-              const lastChecked = vendorDocs
-                .map((d) => d.last_checked_at)
-                .filter(Boolean)
-                .sort()
-                .pop();
+        <section className="db-section">
+          <h2>Tracked Vendors</h2>
+          {vendorError || docError ? (
+            <p className="db-empty">Failed to load vendors.</p>
+          ) : vendors.length === 0 ? (
+            <p className="db-empty">No vendors yet. Complete onboarding to get started.</p>
+          ) : (
+            <div className="db-vendor-list">
+              {vendors.map((vendor) => {
+                const vendorDocs = docsByVendor.get(vendor.id) || [];
+                const lastChecked = vendorDocs
+                  .map((d) => d.last_checked_at)
+                  .filter(Boolean)
+                  .sort()
+                  .pop();
 
-              return (
-                <div key={vendor.id} className="vendor-row">
-                  <div className="vendor-row-header">
-                    {vendor.logo_url && (
-                      <img
-                        src={vendor.logo_url}
-                        alt=""
-                        className="vendor-row-logo"
-                      />
-                    )}
-                    <span className="vendor-row-name">{vendor.name}</span>
-                    <span className="vendor-row-status">
+                return (
+                  <div key={vendor.id} className="db-vendor-row">
+                    <div className="db-vendor-icon">
+                      {vendor.logo_url ? (
+                        <img src={vendor.logo_url} alt="" />
+                      ) : (
+                        vendor.name.charAt(0).toUpperCase()
+                      )}
+                    </div>
+                    <span className="db-vendor-name">{vendor.name}</span>
+                    <div className="db-vendor-docs">
+                      {vendorDocs.map((doc) => (
+                        <span key={doc.id} className="db-doc-badge">
+                          {DOCUMENT_TYPE_LABELS[doc.doc_type] || doc.doc_type}
+                        </span>
+                      ))}
+                    </div>
+                    <span className={`db-vendor-status ${vendor.is_active ? 'active' : 'paused'}`}>
                       {vendor.is_active ? 'Active' : 'Paused'}
                     </span>
+                    <span className="db-vendor-checked">
+                      {formatDate(lastChecked ?? null)}
+                    </span>
                   </div>
-                  <div className="vendor-row-docs">
-                    {vendorDocs.map((doc) => (
-                      <span key={doc.id} className="doc-badge">
-                        {DOCUMENT_TYPE_LABELS[doc.doc_type] || doc.doc_type}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="vendor-row-checked">
-                    Last checked: {formatDate(lastChecked ?? null)}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </section>
+                );
+              })}
+            </div>
+          )}
+        </section>
 
-      <section>
-        <h2>Recent Alerts</h2>
-        {changeError ? (
-          <p className="empty">Failed to load changes.</p>
-        ) : changes.length === 0 ? (
-          <p className="empty">No changes detected yet.</p>
-        ) : (
-          <div className="alerts-list">
-            {changes.map((change) => {
-              const vendor = vendorMap.get(change.vendor_id);
-              const doc = documentMap.get(change.document_id);
-              const docTypeLabel = doc
-                ? DOCUMENT_TYPE_LABELS[doc.doc_type] || doc.doc_type
-                : 'Unknown';
-              const vendorName = vendor?.name || 'Unknown';
-              const title = change.risk_bucket
-                ? `${vendorName} – ${change.risk_bucket.charAt(0).toUpperCase() + change.risk_bucket.slice(1)} change detected`
-                : `${vendorName} – Policy updated`;
+        <section className="db-section">
+          <h2>Recent Alerts</h2>
+          {changeError ? (
+            <p className="db-empty">Failed to load changes.</p>
+          ) : changes.length === 0 ? (
+            <p className="db-empty">No changes detected yet.</p>
+          ) : (
+            <div className="alerts-list">
+              {changes.map((change) => {
+                const vendor = vendorMap.get(change.vendor_id);
+                const doc = documentMap.get(change.document_id);
+                const docTypeLabel = doc
+                  ? DOCUMENT_TYPE_LABELS[doc.doc_type] || doc.doc_type
+                  : 'Unknown';
+                const vendorName = vendor?.name || 'Unknown';
+                const title = change.risk_bucket
+                  ? `${vendorName} – ${change.risk_bucket.charAt(0).toUpperCase() + change.risk_bucket.slice(1)} change detected`
+                  : `${vendorName} – Policy updated`;
 
-              return (
-                <AlertCard
-                  key={change.id}
-                  title={title}
-                  summary={change.summary || 'No summary available.'}
-                  riskBucket={change.risk_bucket}
-                  riskPriority={change.risk_priority || 'low'}
-                  riskLevel={change.risk_level || 'low'}
-                  documentType={docTypeLabel}
-                  documentUrl={doc?.url || '#'}
-                  detectedAt={change.detected_at}
-                  notified={change.notified}
-                  categories={change.categories || undefined}
-                />
-              );
-            })}
-          </div>
-        )}
-      </section>
+                return (
+                  <AlertCard
+                    key={change.id}
+                    title={title}
+                    summary={change.summary || 'No summary available.'}
+                    riskBucket={change.risk_bucket}
+                    riskPriority={change.risk_priority || 'low'}
+                    riskLevel={change.risk_level || 'low'}
+                    documentType={docTypeLabel}
+                    documentUrl={doc?.url || '#'}
+                    detectedAt={change.detected_at}
+                    notified={change.notified}
+                    categories={change.categories || undefined}
+                  />
+                );
+              })}
+            </div>
+          )}
+        </section>
+      </div>
+
+      <footer className="wd-footer">
+        <span>&copy; 2026 Watchdog</span>
+        <div className="wd-footer-links">
+          <a href="/onboarding">Onboarding</a>
+          <a href="/admin">Admin</a>
+        </div>
+      </footer>
     </main>
   );
 }

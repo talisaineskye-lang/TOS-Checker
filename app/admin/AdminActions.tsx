@@ -34,7 +34,7 @@ export function AdminActions() {
   return (
     <div className="admin-actions">
       <button
-        className="btn-primary"
+        className="pill pill-solid"
         onClick={handleRunCheck}
         disabled={isRunning}
       >

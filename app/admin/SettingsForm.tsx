@@ -58,7 +58,7 @@ export function SettingsForm({ alertEmail }: SettingsFormProps) {
       </p>
 
       <div className="setting-actions">
-        <button type="submit" className="btn-primary-small" disabled={isSaving}>
+        <button type="submit" className="pill pill-solid pill-sm" disabled={isSaving}>
           {isSaving ? 'Saving...' : 'Save Settings'}
         </button>
         {message && <span className="setting-message">{message}</span>}
