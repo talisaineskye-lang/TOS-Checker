@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   VENDOR_CATALOG,
@@ -12,6 +12,38 @@ import { SearchBar } from './SearchBar';
 import { VendorCard } from './VendorCard';
 import { CustomVendorForm } from './CustomVendorForm';
 
+const CATEGORY_CONFIG: Record<VendorCategory, {
+  color: string;
+  subtitle: string;
+  description: string;
+}> = {
+  payment_finance: {
+    color: 'blue',
+    subtitle: 'Payment processors',
+    description: 'Billing, payouts, and financial infrastructure',
+  },
+  cloud_infrastructure: {
+    color: 'purple',
+    subtitle: 'Hosting & deployment',
+    description: 'Where your code runs',
+  },
+  ai_ml: {
+    color: 'green',
+    subtitle: 'AI APIs you integrate',
+    description: 'Model providers and inference platforms',
+  },
+  ai_builders: {
+    color: 'green',
+    subtitle: 'AI tools you build with',
+    description: 'Code generation and development platforms',
+  },
+  developer_tools: {
+    color: 'cyan',
+    subtitle: 'Dev platforms & APIs',
+    description: 'Source control, CI/CD, and tooling',
+  },
+};
+
 export function VendorGrid() {
   const router = useRouter();
 
@@ -20,6 +52,21 @@ export function VendorGrid() {
   const [customVendors, setCustomVendors] = useState<CustomVendor[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+
+  // Scroll reveal
+  const revealRefs = useRef<(HTMLDivElement | null)[]>([]);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) e.target.classList.add('visible');
+        });
+      },
+      { threshold: 0.06 }
+    );
+    revealRefs.current.forEach((el) => el && observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
 
   const filteredVendors = useMemo(() => {
     if (!searchQuery.trim()) return VENDOR_CATALOG;
@@ -45,6 +92,11 @@ export function VendorGrid() {
     return grouped;
   }, [filteredVendors]);
 
+  // Categories that actually have vendors to show
+  const visibleCategories = CATEGORY_ORDER.filter(
+    (cat) => vendorsByCategory[cat].length > 0
+  );
+
   const handleToggle = (slug: string) => {
     setSelectedSlugs((prev) => {
       const next = new Set(prev);
@@ -53,6 +105,23 @@ export function VendorGrid() {
       } else {
         next.add(slug);
       }
+      return next;
+    });
+  };
+
+  const handleSelectAll = (category: VendorCategory) => {
+    const vendors = vendorsByCategory[category];
+    const allSelected = vendors.every((v) => selectedSlugs.has(v.slug));
+
+    setSelectedSlugs((prev) => {
+      const next = new Set(prev);
+      vendors.forEach((v) => {
+        if (allSelected) {
+          next.delete(v.slug);
+        } else {
+          next.add(v.slug);
+        }
+      });
       return next;
     });
   };
@@ -111,82 +180,129 @@ export function VendorGrid() {
     return count;
   }, [selectedSlugs, customVendors]);
 
-  const searchMeta = totalSelected > 0
-    ? `${totalSelected} selected \u00b7 ${totalDocs} docs`
-    : undefined;
-
   return (
-    <div className="vendor-grid-container">
-      <SearchBar
-        value={searchQuery}
-        onChange={setSearchQuery}
-        meta={searchMeta}
-      />
+    <>
+      {/* Page header */}
+      <header className="wd-page-header">
+        <div className="wrap">
+          <div className="tag tag-green">Onboarding</div>
+          <h1>
+            Select your<br />
+            <span className="dim">vendor stack.</span>
+          </h1>
+          <p className="sub">
+            We monitor Terms of Service, Privacy Policies, Pricing, and AUP
+            documents for changes that affect your business.
+          </p>
+          <SearchBar value={searchQuery} onChange={setSearchQuery} />
+        </div>
+      </header>
 
-      {CATEGORY_ORDER.map((category) => {
-        const vendors = vendorsByCategory[category];
-        if (vendors.length === 0) return null;
+      {/* Bento grid */}
+      <div className="bento-grid">
+        {visibleCategories.map((category, idx) => {
+          const vendors = vendorsByCategory[category];
+          const config = CATEGORY_CONFIG[category];
+          const allSelected = vendors.every((v) => selectedSlugs.has(v.slug));
+          const isLast = idx === visibleCategories.length - 1;
+          const isOddLast = isLast && visibleCategories.length % 2 !== 0;
 
-        return (
-          <section key={category} className="category-section">
-            <div className="category-header">
-              <h2>{CATEGORY_LABELS[category]}</h2>
+          return (
+            <div
+              key={category}
+              className={`cat-box wd-reveal ${isOddLast ? 'full' : ''}`}
+              data-color={config.color}
+              ref={(el) => { revealRefs.current[idx] = el; }}
+            >
+              <div className="cat-header">
+                <div className="cat-tag">{CATEGORY_LABELS[category]}</div>
+                <h2>{config.subtitle}</h2>
+                <p>{config.description}</p>
+              </div>
+              <button
+                className="cat-select-all"
+                onClick={() => handleSelectAll(category)}
+              >
+                {allSelected ? 'Deselect all' : 'Select all'}
+              </button>
+              <div className="vendor-chips">
+                {vendors.map((vendor) => (
+                  <VendorCard
+                    key={vendor.slug}
+                    vendor={vendor}
+                    isSelected={selectedSlugs.has(vendor.slug)}
+                    onToggle={handleToggle}
+                  />
+                ))}
+              </div>
             </div>
-            <div className="vendor-grid">
-              {vendors.map((vendor) => (
-                <VendorCard
-                  key={vendor.slug}
-                  vendor={vendor}
-                  isSelected={selectedSlugs.has(vendor.slug)}
-                  onToggle={handleToggle}
-                />
+          );
+        })}
+      </div>
+
+      {/* Custom vendors + footer */}
+      <div className="wrap">
+        <div className="custom-section wd-reveal" ref={(el) => { revealRefs.current[10] = el; }}>
+          <div className="tag" style={{ marginBottom: 16 }}>Custom</div>
+          <h3>Can&apos;t find a vendor?</h3>
+          <p className="sub">Paste any legal page URL and we&apos;ll start tracking it.</p>
+
+          {customVendors.length > 0 && (
+            <div className="custom-list">
+              {customVendors.map((cv, i) => (
+                <div key={i} className="custom-item">
+                  <span className="ci-name">{cv.name}</span>
+                  <span className="ci-url">{cv.baseUrl}</span>
+                  <button
+                    className="ci-remove"
+                    onClick={() => handleRemoveCustom(i)}
+                    aria-label={`Remove ${cv.name}`}
+                  >
+                    &times;
+                  </button>
+                </div>
               ))}
             </div>
-          </section>
-        );
-      })}
-
-      <section className="category-section custom-vendor-section">
-        <h2>Custom</h2>
-        {customVendors.length > 0 && (
-          <div className="custom-vendor-list">
-            {customVendors.map((cv, i) => (
-              <div key={i} className="custom-vendor-item">
-                <span className="custom-vendor-name">{cv.name}</span>
-                <span className="custom-vendor-url">{cv.baseUrl}</span>
-                <button
-                  className="custom-vendor-remove"
-                  onClick={() => handleRemoveCustom(i)}
-                  aria-label={`Remove ${cv.name}`}
-                >
-                  &times;
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-        <CustomVendorForm onAdd={handleAddCustom} />
-      </section>
-
-      {error && <p className="error-message">{error}</p>}
-
-      <div className={`wd-action-bar ${totalSelected > 0 ? 'visible' : ''}`}>
-        <div className="wd-action-bar-info">
-          <span className="wd-action-bar-count">
-            <strong>{totalSelected}</strong> vendor{totalSelected !== 1 ? 's' : ''} selected
-          </span>
-          <span className="wd-action-bar-meta">
-            {totalDocs} document{totalDocs !== 1 ? 's' : ''} to monitor
-          </span>
+          )}
+          <CustomVendorForm onAdd={handleAddCustom} />
         </div>
-        <button
-          className="btn-primary"
-          onClick={handleSubmit}
-          disabled={totalSelected === 0 || isSubmitting}
-        >
-          {isSubmitting ? 'Deploying...' : 'Deploy monitors'}
-        </button>
+
+        {error && <p className="error-message">{error}</p>}
+
+        <footer className="wd-footer">
+          <span>&copy; 2026 Watchdog</span>
+          <div className="wd-footer-links">
+            <a href="/">Dashboard</a>
+            <a href="/admin">Admin</a>
+          </div>
+        </footer>
       </div>
-    </div>
+
+      {/* Sticky action bar */}
+      <div className={`wd-action-bar ${totalSelected > 0 ? 'visible' : ''}`}>
+        <div className="action-inner">
+          <div className="action-meta">
+            <span className="action-stat">
+              <span className="num hl">{totalSelected}</span> vendor{totalSelected !== 1 ? 's' : ''}
+            </span>
+            <span className="action-stat">
+              <span className="num">{totalDocs}</span> document{totalDocs !== 1 ? 's' : ''}
+            </span>
+          </div>
+          <div className="action-right">
+            <span className="deploy-label">
+              deploy_monitor --vendors={totalSelected}
+            </span>
+            <button
+              className="pill pill-solid"
+              onClick={handleSubmit}
+              disabled={totalSelected === 0 || isSubmitting}
+            >
+              {isSubmitting ? 'Deploying...' : 'Deploy'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }

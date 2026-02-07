@@ -6,34 +6,23 @@ export default async function OnboardingPage() {
   return (
     <main className="onboarding-page">
       <nav className="wd-nav">
-        <div className="wd-nav-brand">
-          <span className="wd-nav-pulse" />
-          Watchdog
-        </div>
-        <div className="wd-nav-path">
-          setup / <span>vendors</span>
+        <div className="nav-inner">
+          <div className="wd-nav-left">
+            <a className="wd-nav-brand" href="/">
+              <span className="wd-nav-pulse" />
+              Watchdog
+            </a>
+            <div className="wd-nav-crumb">
+              <span className="sep">/</span>
+              <span>setup</span>
+              <span className="sep">/</span>
+              <span className="current">vendors</span>
+            </div>
+          </div>
         </div>
       </nav>
 
-      <header className="wd-header">
-        <h1>Select your vendor stack.</h1>
-        <p>
-          We monitor Terms of Service, Privacy Policies, Pricing, and AUP
-          documents for changes that affect your business.
-        </p>
-      </header>
-
-      <div className="wd-content">
-        <VendorGrid />
-      </div>
-
-      <footer className="wd-footer">
-        <span>Watchdog</span>
-        <div className="wd-footer-links">
-          <a href="/">Dashboard</a>
-          <a href="/admin">Admin</a>
-        </div>
-      </footer>
+      <VendorGrid />
     </main>
   );
 }

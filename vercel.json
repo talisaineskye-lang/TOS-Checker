@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/check-tos",
       "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/intel/ingest",
+      "schedule": "0 */6 * * *"
     }
   ]
 }

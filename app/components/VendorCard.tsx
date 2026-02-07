@@ -9,13 +9,13 @@ interface VendorCardProps {
   onToggle: (slug: string) => void;
 }
 
-const DOC_TYPE_LABELS: Record<string, string> = {
+const DOC_TAG_LABELS: Record<string, string> = {
   tos: 'TOS',
-  privacy: 'PRIVACY',
+  privacy: 'PRIV',
   aup: 'AUP',
-  pricing: 'PRICING',
+  pricing: 'PRICE',
   api_terms: 'API',
-  changelog: 'CHANGELOG',
+  changelog: 'LOG',
 };
 
 export function VendorCard({ vendor, isSelected, onToggle }: VendorCardProps) {
@@ -25,7 +25,7 @@ export function VendorCard({ vendor, isSelected, onToggle }: VendorCardProps) {
 
   return (
     <div
-      className={`vendor-card ${isSelected ? 'selected' : ''}`}
+      className={`v-chip ${isSelected ? 'selected' : ''}`}
       onClick={() => onToggle(vendor.slug)}
       role="button"
       tabIndex={0}
@@ -37,38 +37,41 @@ export function VendorCard({ vendor, isSelected, onToggle }: VendorCardProps) {
         }
       }}
     >
-      <div className="vendor-card-checkbox">
-        <input
-          type="checkbox"
-          checked={isSelected}
-          onChange={() => onToggle(vendor.slug)}
-          aria-label={`Select ${vendor.name}`}
-          onClick={(e) => e.stopPropagation()}
-        />
+      <div className="v-check">
+        <svg viewBox="0 0 10 10" fill="none">
+          <path
+            d="M2 5.5L4 7.5L8 3"
+            stroke="#050505"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
       </div>
 
-      {!imgError ? (
-        <img
-          src={vendor.logoUrl}
-          alt={`${vendor.name} logo`}
-          className="vendor-card-logo"
-          onError={() => setImgError(true)}
-        />
-      ) : (
-        <div className="vendor-card-logo vendor-card-logo-fallback">{initial}</div>
-      )}
+      <div className="v-chip-icon">
+        {!imgError ? (
+          <img
+            src={vendor.logoUrl}
+            alt={`${vendor.name} logo`}
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          initial
+        )}
+      </div>
 
-      <span className="vendor-card-name">{vendor.name}</span>
+      <span className="v-chip-name">{vendor.name}</span>
 
-      <span className="vendor-card-doctypes">
+      <div className="v-chip-tags">
         {vendor.documents.map((d) => (
-          <span key={d.type} className={`doc-tag doc-tag-${d.type}`}>
-            {DOC_TYPE_LABELS[d.type] || d.type.toUpperCase()}
+          <span key={d.type} className={`v-tag v-tag-${d.type}`}>
+            {DOC_TAG_LABELS[d.type] || d.type.toUpperCase()}
           </span>
         ))}
-      </span>
+      </div>
 
-      <span className="vendor-card-docs">
+      <span className="v-chip-docs">
         {vendor.documents.length} doc{vendor.documents.length !== 1 ? 's' : ''}
       </span>
     </div>

@@ -3,21 +3,20 @@
 interface SearchBarProps {
   value: string;
   onChange: (value: string) => void;
-  placeholder?: string;
-  meta?: string;
 }
 
-export function SearchBar({ value, onChange, placeholder = 'Search vendors...', meta }: SearchBarProps) {
+export function SearchBar({ value, onChange }: SearchBarProps) {
   return (
-    <div className="search-bar">
+    <div className="search-wrap">
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
+        placeholder="Search vendors..."
+        autoComplete="off"
+        spellCheck={false}
         aria-label="Search vendors"
       />
-      {meta && <span className="wd-search-meta">{meta}</span>}
     </div>
   );
 }

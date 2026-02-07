@@ -45,22 +45,26 @@ export function CustomVendorForm({ onAdd }: CustomVendorFormProps) {
 
   return (
     <>
-      <form className="custom-vendor-form" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Vendor name"
-          className="form-input"
-        />
-        <input
-          type="url"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          placeholder="https://example.com/terms"
-          className="form-input"
-        />
-        <button type="submit" className="btn-primary-small">
+      <form className="custom-form" onSubmit={handleSubmit}>
+        <div className="form-field">
+          <label>Vendor Name</label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Acme Corp"
+          />
+        </div>
+        <div className="form-field">
+          <label>TOS / Legal Page URL</label>
+          <input
+            type="url"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder="https://acme.com/terms"
+          />
+        </div>
+        <button type="submit" className="pill pill-ghost pill-add">
           Add
         </button>
       </form>
