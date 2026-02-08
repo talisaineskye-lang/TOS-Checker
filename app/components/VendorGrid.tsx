@@ -158,7 +158,7 @@ export function VendorGrid() {
         throw new Error(data.error || 'Failed to complete onboarding');
       }
 
-      router.push('/');
+      router.push('/dashboard');
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
@@ -272,7 +272,7 @@ export function VendorGrid() {
         <footer className="wd-footer">
           <span>&copy; 2026 StackDrift</span>
           <div className="wd-footer-links">
-            <a href="/">Dashboard</a>
+            <a href="/dashboard">Dashboard</a>
             <a href="/intel">Intel</a>
             <a href="/admin">Admin</a>
           </div>

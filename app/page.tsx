@@ -1,325 +1,358 @@
-import { redirect } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
-import { DOCUMENT_TYPE_LABELS, DocumentType } from '@/lib/types';
-import { RiskPriority } from '@/lib/risk-buckets';
-import { DashboardAlerts, DashChange } from './components/DashboardAlerts';
+'use client';
+
+import { useEffect, useRef } from 'react';
 import { Logo } from './components/Logo';
 
-export const dynamic = 'force-dynamic';
+export default function LandingPage() {
+  const revealRefs = useRef<(HTMLElement | null)[]>([]);
 
-interface Vendor {
-  id: string;
-  name: string;
-  slug: string | null;
-  logo_url: string | null;
-  is_active: boolean;
-}
-
-interface Document {
-  id: string;
-  vendor_id: string;
-  doc_type: DocumentType;
-  url: string;
-  last_checked_at: string | null;
-  last_changed_at: string | null;
-  is_active: boolean;
-}
-
-interface ChangeRow {
-  id: string;
-  vendor_id: string;
-  document_id: string;
-  summary: string | null;
-  risk_level: 'low' | 'medium' | 'high' | null;
-  risk_priority: RiskPriority | null;
-  risk_bucket: string | null;
-  categories: string[] | null;
-  detected_at: string;
-  notified: boolean;
-  vendors: { name: string } | null;
-  documents: { doc_type: DocumentType; url: string } | null;
-}
-
-const DOC_TYPE_SHORT: Record<string, string> = {
-  tos: 'TOS',
-  privacy: 'PRIV',
-  aup: 'AUP',
-  pricing: 'PRICE',
-  api_terms: 'API',
-  changelog: 'CHGLOG',
-};
-
-const DOC_TYPE_CLASS: Record<string, string> = {
-  tos: 't-tos',
-  privacy: 't-priv',
-  aup: 't-aup',
-  pricing: 't-price',
-  api_terms: 't-api',
-  changelog: 't-api',
-};
-
-function mapSeverity(riskPriority: string | null): 'critical' | 'warning' | 'notice' | 'low' {
-  switch (riskPriority) {
-    case 'critical': return 'critical';
-    case 'high': return 'warning';
-    case 'medium': return 'notice';
-    default: return 'low';
-  }
-}
-
-function formatDate(value: string | null) {
-  if (!value) return 'Never';
-  return new Date(value).toLocaleString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
-
-async function checkOnboardingStatus(): Promise<boolean> {
-  const { data } = await supabase
-    .from('app_settings')
-    .select('value')
-    .eq('key', 'onboarding_completed')
-    .single();
-
-  return data?.value === 'true';
-}
-
-async function getData() {
-  const { data: vendors } = await supabase
-    .from('vendors')
-    .select('id, name, slug, logo_url, is_active')
-    .order('created_at', { ascending: false });
-
-  const { data: documents } = await supabase
-    .from('documents')
-    .select('id, vendor_id, doc_type, url, last_checked_at, last_changed_at, is_active')
-    .order('created_at', { ascending: false });
-
-  const { data: changes } = await supabase
-    .from('changes')
-    .select('id, vendor_id, document_id, summary, risk_level, risk_priority, risk_bucket, categories, detected_at, notified, vendors(name), documents(doc_type, url)')
-    .order('detected_at', { ascending: false })
-    .limit(20);
-
-  return {
-    vendors: (vendors ?? []) as Vendor[],
-    documents: (documents ?? []) as Document[],
-    changes: (changes ?? []) as unknown as ChangeRow[],
-  };
-}
-
-export default async function Page() {
-  const isOnboarded = await checkOnboardingStatus();
-  if (!isOnboarded) {
-    redirect('/onboarding');
-  }
-
-  const { vendors, documents, changes } = await getData();
-  const documentMap = new Map(documents.map((d) => [d.id, d]));
-
-  // Group documents by vendor
-  const docsByVendor = new Map<string, Document[]>();
-  documents.forEach((doc) => {
-    const existing = docsByVendor.get(doc.vendor_id) || [];
-    existing.push(doc);
-    docsByVendor.set(doc.vendor_id, existing);
-  });
-
-  // Group changes by vendor
-  const changesByVendor = new Map<string, ChangeRow[]>();
-  changes.forEach((c) => {
-    const existing = changesByVendor.get(c.vendor_id) || [];
-    existing.push(c);
-    changesByVendor.set(c.vendor_id, existing);
-  });
-
-  // Stats
-  const activeDocCount = documents.filter((d) => d.is_active).length;
-  const vendorsWithChanges = new Set(changes.map((c) => c.vendor_id));
-  const stableCount = vendors.filter((v) => !vendorsWithChanges.has(v.id)).length;
-
-  // Map changes for client component
-  const dashChanges: DashChange[] = changes.map((c) => {
-    const vendorName = c.vendors?.name || 'Unknown';
-    const docType = c.documents?.doc_type || 'tos';
-    const severity = mapSeverity(c.risk_priority);
-    const bucketLabel = c.risk_bucket
-      ? c.risk_bucket.charAt(0).toUpperCase() + c.risk_bucket.slice(1)
-      : 'Policy';
-
-    return {
-      id: c.id,
-      vendorName,
-      docType,
-      severity,
-      title: `${vendorName} ${DOCUMENT_TYPE_LABELS[docType] || docType} updated — ${bucketLabel} change detected`,
-      summary: c.summary || 'No summary available.',
-      categories: c.categories || [],
-      detectedAt: c.detected_at,
-      documentUrl: c.documents?.url || '#',
-    };
-  });
-
-  // Build vendor table rows
-  interface VendorRow {
-    id: string;
-    name: string;
-    initial: string;
-    detail: string;
-    docTypes: { short: string; cssClass: string }[];
-    statusClass: string;
-    statusLabel: string;
-    lastChecked: string;
-  }
-
-  const vendorRows: VendorRow[] = vendors.map((vendor) => {
-    const vendorChanges = changesByVendor.get(vendor.id) || [];
-    const vendorDocs = docsByVendor.get(vendor.id) || [];
-
-    let statusClass = 'stable';
-    let statusLabel = 'Stable';
-
-    if (vendorChanges.some((c) => c.risk_priority === 'critical')) {
-      statusClass = 'changed';
-      statusLabel = 'Changed';
-    } else if (vendorChanges.some((c) => c.risk_priority === 'high' || c.risk_priority === 'medium')) {
-      statusClass = 'warning';
-      statusLabel = 'Warning';
-    }
-
-    const changedDocTypes = new Set(
-      vendorChanges
-        .map((c) => {
-          const doc = documentMap.get(c.document_id);
-          return doc ? DOCUMENT_TYPE_LABELS[doc.doc_type] : null;
-        })
-        .filter(Boolean)
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) e.target.classList.add('vis');
+        });
+      },
+      { threshold: 0.08 }
     );
-
-    const detail =
-      vendorChanges.length > 0
-        ? `${changedDocTypes.size} document${changedDocTypes.size !== 1 ? 's' : ''} changed · ${Array.from(changedDocTypes).join(', ')}`
-        : 'No changes detected';
-
-    const lastChecked = vendorDocs
-      .map((d) => d.last_checked_at)
-      .filter(Boolean)
-      .sort()
-      .pop();
-
-    return {
-      id: vendor.id,
-      name: vendor.name,
-      initial: vendor.name.charAt(0).toUpperCase(),
-      detail,
-      docTypes: vendorDocs.map((d) => ({
-        short: DOC_TYPE_SHORT[d.doc_type] || d.doc_type.toUpperCase(),
-        cssClass: DOC_TYPE_CLASS[d.doc_type] || '',
-      })),
-      statusClass,
-      statusLabel,
-      lastChecked: formatDate(lastChecked ?? null),
-    };
-  });
-
-  // Sort: changed first, then warning, then stable
-  const statusOrder: Record<string, number> = { changed: 0, warning: 1, stable: 2 };
-  vendorRows.sort((a, b) => (statusOrder[a.statusClass] ?? 2) - (statusOrder[b.statusClass] ?? 2));
+    revealRefs.current.forEach((el) => el && observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <main className="dashboard-page">
-      <nav className="dash-nav">
+    <main className="landing-page">
+      {/* Nav */}
+      <nav className="lp-nav">
         <div className="inner">
           <div className="nav-left">
             <a className="nav-logo" href="/">
               <Logo size="sm" />
             </a>
-            <a href="/" className="nav-link active">Dashboard</a>
+            <a href="#monitor" className="nav-link">How it works</a>
+            <a href="#targets" className="nav-link">What we track</a>
+            <a href="#scoring" className="nav-link">Scoring</a>
             <a href="/intel" className="nav-link">Intel</a>
-            <a href="/admin" className="nav-link">Admin</a>
           </div>
           <div className="nav-right">
-            <a href="/onboarding" className="pill pill-ghost pill-sm">+ Add vendor</a>
+            <a className="nav-cta" href="/onboarding">Start monitoring</a>
           </div>
         </div>
       </nav>
 
-      <div className="wrap">
-        <header className="dash-header">
-          <div className="tag tag-green">Dashboard</div>
-          <h1>
-            Monitoring {activeDocCount} document{activeDocCount !== 1 ? 's' : ''}
-            <br />
-            <span className="dim">across {vendors.length} vendor{vendors.length !== 1 ? 's' : ''}.</span>
+      {/* Hero — two-column with radar */}
+      <section className="hero">
+        <div className="hero-copy">
+          <div className="hero-label">
+            <span className="hero-label-dot" />
+            <span>Vendor Monitoring System</span>
+          </div>
+          <h1 className="hero-h1">
+            They changed the rules.<br />
+            <span className="dim">Did you notice?</span>
           </h1>
-        </header>
-
-        <div className="stat-row">
-          <div className="stat-card">
-            <div className="sc-value">{vendors.length}</div>
-            <div className="sc-label">Vendors</div>
+          <p className="hero-sub">
+            Your vendors update their Terms of Service, Privacy Policies, and Pricing
+            pages constantly. Most changes are buried. Some can break your business.
+          </p>
+          <div className="hero-btns">
+            <a className="btn-primary" href="/onboarding">Start monitoring</a>
+            <a href="#monitor" className="btn-secondary">How it works</a>
           </div>
-          <div className="stat-card">
-            <div className="sc-value">{activeDocCount}</div>
-            <div className="sc-label">Documents</div>
-          </div>
-          <div className="stat-card">
-            <div className={`sc-value${changes.length > 0 ? ' red' : ''}`}>{changes.length}</div>
-            <div className="sc-label">Changes detected</div>
-          </div>
-          <div className="stat-card">
-            <div className="sc-value green">{stableCount}</div>
-            <div className="sc-label">Stable</div>
+          <div className="stats-bar">
+            <div className="stat">
+              <span className="stat-val">29</span>
+              <span className="stat-label">Vendors tracked</span>
+            </div>
+            <div className="stat">
+              <span className="stat-val">98</span>
+              <span className="stat-label">Documents</span>
+            </div>
+            <div className="stat">
+              <span className="stat-val">6h</span>
+              <span className="stat-label">Refresh cycle</span>
+            </div>
           </div>
         </div>
 
-        <DashboardAlerts changes={dashChanges} />
-
-        <div className="vendor-section">
-          <div className="section-head">
-            <h2>Tracked vendors</h2>
-            <div className="sh-meta">
-              <span className="section-action">
-                {vendors.length} vendor{vendors.length !== 1 ? 's' : ''} · sorted by status
-              </span>
-            </div>
+        <div className="hero-radar">
+          <div className="radar-container">
+            <div className="radar-glow" />
+            <div className="radar-ring radar-ring-1" />
+            <div className="radar-ring radar-ring-2" />
+            <div className="radar-ring radar-ring-3" />
+            <div className="radar-ring radar-ring-4" />
+            <div className="radar-sweep-trail" />
+            <div className="radar-sweep" />
+            <div className="radar-core" />
+            <svg className="radar-triangle-svg" width="64" height="140" viewBox="0 0 64 140">
+              <defs>
+                <linearGradient id="tg" x1="50%" y1="0%" x2="50%" y2="100%">
+                  <stop offset="0%" stopColor="#4d8eff" stopOpacity="0.8" />
+                  <stop offset="100%" stopColor="#00d4ff" stopOpacity="0.3" />
+                </linearGradient>
+              </defs>
+              <polygon points="32,0 4,140 60,140" fill="url(#tg)" />
+            </svg>
+            <div className="radar-blip blip-1" />
+            <div className="radar-blip blip-2" />
+            <div className="radar-blip blip-3" />
+            <div className="radar-blip blip-4" />
+            <div className="radar-blip blip-5" />
+            <span className="blip-label label-1">Stripe TOS</span>
+            <span className="blip-label label-2">Vercel pricing</span>
+            <span className="blip-label label-3">Supabase policy</span>
+            <span className="blip-label label-4">OpenAI terms</span>
+            <span className="blip-label label-5">Heroku sunset</span>
           </div>
+        </div>
+      </section>
 
-          {vendors.length === 0 ? (
-            <p className="dash-empty">No vendors yet. Complete onboarding to get started.</p>
-          ) : (
-            <div className="vendor-table">
-              {vendorRows.map((v) => (
-                <div key={v.id} className="vt-row">
-                  <div className={`vt-icon ${v.statusClass !== 'stable' ? v.statusClass : ''}`}>
-                    {v.initial}
+      <div className="wrap">
+        {/* Row 1: Live Feed */}
+        <div id="monitor" className="lp-row lp-reveal" ref={(el) => { revealRefs.current[0] = el; }}>
+          <div>
+            <div className="feed-console">
+              <div className="fc-head">
+                <span className="fc-title">CHANGE FEED</span>
+                <span className="fc-live">LIVE</span>
+              </div>
+              <div className="fc-body">
+                <div className="fc-item">
+                  <div className="fc-sev sr" />
+                  <div className="fc-info">
+                    <div className="fc-vendor">Stripe</div>
+                    <div className="fc-detail">TOS &sect;7.2 &mdash; Liability cap reduced to 3-month fees</div>
                   </div>
-                  <div className="vt-info">
-                    <div className="vt-name">{v.name}</div>
-                    <div className="vt-detail">{v.detail}</div>
-                  </div>
-                  <div className="vt-tags">
-                    {v.docTypes.map((dt, i) => (
-                      <span key={i} className={`vt-tag ${dt.cssClass}`}>{dt.short}</span>
-                    ))}
-                  </div>
-                  <span className={`vt-status ${v.statusClass}`}>{v.statusLabel}</span>
-                  <span className="vt-time">{v.lastChecked}</span>
+                  <div className="fc-time">2h</div>
                 </div>
-              ))}
+                <div className="fc-item">
+                  <div className="fc-sev sr" />
+                  <div className="fc-info">
+                    <div className="fc-vendor">Stripe</div>
+                    <div className="fc-detail">TOS &sect;12.1 &mdash; Data sharing with affiliated partners</div>
+                  </div>
+                  <div className="fc-time">2h</div>
+                </div>
+                <div className="fc-item">
+                  <div className="fc-sev sa" />
+                  <div className="fc-info">
+                    <div className="fc-vendor">PayPal</div>
+                    <div className="fc-detail">Privacy &mdash; Data retention changed to 7 years</div>
+                  </div>
+                  <div className="fc-time">3d</div>
+                </div>
+                <div className="fc-item">
+                  <div className="fc-sev sa" />
+                  <div className="fc-info">
+                    <div className="fc-vendor">OpenAI</div>
+                    <div className="fc-detail">API Terms &mdash; Rate limiting clause added</div>
+                  </div>
+                  <div className="fc-time">5d</div>
+                </div>
+                <div className="fc-item">
+                  <div className="fc-sev sy" />
+                  <div className="fc-info">
+                    <div className="fc-vendor">AWS</div>
+                    <div className="fc-detail">AUP &mdash; Minor wording in &sect;3.4</div>
+                  </div>
+                  <div className="fc-time">12d</div>
+                </div>
+                <div className="fc-item">
+                  <div className="fc-sev sg" />
+                  <div className="fc-info">
+                    <div className="fc-vendor">Cloudflare</div>
+                    <div className="fc-detail">No changes &mdash; 45 days stable</div>
+                  </div>
+                  <div className="fc-time">45d</div>
+                </div>
+              </div>
             </div>
-          )}
+          </div>
+          <div className="row-content">
+            <div className="tag">Real-time monitoring</div>
+            <h2>Every change, the moment it happens.</h2>
+            <p>
+              We scan your vendors&apos; legal and pricing documents daily. When
+              something changes, you see it immediately &mdash; severity-scored and
+              summarized in plain English.
+            </p>
+            <p>No more finding out after the damage is done.</p>
+          </div>
         </div>
 
-        <footer className="dash-footer">
+        {/* Row 2: Diff */}
+        <div className="lp-row flip lp-reveal" ref={(el) => { revealRefs.current[1] = el; }}>
+          <div>
+            <div className="console">
+              <div className="console-head">
+                <div className="console-dots">
+                  <span /><span /><span />
+                </div>
+                <span className="console-path">stripe / terms-of-service.md</span>
+                <span className="console-badge">CRITICAL</span>
+              </div>
+              <div className="console-body">
+                <div className="cl ctx">&sect;7.2 &mdash; Liability</div>
+                <div className="cl rem">- Stripe liable for direct damages up to total fees paid.</div>
+                <div className="cl add">+ Liability capped at fees paid in preceding 3 months.</div>
+                <div className="cl ctx">{'\u00A0'}</div>
+                <div className="cl ctx">&sect;12.1 &mdash; Data Processing</div>
+                <div className="cl rem">- Customer data not shared without explicit consent.</div>
+                <div className="cl add">+ Data may be shared with affiliated partners for service improvement.</div>
+              </div>
+            </div>
+          </div>
+          <div className="row-content">
+            <div className="tag">Output format</div>
+            <h2>Clear diffs. Not legal soup.</h2>
+            <p>
+              Every detected change is presented as a clean, line-by-line diff with
+              severity scoring. You see exactly what was added, removed, or modified.
+            </p>
+            <p>Plus a plain-English summary of what it means for your business.</p>
+          </div>
+        </div>
+
+        {/* Row 3: Problem */}
+        <div className="lp-row lp-reveal" ref={(el) => { revealRefs.current[2] = el; }}>
+          <div className="row-content">
+            <div className="tag">The problem</div>
+            <h2>
+              Your vendors update their legal pages constantly. Most changes are buried.
+            </h2>
+            <p>
+              A liability cap gets halved. A data-sharing clause appears. A pricing
+              tier disappears. These aren&apos;t hypotheticals &mdash; they happen every
+              week across your vendor stack.
+            </p>
+            <p>By the time you notice, the damage is already done.</p>
+          </div>
+          <div className="row-content" style={{ maxWidth: 380 }}>
+            <div className="risk-block">
+              <div className="tag" style={{ color: 'var(--lp-red)' }}>Silent pricing changes</div>
+              <p>
+                A vendor changes their model or adds usage caps. You find out when
+                your bill doubles.
+              </p>
+            </div>
+            <div className="risk-block">
+              <div className="tag" style={{ color: 'var(--lp-amber)' }}>Data policy shifts</div>
+              <p>
+                A new clause about sharing user data with third parties. Your privacy
+                commitment becomes a liability.
+              </p>
+            </div>
+            <div className="risk-block">
+              <div className="tag" style={{ color: 'var(--lp-yellow)' }}>Liability transfers</div>
+              <p>
+                An indemnification clause shifts responsibility to you. Things that
+                were the vendor&apos;s problem become yours.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Row 4: Integrations */}
+        <div className="lp-row flip lp-reveal" ref={(el) => { revealRefs.current[3] = el; }}>
+          <div className="row-content" style={{ maxWidth: 380 }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              <span className="pill pill-ghost pill-sm">Slack</span>
+              <span className="pill pill-ghost pill-sm">Email</span>
+              <span className="pill pill-ghost pill-sm">Webhooks</span>
+              <span className="pill pill-ghost pill-sm">RSS</span>
+              <span className="pill pill-ghost pill-sm">API</span>
+              <span className="pill pill-ghost pill-sm">PagerDuty</span>
+            </div>
+          </div>
+          <div className="row-content">
+            <div className="tag">Integrations</div>
+            <h2>Alerts go where your team already works.</h2>
+            <p>
+              Route by severity. Critical changes go to legal, pricing changes go to
+              finance, API changes go to engineering. Configure once, never miss what
+              matters.
+            </p>
+          </div>
+        </div>
+
+        {/* Document Types */}
+        <section id="targets" className="types-row lp-reveal" ref={(el) => { revealRefs.current[4] = el; }}>
+          <div className="tag">Document types</div>
+          <h2>What we watch.</h2>
+          <div className="type-list">
+            <div className="type-item">
+              <div className="t-accent" />
+              <h4>Terms of Service</h4>
+              <p>
+                Liability, termination, IP ownership, dispute resolution &mdash; the
+                clauses that matter when things go wrong.
+              </p>
+            </div>
+            <div className="type-item">
+              <div className="t-accent" />
+              <h4>Privacy Policy</h4>
+              <p>
+                Data collection, sharing, retention, cross-border transfers. Your
+                compliance depends on theirs.
+              </p>
+            </div>
+            <div className="type-item">
+              <div className="t-accent" />
+              <h4>Acceptable Use</h4>
+              <p>
+                A new restriction here could make your entire product non-compliant
+                overnight.
+              </p>
+            </div>
+            <div className="type-item">
+              <div className="t-accent" />
+              <h4>Pricing Pages</h4>
+              <p>
+                Rate changes, deprecated plans, new caps. Know before your margins
+                disappear.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Severity */}
+        <section id="scoring" className="sev-row lp-reveal" ref={(el) => { revealRefs.current[5] = el; }}>
+          <div className="tag" style={{ marginBottom: 32 }}>Severity scoring</div>
+          <div className="sev-scale">
+            <div className="sev-item">
+              <h5>Critical</h5>
+              <p>Liability shifts, data sharing changes, termination modifications</p>
+            </div>
+            <div className="sev-item">
+              <h5>Warning</h5>
+              <p>Pricing changes, new restrictions, compliance-affecting updates</p>
+            </div>
+            <div className="sev-item">
+              <h5>Notice</h5>
+              <p>Minor wording, formatting, or clarification changes</p>
+            </div>
+            <div className="sev-item">
+              <h5>Stable</h5>
+              <p>No changes detected since last scan</p>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section className="lp-cta lp-reveal" ref={(el) => { revealRefs.current[6] = el; }}>
+          <h2>Stop getting<br />blindsided.</h2>
+          <p>Start monitoring your vendor stack today. Free during early access.</p>
+          <div className="cta-pills">
+            <a className="btn-primary" href="/onboarding">Get early access</a>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="lp-footer">
           <span>&copy; 2026 StackDrift</span>
           <div className="f-links">
             <a href="/intel">Intel</a>
-            <a href="/onboarding">Onboarding</a>
-            <a href="/admin">Admin</a>
+            <a href="/onboarding">Get started</a>
           </div>
         </footer>
       </div>

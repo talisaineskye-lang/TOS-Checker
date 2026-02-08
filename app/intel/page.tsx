@@ -102,11 +102,11 @@ export default function IntelPage() {
       <nav className="ip-nav">
         <div className="inner">
           <div className="nav-left">
-            <a className="nav-logo" href="/landing">
+            <a className="nav-logo" href="/">
               <Logo size="sm" />
             </a>
             <a href="/intel" className="nav-link active">Intel</a>
-            <a href="/landing" className="nav-link">How it works</a>
+            <a href="/" className="nav-link">How it works</a>
           </div>
           <div className="nav-right">
             <a className="nav-pill" href="/onboarding">Start monitoring</a>
@@ -297,7 +297,7 @@ export default function IntelPage() {
 
         {/* ── Footer ── */}
         <footer className="ip-footer">
-          <a href="/landing" className="ip-footer-logo">
+          <a href="/" className="ip-footer-logo">
             <Logo size="sm" />
           </a>
           <span className="ip-footer-copy">&copy; 2026 StackDrift</span>

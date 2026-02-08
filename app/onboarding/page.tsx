@@ -9,7 +9,7 @@ export default async function OnboardingPage() {
       <nav className="wd-nav">
         <div className="nav-inner">
           <div className="wd-nav-left">
-            <a className="wd-nav-brand" href="/">
+            <a className="wd-nav-brand" href="/dashboard">
               <Logo size="sm" />
             </a>
             <div className="wd-nav-crumb">
