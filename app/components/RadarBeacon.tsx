@@ -5,7 +5,7 @@ interface RadarBeaconProps {
 
 export function RadarBeacon({ size = 'md', className }: RadarBeaconProps) {
   const sizes = {
-    xs: { w: 20, h: 26 },
+    xs: { w: 16, h: 20 },
     sm: { w: 36, h: 46 },
     md: { w: 44, h: 56 },
     lg: { w: 56, h: 72 },

@@ -43,7 +43,7 @@
   color: inherit;
 }
 .logo-sm { gap: 6px; }
-.logo-sm .logo-wordmark { font-size: 14px; }
+.logo-sm .logo-wordmark { font-size: 19px; }
 .logo-md { gap: 8px; }
 .logo-md .logo-wordmark { font-size: 18px; }
 .logo-lg { gap: 12px; }
@@ -1655,7 +1655,7 @@ a { color: inherit; text-decoration: none; }
 /* ============ LANDING PAGE ============ */
 
 .landing-page {
-  --lp-bg: #050505;
+  --lp-bg: #0a0a10;
   --lp-white: #f0f0f0;
   --lp-white-dim: #c4c5cc;
   --lp-white-muted: #8b8d9e;
@@ -1663,7 +1663,7 @@ a { color: inherit; text-decoration: none; }
   --lp-white-ghost: #2a2d3e;
   --lp-line: rgba(255,255,255,0.08);
   --lp-line-hi: rgba(255,255,255,0.14);
-  --lp-cyan: #22d3ee;
+  --lp-cyan: #00d4ff;
   --lp-green: #00e87b;
   --lp-green-dim: rgba(0,232,123,0.12);
   --lp-blue: #4a9eff;
@@ -1687,6 +1687,15 @@ a { color: inherit; text-decoration: none; }
   max-width: 1120px;
   margin: 0 auto;
   padding: 0 40px;
+  position: relative;
+}
+.landing-page .wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 30% 50%, rgba(123, 47, 255, 0.03), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* ── Tags & Pills ── */
@@ -1784,7 +1793,6 @@ a { color: inherit; text-decoration: none; }
   gap: 8px;
   text-decoration: none;
 }
-.landing-page .nav-logo .logo-wordmark { font-size: 19px; }
 
 .landing-page .nav-dot {
   width: 6px;
@@ -1834,6 +1842,17 @@ a { color: inherit; text-decoration: none; }
   max-width: 1400px;
   margin: 0 auto;
   gap: 40px;
+  position: relative;
+}
+.landing-page .hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 70% 20%, rgba(123, 47, 255, 0.04), transparent 60%),
+    radial-gradient(ellipse at 20% 80%, rgba(77, 142, 255, 0.03), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .landing-page .hero-copy { position: relative; z-index: 2; }
@@ -1869,7 +1888,7 @@ a { color: inherit; text-decoration: none; }
   letter-spacing: -0.03em;
   margin-bottom: 24px;
 }
-.landing-page .hero-h1 .dim { color: var(--lp-white-muted); }
+.landing-page .hero-h1 .dim { color: #7878b0; }
 
 .landing-page .hero-sub {
   font-size: 17px;
@@ -1945,6 +1964,9 @@ a { color: inherit; text-decoration: none; }
   letter-spacing: 0.12em;
   color: var(--lp-white-faint);
 }
+.landing-page .stat:nth-child(1) .stat-val { color: #00d4ff; }
+.landing-page .stat:nth-child(2) .stat-val { color: #4d8eff; }
+.landing-page .stat:nth-child(3) .stat-val { color: #7b6fff; }
 
 /* ── Radar ── */
 .landing-page .hero-radar {
@@ -1957,6 +1979,8 @@ a { color: inherit; text-decoration: none; }
 .landing-page .radar-container {
   position: relative;
   width: 460px; height: 460px;
+  overflow: hidden;
+  border-radius: 50%;
 }
 
 .landing-page .radar-ring {
@@ -2128,6 +2152,7 @@ a { color: inherit; text-decoration: none; }
   align-items: center;
   padding: 80px 0;
   border-top: 1px solid var(--lp-line);
+  border-image: linear-gradient(90deg, transparent, rgba(77, 142, 255, 0.15), rgba(123, 47, 255, 0.1), transparent) 1;
 }
 
 .landing-page .row-content { max-width: 440px; }
@@ -2311,6 +2336,7 @@ a { color: inherit; text-decoration: none; }
 .landing-page .types-row {
   padding: 80px 0;
   border-top: 1px solid var(--lp-line);
+  border-image: linear-gradient(90deg, transparent, rgba(77, 142, 255, 0.15), rgba(123, 47, 255, 0.1), transparent) 1;
 }
 
 .landing-page .types-row .tag { margin-bottom: 28px; }
@@ -2367,6 +2393,7 @@ a { color: inherit; text-decoration: none; }
 .landing-page .sev-row {
   padding: 64px 0;
   border-top: 1px solid var(--lp-line);
+  border-image: linear-gradient(90deg, transparent, rgba(77, 142, 255, 0.15), rgba(123, 47, 255, 0.1), transparent) 1;
 }
 
 .landing-page .sev-scale {
@@ -2414,7 +2441,21 @@ a { color: inherit; text-decoration: none; }
 .landing-page .lp-cta {
   padding: 100px 0;
   border-top: 1px solid var(--lp-line);
+  border-image: linear-gradient(90deg, transparent, rgba(77, 142, 255, 0.15), rgba(123, 47, 255, 0.1), transparent) 1;
   text-align: center;
+  position: relative;
+}
+
+.landing-page .lp-cta::before {
+  content: '';
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  top: -100px;
+  right: -50px;
+  background: radial-gradient(ellipse, rgba(123, 47, 255, 0.05), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .landing-page .lp-cta h2 {
@@ -2446,6 +2487,7 @@ a { color: inherit; text-decoration: none; }
 .landing-page .lp-footer {
   padding: 24px 0;
   border-top: 1px solid var(--lp-line);
+  border-image: linear-gradient(90deg, transparent, rgba(77, 142, 255, 0.15), rgba(123, 47, 255, 0.1), transparent) 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -2717,6 +2759,16 @@ a { color: inherit; text-decoration: none; }
 /* ── Pillar Tabs ── */
 .intel-page .ip-tabs {
   padding: 20px 0;
+  position: relative;
+}
+.intel-page .ip-tabs::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 48px;
+  background: linear-gradient(90deg, transparent, var(--ip-bg));
+  pointer-events: none;
+  z-index: 2;
 }
 
 .intel-page .ip-tabs-inner {
@@ -2726,6 +2778,7 @@ a { color: inherit; text-decoration: none; }
   border: 1px solid var(--ip-line);
   border-radius: 14px;
   padding: 4px;
+  padding-right: 24px;
   overflow-x: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;
