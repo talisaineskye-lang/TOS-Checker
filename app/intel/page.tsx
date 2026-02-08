@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 
-type Pillar = 'all' | 'direct_delta' | 'regulatory_intel' | 'market_shift';
+type Pillar = 'all' | 'policy_watch' | 'build' | 'business' | 'ai_tools' | 'growth' | 'ideas_trends' | 'regulatory_intel' | 'market_shift';
 
 interface IntelItem {
   id: string;
@@ -20,9 +20,14 @@ interface IntelItem {
 
 const PILLAR_LABELS: Record<Pillar, string> = {
   all: 'All',
-  direct_delta: 'Direct Changes',
+  policy_watch: 'Policy Watch',
+  build: 'Build',
+  business: 'Business',
+  ai_tools: 'AI & Tools',
+  growth: 'Growth',
+  ideas_trends: 'Ideas & Trends',
   regulatory_intel: 'Regulatory',
-  market_shift: 'Market Shifts',
+  market_shift: 'Market',
 };
 
 const FREE_PREVIEW_COUNT = 4;

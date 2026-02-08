@@ -47,6 +47,16 @@ export async function GET(request: NextRequest) {
 
     try {
       const content = await fetchTosContent(doc.url);
+
+      // Safety Net 1: Empty/tiny content protection — if fetch returned
+      // garbage (blocked, error page, empty), skip entirely to avoid
+      // poisoning the baseline or creating false "content removed" alerts
+      if (content.length < 200) {
+        console.warn(`[check-tos] Skipping "${displayName}" — fetched content too small (${content.length} chars), likely a failed fetch or blocked request`);
+        results.push({ document: displayName, status: 'fetch_empty', contentLength: content.length });
+        continue;
+      }
+
       const contentHash = hashContent(content);
 
       // Get last snapshot for this document
@@ -80,16 +90,48 @@ export async function GET(request: NextRequest) {
         if (lastSnapshot && newSnapshot) {
           const diff = getBasicDiff(lastSnapshot.content, content);
 
-          // Safety net A: Skip if diff is too large — likely a full document
-          // replacement (first scan, language swap, or complete rewrite)
-          if (diff.added.length > 500 && diff.removed.length > 500) {
-            console.log(`[check-tos] Skipping "${displayName}" — full replacement detected (${diff.added.length} added, ${diff.removed.length} removed)`);
-            results.push({ document: displayName, status: 'full_replacement_skipped' });
+          // Safety Net 2: Full-document replacement detection — if 80%+ of
+          // sentences changed, this is a language swap, page redesign, or fetch
+          // anomaly. Save the new baseline but skip AI analysis to save costs.
+          const splitSentences = (text: string) =>
+            text.split(/[.!?]+/).map((s) => s.trim()).filter(Boolean);
+          const oldSentenceCount = splitSentences(lastSnapshot.content).length;
+          const newSentenceCount = splitSentences(content).length;
+          const totalSentences = Math.max(oldSentenceCount, newSentenceCount);
+          const changedSentences = diff.added.length + diff.removed.length;
+          const changeRatio = totalSentences > 0 ? changedSentences / totalSentences : 0;
+
+          if (changeRatio > 0.8 && changedSentences > 100) {
+            console.log(`[check-tos] Full replacement detected for "${displayName}" — ${changedSentences} sentences changed (${Math.round(changeRatio * 100)}%). Saving baseline, skipping analysis.`);
+
+            await supabase
+              .from('changes')
+              .insert({
+                vendor_id: doc.vendor_id,
+                document_id: doc.id,
+                old_snapshot_id: lastSnapshot.id,
+                new_snapshot_id: newSnapshot.id,
+                summary: 'Large-scale content change detected (likely page restructure or language change). New baseline saved.',
+                risk_level: 'low',
+                risk_bucket: null,
+                risk_priority: 'low',
+                categories: [],
+                is_noise: true,
+              });
+
+            await supabase
+              .from('documents')
+              .update({ last_changed_at: new Date().toISOString() })
+              .eq('id', doc.id);
+
+            results.push({ document: displayName, status: 'full_replacement_baseline', changeRatio: Math.round(changeRatio * 100) });
           } else {
+            // Normal incremental change — run AI analysis
             const analysis = await analyzeChanges(displayName, diff.added, diff.removed);
 
-            // Safety net B: For noise changes, force risk_level to 'low'
-            const effectiveRiskLevel = analysis.isNoise ? 'low' : analysis.riskLevel;
+            // Safety Net 3: For noise changes, force risk_level to 'low'
+            const isNoise = analysis.isNoise ?? false;
+            const effectiveRiskLevel = isNoise ? 'low' : analysis.riskLevel;
 
             const { data: changeRecord } = await supabase
               .from('changes')
@@ -101,15 +143,15 @@ export async function GET(request: NextRequest) {
                 summary: analysis.summary,
                 risk_level: effectiveRiskLevel,
                 risk_bucket: analysis.riskBucket,
-                risk_priority: analysis.isNoise ? 'low' : analysis.riskPriority,
+                risk_priority: isNoise ? 'low' : analysis.riskPriority,
                 categories: analysis.categories,
-                is_noise: analysis.isNoise,
+                is_noise: isNoise,
               })
               .select()
               .single();
 
             // Send alert for medium/high risk changes — skip noise
-            if (effectiveRiskLevel !== 'low' && !analysis.isNoise) {
+            if (effectiveRiskLevel !== 'low' && !isNoise) {
               await sendChangeAlert({
                 serviceName: displayName,
                 summary: analysis.summary,
@@ -134,7 +176,7 @@ export async function GET(request: NextRequest) {
 
             results.push({
               document: displayName,
-              status: analysis.isNoise ? 'noise' : 'changed',
+              status: isNoise ? 'noise' : 'changed',
               riskLevel: effectiveRiskLevel,
             });
           }

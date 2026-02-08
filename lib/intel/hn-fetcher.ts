@@ -8,7 +8,7 @@ export async function fetchHackerNews(): Promise<RawFeedItem[]> {
     const ids: number[] = await res.json();
 
     const stories = await Promise.all(
-      ids.slice(0, 20).map(async (id) => {
+      ids.slice(0, 50).map(async (id) => {
         const r = await fetch(`${HN_API}/item/${id}.json`);
         return r.json();
       })
