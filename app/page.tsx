@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { DOCUMENT_TYPE_LABELS, DocumentType } from '@/lib/types';
 import { RiskPriority } from '@/lib/risk-buckets';
 import { DashboardAlerts, DashChange } from './components/DashboardAlerts';
+import { Logo } from './components/Logo';
 
 export const dynamic = 'force-dynamic';
 
@@ -234,8 +235,7 @@ export default async function Page() {
         <div className="inner">
           <div className="nav-left">
             <a className="nav-logo" href="/">
-              <span className="nav-dot" />
-              StackDrift
+              <Logo size="sm" />
             </a>
             <a href="/" className="nav-link active">Dashboard</a>
             <a href="/intel" className="nav-link">Intel</a>

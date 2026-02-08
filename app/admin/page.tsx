@@ -4,6 +4,7 @@ import { RiskBucket, RiskPriority, RISK_BUCKETS } from '@/lib/risk-buckets';
 import { AdminActions } from './AdminActions';
 import { SettingsForm } from './SettingsForm';
 import { AlertCard } from '../components/AlertCard';
+import { Logo } from '../components/Logo';
 
 export const dynamic = 'force-dynamic';
 
@@ -105,8 +106,7 @@ export default async function AdminPage() {
       <nav className="wd-nav">
         <div className="nav-inner">
           <a href="/" className="nav-logo">
-            <span className="pulse-dot" />
-            StackDrift
+            <Logo size="sm" />
           </a>
           <span className="nav-breadcrumb">/ admin</span>
           <div className="wd-nav-right">

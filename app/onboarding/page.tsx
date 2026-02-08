@@ -1,4 +1,5 @@
 import { VendorGrid } from '@/app/components/VendorGrid';
+import { Logo } from '@/app/components/Logo';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,8 +10,7 @@ export default async function OnboardingPage() {
         <div className="nav-inner">
           <div className="wd-nav-left">
             <a className="wd-nav-brand" href="/">
-              <span className="wd-nav-pulse" />
-              StackDrift
+              <Logo size="sm" />
             </a>
             <div className="wd-nav-crumb">
               <span className="sep">/</span>

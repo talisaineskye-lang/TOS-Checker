@@ -1,18 +1,31 @@
 import './globals.css';
 import type { ReactNode } from 'react';
-import { Inter, JetBrains_Mono } from 'next/font/google';
+import localFont from 'next/font/local';
+import { Exo_2, Space_Mono } from 'next/font/google';
 
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-sans',
-  weight: ['300', '400', '500', '600'],
+// CODEX — wordmark only
+const codex = localFont({
+  src: [
+    { path: '../public/fonts/Codex-Regular.ttf', weight: '400', style: 'normal' },
+    { path: '../public/fonts/Codex-Italic.ttf', weight: '400', style: 'italic' },
+  ],
+  variable: '--font-codex',
   display: 'swap',
 });
 
-const jetbrainsMono = JetBrains_Mono({
+// Exo 2 — primary UI font (replaces Inter)
+const exo2 = Exo_2({
   subsets: ['latin'],
-  variable: '--font-mono',
+  weight: ['400', '500', '600', '700', '800'],
+  variable: '--font-sans',
+  display: 'swap',
+});
+
+// Space Mono — labels, tags, meta (replaces JetBrains Mono)
+const spaceMono = Space_Mono({
+  subsets: ['latin'],
   weight: ['400', '700'],
+  variable: '--font-mono',
   display: 'swap',
 });
 
@@ -23,7 +36,7 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en" className={`${codex.variable} ${exo2.variable} ${spaceMono.variable}`}>
       <body>{children}</body>
     </html>
   );

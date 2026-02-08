@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { Logo } from '../components/Logo';
 
 export default function LandingPage() {
   const revealRefs = useRef<(HTMLElement | null)[]>([]);
@@ -25,8 +26,7 @@ export default function LandingPage() {
         <div className="inner">
           <div className="nav-left">
             <a className="nav-logo" href="/landing">
-              <span className="nav-dot" />
-              StackDrift
+              <Logo size="sm" />
             </a>
             <a href="#monitor" className="nav-link">How it works</a>
             <a href="#targets" className="nav-link">What we track</a>

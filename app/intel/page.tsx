@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { Logo } from '../components/Logo';
 
 type Pillar = 'all' | 'policy_watch' | 'build' | 'business' | 'ai_tools' | 'growth' | 'ideas_trends' | 'regulatory_intel' | 'market_shift';
 
@@ -30,7 +31,18 @@ const PILLAR_LABELS: Record<Pillar, string> = {
   market_shift: 'Market',
 };
 
-const FREE_PREVIEW_COUNT = 4;
+const PILLAR_COLORS: Record<string, string> = {
+  policy_watch: 'red',
+  regulatory_intel: 'red',
+  build: 'green',
+  ai_tools: 'purple',
+  business: 'blue',
+  growth: 'pink',
+  ideas_trends: 'cyan',
+  market_shift: 'blue',
+};
+
+const FREE_PREVIEW_COUNT = 6;
 
 function formatTime(dateStr: string) {
   const date = new Date(dateStr);
@@ -50,9 +62,9 @@ export default function IntelPage() {
   const [activePillar, setActivePillar] = useState<Pillar>('all');
   const [items, setItems] = useState<IntelItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const feedRef = useRef<HTMLDivElement>(null);
 
-  const revealRefs = useRef<(HTMLElement | null)[]>([]);
-
+  // Scroll-reveal observer
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -62,10 +74,12 @@ export default function IntelPage() {
       },
       { threshold: 0.08 }
     );
-    revealRefs.current.forEach((el) => el && observer.observe(el));
+    const els = feedRef.current?.querySelectorAll('.ip-reveal');
+    els?.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, [items]);
 
+  // Data fetch
   useEffect(() => {
     setLoading(true);
     const params = new URLSearchParams({ limit: '30', hours: '168' });
@@ -83,16 +97,15 @@ export default function IntelPage() {
   const gatedCount = Math.max(0, items.length - FREE_PREVIEW_COUNT);
 
   return (
-    <main className="intel-page">
-      {/* Nav */}
+    <main className="intel-page" ref={feedRef}>
+      {/* ── Nav ── */}
       <nav className="ip-nav">
         <div className="inner">
           <div className="nav-left">
             <a className="nav-logo" href="/landing">
-              <span className="nav-dot" />
-              StackDrift
+              <Logo size="sm" />
             </a>
-            <a href="/intel" className="nav-link active">Intel Feed</a>
+            <a href="/intel" className="nav-link active">Intel</a>
             <a href="/landing" className="nav-link">How it works</a>
           </div>
           <div className="nav-right">
@@ -102,33 +115,49 @@ export default function IntelPage() {
       </nav>
 
       <div className="wrap">
-        {/* Hero */}
+        {/* ── Hero ── */}
         <section className="ip-hero">
-          <div className="tag tag-green">Industry intel</div>
-          <h1>
-            What&apos;s moving in<br />
-            <span className="dim">vendor policy.</span>
-          </h1>
+          <div className="ip-hero-label">
+            <span className="ip-pulse-dot" />
+            <span>DRIFT INTEL</span>
+          </div>
+          <h1>What&apos;s moving in your stack.</h1>
           <p className="ip-hero-sub">
-            Real-time intel from regulatory bodies, vendor blogs, and tech news
-            &mdash; classified by AI. Updated every 6 hours.
+            Curated intel from vendor blogs, regulatory bodies, and tech news
+            &mdash; classified by AI, delivered every Tuesday.
           </p>
+          <div className="ip-hero-stats">
+            <div className="ip-stat">
+              <span className="ip-stat-value">29</span>
+              <span className="ip-stat-label">Vendors</span>
+            </div>
+            <div className="ip-stat">
+              <span className="ip-stat-value">98</span>
+              <span className="ip-stat-label">Documents</span>
+            </div>
+            <div className="ip-stat">
+              <span className="ip-stat-value">6h</span>
+              <span className="ip-stat-label">Refresh</span>
+            </div>
+          </div>
         </section>
 
-        {/* Pillar Tabs */}
+        {/* ── Pillar Tabs ── */}
         <div className="ip-tabs">
-          {(Object.keys(PILLAR_LABELS) as Pillar[]).map((pillar) => (
-            <button
-              key={pillar}
-              className={`ip-tab ${activePillar === pillar ? 'active' : ''}`}
-              onClick={() => setActivePillar(pillar)}
-            >
-              {PILLAR_LABELS[pillar]}
-            </button>
-          ))}
+          <div className="ip-tabs-inner">
+            {(Object.keys(PILLAR_LABELS) as Pillar[]).map((pillar) => (
+              <button
+                key={pillar}
+                className={`ip-tab ${activePillar === pillar ? 'active' : ''}`}
+                onClick={() => setActivePillar(pillar)}
+              >
+                {PILLAR_LABELS[pillar]}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Feed */}
+        {/* ── Feed ── */}
         {loading ? (
           <div className="ip-loading">Loading intel&hellip;</div>
         ) : items.length === 0 ? (
@@ -137,78 +166,117 @@ export default function IntelPage() {
           <>
             {/* Free preview cards */}
             <div className="ip-feed">
-              {previewItems.map((item, idx) => (
-                <div
-                  key={item.id}
-                  className={`ip-card sev-${item.severity} ip-reveal`}
-                  ref={(el) => { revealRefs.current[idx] = el; }}
-                >
-                  <div className="ip-card-header">
-                    <div className="ip-card-title">
-                      <a href={item.link} target="_blank" rel="noopener noreferrer">
-                        {item.title}
-                      </a>
-                    </div>
-                    <span className={`ip-sev-badge ${item.severity}`}>
-                      {item.severity}
-                    </span>
-                  </div>
-                  <p className="ip-card-summary">{item.summary}</p>
-                  <div className="ip-card-meta">
-                    <span className="ip-card-source">{item.source}</span>
-                    <span>{formatTime(item.pub_date)}</span>
-                    {item.relevance > 0 && <span>relevance: {item.relevance}</span>}
-                  </div>
-                  {(item.affected_vendors?.length > 0 || item.tags?.length > 0) && (
-                    <div className="ip-card-chips">
-                      {item.affected_vendors?.map((v) => (
-                        <span key={v} className="ip-chip vendor">{v}</span>
-                      ))}
-                      {item.tags?.map((t) => (
-                        <span key={t} className="ip-chip">{t}</span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            {/* Gated section */}
-            {gatedCount > 0 && (
-              <div className="ip-gate-section">
-                <div className="ip-gate-blur">
-                  {gatedItems.map((item) => (
-                    <div
-                      key={item.id}
-                      className={`ip-card sev-${item.severity}`}
-                      aria-hidden="true"
-                    >
+              {previewItems.map((item, idx) => {
+                const color = PILLAR_COLORS[item.pillar] || 'blue';
+                return (
+                  <a
+                    key={item.id}
+                    href={item.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`ip-card accent-${color} ip-reveal`}
+                    style={{ '--card-index': idx } as React.CSSProperties}
+                  >
+                    <div className="ip-card-inner">
                       <div className="ip-card-header">
                         <div className="ip-card-title">{item.title}</div>
-                        <span className={`ip-sev-badge ${item.severity}`}>
-                          {item.severity}
+                        <span className={`ip-pillar-badge ${color}`}>
+                          {PILLAR_LABELS[item.pillar as Pillar] || item.pillar}
                         </span>
                       </div>
                       <p className="ip-card-summary">{item.summary}</p>
-                      <div className="ip-card-meta">
-                        <span className="ip-card-source">{item.source}</span>
-                        <span>{formatTime(item.pub_date)}</span>
+                      <div className="ip-card-footer">
+                        <div className="ip-card-meta">
+                          <span className="ip-card-source">{item.source}</span>
+                          <span className="ip-meta-dot">&middot;</span>
+                          <span>{formatTime(item.pub_date)}</span>
+                        </div>
+                        <span className="ip-read-arrow">Read &rarr;</span>
                       </div>
+                      {(item.affected_vendors?.length > 0 || item.tags?.length > 0) && (
+                        <>
+                          <div className="ip-card-divider" />
+                          <div className="ip-card-chips">
+                            {item.affected_vendors?.map((v) => (
+                              <span key={v} className="ip-chip vendor">{v}</span>
+                            ))}
+                            {item.tags?.map((t) => (
+                              <span key={t} className="ip-chip">{t}</span>
+                            ))}
+                          </div>
+                        </>
+                      )}
                     </div>
-                  ))}
+                  </a>
+                );
+              })}
+            </div>
+
+            {/* ── Newsletter Signup ── */}
+            <section className="ip-newsletter ip-reveal">
+              <div className="ip-nl-glow-1" />
+              <div className="ip-nl-glow-2" />
+              <div className="ip-nl-content">
+                <div className="ip-hero-label">
+                  <span className="ip-pulse-dot" />
+                  <span>DRIFT INTEL NEWSLETTER</span>
+                </div>
+                <h2>Get this in your inbox every Tuesday.</h2>
+                <p>
+                  A 5-minute read curated for indie devs and SaaS builders.
+                  Vendor policy changes, tool launches, and market moves
+                  &mdash; classified and summarized.
+                </p>
+                <div className="ip-nl-embed">
+                  <iframe
+                    src="https://embeds.beehiiv.com/b42abe3a-e8c1-47c1-bd15-15333a895e73?slim=true"
+                    style={{ width: '100%', maxWidth: 480, height: 52, border: 'none', background: 'transparent' }}
+                    title="Subscribe to Drift Intel"
+                  />
+                </div>
+                <div className="ip-nl-proof">
+                  Every Tuesday, 6am &middot; 5-min read &middot; Unsubscribe anytime
+                </div>
+              </div>
+            </section>
+
+            {/* ── Gated section ── */}
+            {gatedCount > 0 && (
+              <div className="ip-gate-section">
+                <div className="ip-gate-blur">
+                  {gatedItems.map((item) => {
+                    const color = PILLAR_COLORS[item.pillar] || 'blue';
+                    return (
+                      <div
+                        key={item.id}
+                        className={`ip-card accent-${color}`}
+                        aria-hidden="true"
+                      >
+                        <div className="ip-card-inner">
+                          <div className="ip-card-header">
+                            <div className="ip-card-title">{item.title}</div>
+                            <span className={`ip-pillar-badge ${color}`}>
+                              {PILLAR_LABELS[item.pillar as Pillar] || item.pillar}
+                            </span>
+                          </div>
+                          <p className="ip-card-summary">{item.summary}</p>
+                          <div className="ip-card-meta">
+                            <span className="ip-card-source">{item.source}</span>
+                            <span className="ip-meta-dot">&middot;</span>
+                            <span>{formatTime(item.pub_date)}</span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
                 <div className="ip-gate-overlay">
                   <div className="ip-gate-content">
-                    <div className="tag" style={{ marginBottom: 16 }}>
-                      +{gatedCount} more item{gatedCount !== 1 ? 's' : ''}
-                    </div>
-                    <h3>Get the full intel feed.</h3>
-                    <p>
-                      Sign up to unlock every classified item, vendor alerts,
-                      and daily briefings.
-                    </p>
-                    <a className="ip-cta-pill" href="/onboarding">
-                      Get early access
+                    <span className="ip-gate-count">
+                      +{gatedCount} more item{gatedCount !== 1 ? 's' : ''} this week
+                    </span>
+                    <a className="ip-cta-gradient" href="/onboarding">
+                      Subscribe to Drift Intel
                     </a>
                   </div>
                 </div>
@@ -217,27 +285,22 @@ export default function IntelPage() {
           </>
         )}
 
-        {/* CTA */}
-        <section
-          className="ip-cta ip-reveal"
-          ref={(el) => { revealRefs.current[20] = el; }}
-        >
-          <h2>
-            Stay ahead of<br />vendor changes.
-          </h2>
+        {/* ── Bottom CTA ── */}
+        <section className="ip-cta ip-reveal">
+          <h2>Never miss a shift.</h2>
           <p>
-            Monitor your entire vendor stack. Free during early access.
+            Get vendor policy changes, tool launches, and market intel
+            delivered every Tuesday.
           </p>
-          <a className="ip-cta-pill" href="/onboarding">Get early access</a>
+          <a className="ip-cta-gradient" href="/onboarding">Subscribe to Drift Intel</a>
         </section>
 
-        {/* Footer */}
+        {/* ── Footer ── */}
         <footer className="ip-footer">
-          <span>&copy; 2026 StackDrift</span>
-          <div className="ip-footer-links">
-            <a href="/landing">Home</a>
-            <a href="/intel">Intel</a>
-          </div>
+          <a href="/landing" className="ip-footer-logo">
+            <Logo size="sm" />
+          </a>
+          <span className="ip-footer-copy">&copy; 2026 StackDrift</span>
         </footer>
       </div>
     </main>
