@@ -72,51 +72,64 @@ export async function POST() {
 
         if (lastSnapshot && newSnapshot) {
           const diff = getBasicDiff(lastSnapshot.content, content);
-          const analysis = await analyzeChanges(displayName, diff.added, diff.removed);
 
-          const { data: changeRecord } = await supabase
-            .from('changes')
-            .insert({
-              vendor_id: doc.vendor_id,
-              document_id: doc.id,
-              old_snapshot_id: lastSnapshot.id,
-              new_snapshot_id: newSnapshot.id,
-              summary: analysis.summary,
-              risk_level: analysis.riskLevel,
-              risk_bucket: analysis.riskBucket,
-              risk_priority: analysis.riskPriority,
-              categories: analysis.categories,
-            })
-            .select()
-            .single();
+          // Safety net A: Skip if diff is too large — likely a full document
+          // replacement (first scan, language swap, or complete rewrite)
+          if (diff.added.length > 500 && diff.removed.length > 500) {
+            console.log(`[trigger-check] Skipping "${displayName}" — full replacement detected (${diff.added.length} added, ${diff.removed.length} removed)`);
+            results.push({ document: displayName, status: 'full_replacement_skipped' });
+          } else {
+            const analysis = await analyzeChanges(displayName, diff.added, diff.removed);
 
-          if (analysis.riskLevel !== 'low') {
-            await sendChangeAlert({
-              serviceName: displayName,
-              summary: analysis.summary,
-              riskLevel: analysis.riskLevel,
-              categories: analysis.categories,
-              detectedAt: new Date(),
-            });
+            // Safety net B: For noise changes, force risk_level to 'low'
+            const effectiveRiskLevel = analysis.isNoise ? 'low' : analysis.riskLevel;
 
-            if (changeRecord?.id) {
-              await supabase
-                .from('changes')
-                .update({ notified: true })
-                .eq('id', changeRecord.id);
+            const { data: changeRecord } = await supabase
+              .from('changes')
+              .insert({
+                vendor_id: doc.vendor_id,
+                document_id: doc.id,
+                old_snapshot_id: lastSnapshot.id,
+                new_snapshot_id: newSnapshot.id,
+                summary: analysis.summary,
+                risk_level: effectiveRiskLevel,
+                risk_bucket: analysis.riskBucket,
+                risk_priority: analysis.isNoise ? 'low' : analysis.riskPriority,
+                categories: analysis.categories,
+                is_noise: analysis.isNoise,
+              })
+              .select()
+              .single();
+
+            // Send alert for medium/high risk changes — skip noise
+            if (effectiveRiskLevel !== 'low' && !analysis.isNoise) {
+              await sendChangeAlert({
+                serviceName: displayName,
+                summary: analysis.summary,
+                riskLevel: effectiveRiskLevel,
+                categories: analysis.categories,
+                detectedAt: new Date(),
+              });
+
+              if (changeRecord?.id) {
+                await supabase
+                  .from('changes')
+                  .update({ notified: true })
+                  .eq('id', changeRecord.id);
+              }
             }
+
+            await supabase
+              .from('documents')
+              .update({ last_changed_at: new Date().toISOString() })
+              .eq('id', doc.id);
+
+            results.push({
+              document: displayName,
+              status: analysis.isNoise ? 'noise' : 'changed',
+              riskLevel: effectiveRiskLevel,
+            });
           }
-
-          await supabase
-            .from('documents')
-            .update({ last_changed_at: new Date().toISOString() })
-            .eq('id', doc.id);
-
-          results.push({
-            document: displayName,
-            status: 'changed',
-            riskLevel: analysis.riskLevel,
-          });
         } else {
           results.push({ document: displayName, status: 'initial_snapshot' });
         }
