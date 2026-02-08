@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Logo } from '../components/Logo';
+import { SubscribeForm } from '../components/SubscribeForm';
 
 type Pillar = 'all' | 'policy_watch' | 'build' | 'business' | 'ai_tools' | 'growth' | 'ideas_trends' | 'regulatory_intel' | 'market_shift';
 
@@ -228,11 +229,7 @@ export default function IntelPage() {
                   &mdash; classified and summarized.
                 </p>
                 <div className="ip-nl-embed">
-                  <iframe
-                    src="https://embeds.beehiiv.com/b42abe3a-e8c1-47c1-bd15-15333a895e73?slim=true"
-                    style={{ width: '100%', maxWidth: 480, height: 52, border: 'none', background: 'transparent' }}
-                    title="Subscribe to Drift Intel"
-                  />
+                  <SubscribeForm />
                 </div>
                 <div className="ip-nl-proof">
                   Every Tuesday, 6am &middot; 5-min read &middot; Unsubscribe anytime
