@@ -273,6 +273,7 @@ export function VendorGrid() {
           <span>&copy; 2026 TOS Monitor</span>
           <div className="wd-footer-links">
             <a href="/">Dashboard</a>
+            <a href="/intel">Intel</a>
             <a href="/admin">Admin</a>
           </div>
         </footer>

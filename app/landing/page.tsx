@@ -31,6 +31,7 @@ export default function LandingPage() {
             <a href="#monitor" className="nav-link">How it works</a>
             <a href="#targets" className="nav-link">What we track</a>
             <a href="#scoring" className="nav-link">Scoring</a>
+            <a href="/intel" className="nav-link">Intel</a>
           </div>
           <div className="nav-right">
             <a className="pill pill-solid nav-pill" href="/onboarding">Early access</a>
@@ -299,9 +300,8 @@ export default function LandingPage() {
         <footer className="lp-footer">
           <span>&copy; 2026 TOS Monitor</span>
           <div className="f-links">
-            <a href="#">Docs</a>
-            <a href="#">GitHub</a>
-            <a href="#">Twitter</a>
+            <a href="/intel">Intel</a>
+            <a href="/onboarding">Get started</a>
           </div>
         </footer>
       </div>
