@@ -1784,6 +1784,7 @@ a { color: inherit; text-decoration: none; }
   gap: 8px;
   text-decoration: none;
 }
+.landing-page .nav-logo .logo-wordmark { font-size: 19px; }
 
 .landing-page .nav-dot {
   width: 6px;
