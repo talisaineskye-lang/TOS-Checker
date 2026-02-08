@@ -10,7 +10,7 @@ export default async function OnboardingPage() {
           <div className="wd-nav-left">
             <a className="wd-nav-brand" href="/">
               <span className="wd-nav-pulse" />
-              TOS Monitor
+              StackDrift
             </a>
             <div className="wd-nav-crumb">
               <span className="sep">/</span>

@@ -26,7 +26,7 @@ export default function LandingPage() {
           <div className="nav-left">
             <a className="nav-logo" href="/landing">
               <span className="nav-dot" />
-              TOS Monitor
+              StackDrift
             </a>
             <a href="#monitor" className="nav-link">How it works</a>
             <a href="#targets" className="nav-link">What we track</a>
@@ -298,7 +298,7 @@ export default function LandingPage() {
 
         {/* Footer */}
         <footer className="lp-footer">
-          <span>&copy; 2026 TOS Monitor</span>
+          <span>&copy; 2026 StackDrift</span>
           <div className="f-links">
             <a href="/intel">Intel</a>
             <a href="/onboarding">Get started</a>

@@ -235,7 +235,7 @@ export default async function Page() {
           <div className="nav-left">
             <a className="nav-logo" href="/">
               <span className="nav-dot" />
-              TOS Monitor
+              StackDrift
             </a>
             <a href="/" className="nav-link active">Dashboard</a>
             <a href="/intel" className="nav-link">Intel</a>
@@ -315,7 +315,7 @@ export default async function Page() {
         </div>
 
         <footer className="dash-footer">
-          <span>&copy; 2026 TOS Monitor</span>
+          <span>&copy; 2026 StackDrift</span>
           <div className="f-links">
             <a href="/intel">Intel</a>
             <a href="/onboarding">Onboarding</a>

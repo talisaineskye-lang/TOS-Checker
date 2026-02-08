@@ -18,7 +18,7 @@ const riskLabelMap: Record<string, string> = {
 
 export async function sendChangeAlert(change: ChangeNotification) {
   const alertEmail = process.env.ALERT_EMAIL;
-  const fromEmail = process.env.RESEND_FROM_EMAIL || 'TOS Monitor <alerts@yourdomain.com>';
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'StackDrift <alerts@stackdrift.app>';
 
   if (!alertEmail) {
     console.warn('[notifier] ALERT_EMAIL not set — skipping email notification');

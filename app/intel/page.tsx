@@ -90,7 +90,7 @@ export default function IntelPage() {
           <div className="nav-left">
             <a className="nav-logo" href="/landing">
               <span className="nav-dot" />
-              TOS Monitor
+              StackDrift
             </a>
             <a href="/intel" className="nav-link active">Intel Feed</a>
             <a href="/landing" className="nav-link">How it works</a>
@@ -233,7 +233,7 @@ export default function IntelPage() {
 
         {/* Footer */}
         <footer className="ip-footer">
-          <span>&copy; 2026 TOS Monitor</span>
+          <span>&copy; 2026 StackDrift</span>
           <div className="ip-footer-links">
             <a href="/landing">Home</a>
             <a href="/intel">Intel</a>

@@ -17,8 +17,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata = {
-  title: 'TOS Change Monitor',
-  description: 'Monitor Terms of Service changes and get alerts.'
+  title: 'StackDrift — Vendor Policy Monitoring',
+  description: 'Monitor your vendor stack for TOS, privacy, and pricing changes. Get alerts before they break your business.'
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

@@ -1,4 +1,4 @@
-// Vendor and document types for TOS Checker
+// Vendor and document types for StackDrift
 
 // Re-export risk bucket types for convenience
 export type { RiskBucket, RiskPriority } from './risk-buckets';

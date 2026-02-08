@@ -106,7 +106,7 @@ export default async function AdminPage() {
         <div className="nav-inner">
           <a href="/" className="nav-logo">
             <span className="pulse-dot" />
-            TOS Monitor
+            StackDrift
           </a>
           <span className="nav-breadcrumb">/ admin</span>
           <div className="wd-nav-right">
@@ -240,7 +240,7 @@ export default async function AdminPage() {
       </div>
 
       <footer className="wd-footer">
-        <span>&copy; 2026 TOS Monitor</span>
+        <span>&copy; 2026 StackDrift</span>
         <div className="wd-footer-links">
           <a href="/">Dashboard</a>
           <a href="/intel">Intel</a>
