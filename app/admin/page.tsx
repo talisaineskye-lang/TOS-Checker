@@ -198,9 +198,18 @@ export default async function AdminPage() {
                 const docTypeLabel = change.documents?.doc_type
                   ? DOCUMENT_TYPE_LABELS[change.documents.doc_type]
                   : 'Unknown';
-                const title = change.risk_bucket
-                  ? `${vendorName} – ${RISK_BUCKETS[change.risk_bucket].name} change detected`
-                  : `${vendorName} – Policy updated`;
+                const isFallback = change.summary === 'Policy change detected. Review the document for details.' || !change.summary;
+
+                let title: string;
+                if (isFallback && change.risk_bucket) {
+                  title = `${vendorName} – ${RISK_BUCKETS[change.risk_bucket].name} change detected`;
+                } else if (change.risk_priority === 'critical') {
+                  title = `${vendorName} – Critical ${docTypeLabel} change`;
+                } else if (change.risk_priority === 'high') {
+                  title = `${vendorName} – Important ${docTypeLabel} change`;
+                } else {
+                  title = `${vendorName} – ${docTypeLabel} updated`;
+                }
 
                 return (
                   <AlertCard

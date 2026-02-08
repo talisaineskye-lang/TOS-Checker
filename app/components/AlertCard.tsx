@@ -55,10 +55,18 @@ export function AlertCard({
   const [analyzing, setAnalyzing] = useState(false);
 
   const bucketInfo = riskBucket ? RISK_BUCKETS[riskBucket] : null;
-  const icon = bucketInfo?.icon || '⚪';
   const priorityClass = `priority-${riskPriority}`;
 
   const isFallback = currentSummary === 'Policy change detected. Review the document for details.';
+
+  // Use AI-based icon by default; only fall back to keyword bucket icon when AI didn't analyze
+  const priorityIcons: Record<RiskPriority, string> = {
+    critical: '🔴',
+    high: '🟠',
+    medium: '🟡',
+    low: '⚪',
+  };
+  const icon = isFallback ? (bucketInfo?.icon || '⚪') : priorityIcons[riskPriority];
 
   async function handleReanalyze() {
     if (!changeId || analyzing) return;
@@ -98,7 +106,7 @@ export function AlertCard({
         <span className="alert-time">Detected {formatRelativeTime(detectedAt)}</span>
       </div>
 
-      {categories && categories.length > 0 && (
+      {categories && categories.length > 0 && (isFallback || riskLevel !== 'low') && (
         <div className="alert-card-categories">
           {categories.map((cat) => {
             const catInfo = RISK_BUCKETS[cat as RiskBucket];
