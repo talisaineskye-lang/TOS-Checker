@@ -61,6 +61,13 @@ export function DashboardAlerts({ changes }: { changes: DashChange[] }) {
   const [reanalyzing, setReanalyzing] = useState<string | null>(null);
   const [summaries, setSummaries] = useState<Record<string, string>>({});
 
+  const counts: Record<Filter, number> = {
+    all: changes.length,
+    critical: changes.filter((c) => c.severity === 'critical').length,
+    warning: changes.filter((c) => c.severity === 'warning').length,
+    notice: changes.filter((c) => c.severity === 'notice').length,
+  };
+
   const filtered = filter === 'all'
     ? changes
     : changes.filter((c) => c.severity === filter);
@@ -100,6 +107,7 @@ export function DashboardAlerts({ changes }: { changes: DashChange[] }) {
                 onClick={() => setFilter(f)}
               >
                 {f === 'all' ? 'All' : SEVERITY_LABELS[f]}
+                <span className="fp-count">{counts[f]}</span>
               </button>
             ))}
           </div>
