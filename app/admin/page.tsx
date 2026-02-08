@@ -214,6 +214,7 @@ export default async function AdminPage() {
                     detectedAt={change.detected_at}
                     notified={change.notified}
                     categories={change.categories || undefined}
+                    changeId={change.id}
                   />
                 );
               })}

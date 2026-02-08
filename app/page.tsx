@@ -210,6 +210,7 @@ export default async function Page() {
                     detectedAt={change.detected_at}
                     notified={change.notified}
                     categories={change.categories || undefined}
+                    changeId={change.id}
                   />
                 );
               })}

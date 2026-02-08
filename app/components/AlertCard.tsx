@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { RiskBucket, RiskPriority, RISK_BUCKETS } from '@/lib/risk-buckets';
 
 interface AlertCardProps {
@@ -13,6 +14,7 @@ interface AlertCardProps {
   detectedAt: string;
   notified: boolean;
   categories?: string[];
+  changeId?: string;
   onDismiss?: () => void;
 }
 
@@ -46,11 +48,37 @@ export function AlertCard({
   detectedAt,
   notified,
   categories,
+  changeId,
   onDismiss,
 }: AlertCardProps) {
+  const [currentSummary, setCurrentSummary] = useState(summary);
+  const [analyzing, setAnalyzing] = useState(false);
+
   const bucketInfo = riskBucket ? RISK_BUCKETS[riskBucket] : null;
   const icon = bucketInfo?.icon || '⚪';
   const priorityClass = `priority-${riskPriority}`;
+
+  const isFallback = currentSummary === 'Policy change detected. Review the document for details.';
+
+  async function handleReanalyze() {
+    if (!changeId || analyzing) return;
+    setAnalyzing(true);
+    try {
+      const res = await fetch('/api/admin/reanalyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ changeId }),
+      });
+      const data = await res.json();
+      if (data.success && data.summary) {
+        setCurrentSummary(data.summary);
+      }
+    } catch {
+      // Silently fail — user can try again
+    } finally {
+      setAnalyzing(false);
+    }
+  }
 
   return (
     <div className={`alert-card ${priorityClass}`}>
@@ -63,7 +91,7 @@ export function AlertCard({
 
       <h3 className="alert-card-title">{title}</h3>
 
-      <p className="alert-card-summary">{summary}</p>
+      <p className="alert-card-summary">{currentSummary}</p>
 
       <div className="alert-card-meta">
         <span className="alert-doc-type">{documentType}</span>
@@ -84,6 +112,15 @@ export function AlertCard({
       )}
 
       <div className="alert-card-actions">
+        {isFallback && changeId && (
+          <button
+            onClick={handleReanalyze}
+            disabled={analyzing}
+            className="alert-btn alert-btn-secondary"
+          >
+            {analyzing ? 'Analyzing...' : 'Re-analyze'}
+          </button>
+        )}
         <a
           href={documentUrl}
           target="_blank"
