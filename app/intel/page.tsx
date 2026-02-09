@@ -282,16 +282,6 @@ export default function IntelPage() {
           </>
         )}
 
-        {/* ── Bottom CTA ── */}
-        <section className="ip-cta ip-reveal">
-          <h2>Never miss a shift.</h2>
-          <p>
-            Get vendor policy changes, tool launches, and market intel
-            delivered every Tuesday.
-          </p>
-          <a className="ip-cta-gradient" href="/onboarding">Subscribe to Drift Intel</a>
-        </section>
-
         {/* ── Footer ── */}
         <footer className="ip-footer">
           <a href="/" className="ip-footer-logo">
