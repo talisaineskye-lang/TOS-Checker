@@ -2761,7 +2761,7 @@ a { color: inherit; text-decoration: none; }
 .intel-page .ip-tabs {
   padding: 20px 0;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 .intel-page .ip-tabs::after {
   content: '';
