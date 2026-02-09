@@ -4,8 +4,6 @@ import { useState, useEffect, useRef } from 'react';
 import { Logo } from '../components/Logo';
 import { SubscribeForm } from '../components/SubscribeForm';
 
-type Pillar = 'all' | 'policy_watch' | 'build' | 'business' | 'ai_tools' | 'growth' | 'ideas_trends' | 'regulatory_intel' | 'market_shift';
-
 interface IntelItem {
   id: string;
   title: string;
@@ -20,8 +18,7 @@ interface IntelItem {
   tags: string[];
 }
 
-const PILLAR_LABELS: Record<Pillar, string> = {
-  all: 'All',
+const PILLAR_LABELS: Record<string, string> = {
   policy_watch: 'Policy Watch',
   build: 'Build',
   business: 'Business',
@@ -43,7 +40,22 @@ const PILLAR_COLORS: Record<string, string> = {
   market_shift: 'blue',
 };
 
-const FREE_PREVIEW_COUNT = 6;
+const RIVER_SECTIONS = [
+  { label: 'Ideas & Trends', pillars: ['ideas_trends', 'growth'], color: 'cyan', layout: 'layout-2-1' },
+  { label: 'Build', pillars: ['build'], color: 'green', layout: 'layout-1-2' },
+  { label: 'Business · AI & Tools', pillars: ['business', 'ai_tools', 'market_shift'], color: 'blue', layout: 'layout-3' },
+  { label: 'Policy & Regulatory', pillars: ['policy_watch', 'regulatory_intel'], color: 'red', layout: 'layout-2-1' },
+];
+
+function severityRank(severity: string): number {
+  switch (severity) {
+    case 'critical': return 4;
+    case 'high': return 3;
+    case 'medium': return 2;
+    case 'low': return 1;
+    default: return 0;
+  }
+}
 
 function formatTime(dateStr: string) {
   const date = new Date(dateStr);
@@ -60,10 +72,9 @@ function formatTime(dateStr: string) {
 }
 
 export default function IntelPage() {
-  const [activePillar, setActivePillar] = useState<Pillar>('all');
   const [items, setItems] = useState<IntelItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const feedRef = useRef<HTMLDivElement>(null);
+  const pageRef = useRef<HTMLDivElement>(null);
 
   // Scroll-reveal observer
   useEffect(() => {
@@ -75,7 +86,7 @@ export default function IntelPage() {
       },
       { threshold: 0.08 }
     );
-    const els = feedRef.current?.querySelectorAll('.ip-reveal');
+    const els = pageRef.current?.querySelectorAll('.ip-reveal');
     els?.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, [items]);
@@ -83,202 +94,264 @@ export default function IntelPage() {
   // Data fetch
   useEffect(() => {
     setLoading(true);
-    const params = new URLSearchParams({ limit: '30', hours: '168' });
-    if (activePillar !== 'all') params.set('pillar', activePillar);
-
-    fetch(`/api/intel/feed?${params}`)
+    fetch('/api/intel/feed?limit=30&hours=168')
       .then((res) => res.json())
       .then((data) => setItems(data.items || []))
       .catch(() => setItems([]))
       .finally(() => setLoading(false));
-  }, [activePillar]);
+  }, []);
 
-  const previewItems = items.slice(0, FREE_PREVIEW_COUNT);
-  const gatedItems = items.slice(FREE_PREVIEW_COUNT, FREE_PREVIEW_COUNT + 3);
-  const gatedCount = Math.max(0, items.length - FREE_PREVIEW_COUNT);
+  // Split items: featured (first), quick hits (next 7), river (rest)
+  const featured = items[0] || null;
+  const quickHits = items.slice(1, 8);
+  const riverItems = items.slice(8);
+
+  // Group river items by section
+  const riverSections = RIVER_SECTIONS.map((section) => ({
+    ...section,
+    items: riverItems.filter((item) => section.pillars.includes(item.pillar)),
+  })).filter((section) => section.items.length > 0);
+
+  // Collect unique vendors for radar strip
+  const vendorMap = new Map<string, { name: string; severity: string }>();
+  items.forEach((item) => {
+    item.affected_vendors?.forEach((v) => {
+      const existing = vendorMap.get(v);
+      if (!existing || severityRank(item.severity) > severityRank(existing.severity)) {
+        vendorMap.set(v, { name: v, severity: item.severity });
+      }
+    });
+  });
+  const radarVendors = Array.from(vendorMap.values()).slice(0, 6);
 
   return (
-    <main className="intel-page" ref={feedRef}>
+    <main className="intel-page" ref={pageRef}>
+      {/* ── Logo Rail ── */}
+      <div className="ip-logo-rail">
+        <span className="ip-rail-text">
+          STACK<span className="ip-rail-drift">DRIFT</span>
+        </span>
+      </div>
+
       {/* ── Nav ── */}
       <nav className="ip-nav">
-        <div className="inner">
-          <div className="nav-left">
-            <a className="nav-logo" href="/">
+        <div className="ip-nav-inner">
+          <div className="ip-nav-left">
+            <a className="ip-nav-logo" href="/">
               <Logo size="sm" />
             </a>
-            <a href="/intel" className="nav-link active">Intel</a>
-            <a href="/" className="nav-link">How it works</a>
+            <a href="/intel" className="ip-nav-link active">Intel</a>
+            <a href="/#how" className="ip-nav-link">How it works</a>
+            <a href="/pricing" className="ip-nav-link">Pricing</a>
           </div>
-          <div className="nav-right">
-            <a className="nav-pill" href="/onboarding">Start monitoring</a>
-          </div>
+          <a className="ip-nav-pill" href="/onboarding">Start monitoring</a>
         </div>
       </nav>
 
-      <div className="wrap">
-        {/* ── Hero ── */}
-        <section className="ip-hero">
-          <div className="ip-hero-label">
-            <span className="ip-pulse-dot" />
-            <span>DRIFT INTEL</span>
-          </div>
-          <h1>What&apos;s moving in your stack.</h1>
-          <p className="ip-hero-sub">
-            Curated intel from vendor blogs, regulatory bodies, and tech news
-            &mdash; classified by AI, delivered every Tuesday.
-          </p>
-          <div className="ip-hero-stats">
-            <div className="ip-stat">
-              <span className="ip-stat-value">29</span>
-              <span className="ip-stat-label">Vendors</span>
-            </div>
-            <div className="ip-stat">
-              <span className="ip-stat-value">98</span>
-              <span className="ip-stat-label">Documents</span>
-            </div>
-            <div className="ip-stat">
-              <span className="ip-stat-value">6h</span>
-              <span className="ip-stat-label">Refresh</span>
-            </div>
-          </div>
-        </section>
-
-        {/* ── Pillar Tabs ── */}
-        <div className="ip-tabs">
-          <div className="ip-tabs-inner">
-            {(Object.keys(PILLAR_LABELS) as Pillar[]).map((pillar) => (
-              <button
-                key={pillar}
-                className={`ip-tab ${activePillar === pillar ? 'active' : ''}`}
-                onClick={() => setActivePillar(pillar)}
-              >
-                {PILLAR_LABELS[pillar]}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* ── Feed ── */}
+      {/* ── Page Body ── */}
+      <div className="ip-page">
         {loading ? (
           <div className="ip-loading">Loading intel&hellip;</div>
         ) : items.length === 0 ? (
           <div className="ip-empty">No intel items yet. Check back soon.</div>
         ) : (
           <>
-            {/* Free preview cards */}
-            <div className="ip-feed">
-              {previewItems.map((item, idx) => {
-                const color = PILLAR_COLORS[item.pillar] || 'blue';
-                return (
+            {/* ── Hero Zone — asymmetric split ── */}
+            <div className="ip-hero-zone">
+              {/* Left: masthead + featured story */}
+              <div className="ip-hero-left">
+                <div className="ip-masthead-badge">
+                  <span className="ip-pulse-dot" />
+                  DRIFT INTEL
+                </div>
+
+                <h1 className="ip-hero-title">
+                  What&apos;s moving<br />in your <span className="ip-accent">stack.</span>
+                </h1>
+
+                <p className="ip-hero-sub">
+                  Curated intel from vendor blogs, AI trends and tech news
+                  &mdash; classified by AI, delivered every Tuesday.
+                </p>
+
+                {/* Featured story */}
+                {featured && (
                   <a
-                    key={item.id}
-                    href={item.link}
+                    href={featured.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`ip-card accent-${color} ip-reveal`}
-                    style={{ '--card-index': idx } as React.CSSProperties}
+                    className="ip-hero-featured ip-reveal"
                   >
-                    <div className="ip-card-inner">
-                      <div className="ip-card-header">
-                        <div className="ip-card-title">{item.title}</div>
-                        <span className={`ip-pillar-badge ${color}`}>
-                          {PILLAR_LABELS[item.pillar as Pillar] || item.pillar}
-                        </span>
+                    <div className="ip-hf-pillar">
+                      <span className={`ip-sev-dot ${PILLAR_COLORS[featured.pillar] || 'blue'}`} />
+                      {(PILLAR_LABELS[featured.pillar] || featured.pillar).toUpperCase()}
+                      {featured.severity === 'critical' && ' · CRITICAL'}
+                      {featured.severity === 'high' && ' · HIGH'}
+                    </div>
+                    <div className="ip-hf-title">{featured.title}</div>
+                    <p className="ip-hf-summary">{featured.summary}</p>
+                    <div className="ip-hf-meta">
+                      <span className="ip-hf-source">{featured.source}</span>
+                      <span className="ip-sep">&middot;</span>
+                      <span>{formatTime(featured.pub_date)}</span>
+                    </div>
+                    {(featured.affected_vendors?.length > 0 || featured.tags?.length > 0) && (
+                      <div className="ip-hf-chips">
+                        {featured.affected_vendors?.map((v) => (
+                          <span key={v} className="ip-chip vendor">{v}</span>
+                        ))}
+                        {featured.tags?.map((t) => (
+                          <span key={t} className="ip-chip">{t}</span>
+                        ))}
                       </div>
-                      <p className="ip-card-summary">{item.summary}</p>
-                      <div className="ip-card-footer">
-                        <div className="ip-card-meta">
-                          <span className="ip-card-source">{item.source}</span>
-                          <span className="ip-meta-dot">&middot;</span>
+                    )}
+                  </a>
+                )}
+              </div>
+
+              {/* Right: Quick Hits sidebar */}
+              <div className="ip-hero-right">
+                <div className="ip-qh-header">
+                  <h3>Quick Hits</h3>
+                  <span className="ip-qh-live">LIVE</span>
+                </div>
+                {quickHits.map((item) => {
+                  const color = PILLAR_COLORS[item.pillar] || 'blue';
+                  return (
+                    <a
+                      key={item.id}
+                      href={item.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ip-qh-item"
+                    >
+                      <div className={`ip-qh-accent ${color}`} />
+                      <div className="ip-qh-content">
+                        <div className="ip-qh-title">{item.title}</div>
+                        <div className="ip-qh-meta">
+                          <span className="ip-qh-source">{item.source}</span>
+                          <span className="ip-sep">&middot;</span>
                           <span>{formatTime(item.pub_date)}</span>
                         </div>
-                        <span className="ip-read-arrow">Read &rarr;</span>
                       </div>
-                      {(item.affected_vendors?.length > 0 || item.tags?.length > 0) && (
-                        <>
-                          <div className="ip-card-divider" />
-                          <div className="ip-card-chips">
-                            {item.affected_vendors?.map((v) => (
-                              <span key={v} className="ip-chip vendor">{v}</span>
-                            ))}
-                            {item.tags?.map((t) => (
-                              <span key={t} className="ip-chip">{t}</span>
-                            ))}
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </a>
-                );
-              })}
+                    </a>
+                  );
+                })}
+              </div>
             </div>
 
-            {/* ── Newsletter Signup ── */}
-            <section className="ip-newsletter ip-reveal">
-              <div className="ip-nl-glow-1" />
-              <div className="ip-nl-glow-2" />
-              <div className="ip-nl-content">
-                <div className="ip-hero-label">
-                  <span className="ip-pulse-dot" />
-                  <span>DRIFT INTEL NEWSLETTER</span>
-                </div>
-                <h2>Get this in your inbox every Tuesday.</h2>
-                <p>
-                  A 5-minute read curated for indie devs and SaaS builders.
-                  Vendor policy changes, tool launches, and market moves
-                  &mdash; classified and summarized.
-                </p>
-                <div className="ip-nl-embed">
-                  <SubscribeForm />
-                </div>
-                <div className="ip-nl-proof">
-                  Every Tuesday, 6am &middot; 5-min read &middot; Unsubscribe anytime
-                </div>
-              </div>
-            </section>
-
-            {/* ── Gated section ── */}
-            {gatedCount > 0 && (
-              <div className="ip-gate-section">
-                <div className="ip-gate-blur">
-                  {gatedItems.map((item) => {
-                    const color = PILLAR_COLORS[item.pillar] || 'blue';
+            {/* ── Vendor Radar Strip ── */}
+            {radarVendors.length > 0 && (
+              <div className="ip-radar-strip">
+                <div className="ip-radar-bar">
+                  {radarVendors.map((v) => {
+                    const dotClass =
+                      v.severity === 'critical' ? 'alert' :
+                      v.severity === 'high' ? 'warning' : 'active';
+                    const statusText =
+                      v.severity === 'critical' ? 'TOS changed' :
+                      v.severity === 'high' ? 'Updated' : 'Stable';
                     return (
-                      <div
-                        key={item.id}
-                        className={`ip-card accent-${color}`}
-                        aria-hidden="true"
-                      >
-                        <div className="ip-card-inner">
-                          <div className="ip-card-header">
-                            <div className="ip-card-title">{item.title}</div>
-                            <span className={`ip-pillar-badge ${color}`}>
-                              {PILLAR_LABELS[item.pillar as Pillar] || item.pillar}
-                            </span>
-                          </div>
-                          <p className="ip-card-summary">{item.summary}</p>
-                          <div className="ip-card-meta">
-                            <span className="ip-card-source">{item.source}</span>
-                            <span className="ip-meta-dot">&middot;</span>
-                            <span>{formatTime(item.pub_date)}</span>
-                          </div>
-                        </div>
+                      <div key={v.name} className="ip-radar-item">
+                        <span className={`ip-ri-dot ${dotClass}`} />
+                        <span className="ip-ri-name">
+                          {v.name.charAt(0).toUpperCase() + v.name.slice(1)}
+                        </span>
+                        <span className={`ip-ri-status ${dotClass !== 'active' ? 'changed' : ''}`}>
+                          {statusText}
+                        </span>
                       </div>
                     );
                   })}
                 </div>
-                <div className="ip-gate-overlay">
-                  <div className="ip-gate-content">
-                    <span className="ip-gate-count">
-                      +{gatedCount} more item{gatedCount !== 1 ? 's' : ''} this week
-                    </span>
-                    <a className="ip-cta-gradient" href="/onboarding">
-                      Subscribe to Drift Intel
-                    </a>
+              </div>
+            )}
+
+            {/* ── Story River ── */}
+            <div className="ip-river">
+              {riverSections.map((section, sIdx) => (
+                <div key={section.label}>
+                  {sIdx > 0 && <div className="ip-river-divider" />}
+                  <div className="ip-sec-head">
+                    <div
+                      className="ip-sec-accent"
+                      style={{ background: `var(--ip-${section.color})` }}
+                    />
+                    <h2>{section.label}</h2>
+                  </div>
+                  <div
+                    className={`ip-story-row ${section.layout} ip-reveal`}
+                    style={{ '--card-index': sIdx } as React.CSSProperties}
+                  >
+                    {section.items
+                      .slice(0, section.layout === 'layout-3' ? 3 : 2)
+                      .map((item, idx) => {
+                        const color = PILLAR_COLORS[item.pillar] || 'blue';
+                        const isLarge =
+                          (section.layout === 'layout-2-1' && idx === 0) ||
+                          (section.layout === 'layout-1-2' && idx === 1);
+                        return (
+                          <a
+                            key={item.id}
+                            href={item.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={`ip-story-cell a-${color}${isLarge ? ' large' : ''}`}
+                          >
+                            <span className={`ip-cell-badge ${color}`}>
+                              {PILLAR_LABELS[item.pillar] || item.pillar}
+                            </span>
+                            <div className="ip-cell-title">{item.title}</div>
+                            <p className="ip-cell-summary">{item.summary}</p>
+                            <div className="ip-cell-meta">
+                              <span className="ip-cell-source">{item.source}</span>
+                              <span className="ip-sep">&middot;</span>
+                              <span>{formatTime(item.pub_date)}</span>
+                              <span className="ip-cell-read">Read &rarr;</span>
+                            </div>
+                            {(item.affected_vendors?.length > 0 || item.tags?.length > 0) && (
+                              <div className="ip-cell-chips">
+                                {item.affected_vendors?.map((v) => (
+                                  <span key={v} className="ip-chip vendor">{v}</span>
+                                ))}
+                                {item.tags?.map((t) => (
+                                  <span key={t} className="ip-chip">{t}</span>
+                                ))}
+                              </div>
+                            )}
+                          </a>
+                        );
+                      })}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* ── Newsletter ── */}
+            <div className="ip-newsletter-section ip-reveal">
+              <div className="ip-nl-box">
+                <div className="ip-nl-glow-1" />
+                <div className="ip-nl-glow-2" />
+                <div className="ip-nl-content">
+                  <div className="ip-masthead-badge" style={{ justifyContent: 'center' }}>
+                    <span className="ip-pulse-dot" />
+                    DRIFT INTEL NEWSLETTER
+                  </div>
+                  <h2>Get this in your inbox every Tuesday.</h2>
+                  <p>
+                    A 5-minute read curated for indie devs and SaaS builders.
+                    Vendor policy changes, tool launches, and market moves
+                    &mdash; classified and summarized.
+                  </p>
+                  <div className="ip-nl-embed">
+                    <SubscribeForm />
+                  </div>
+                  <div className="ip-nl-proof">
+                    Every Tuesday, 6am &middot; 5-min read &middot; Unsubscribe anytime
                   </div>
                 </div>
               </div>
-            )}
+            </div>
           </>
         )}
 
