@@ -91,19 +91,34 @@ export default function IntelPage() {
     return () => observer.disconnect();
   }, [items]);
 
+  const [quickHitsData, setQuickHitsData] = useState<{
+    spotlight: { label: string; accentColor: string; article: IntelItem } | null;
+    quickHits: IntelItem[];
+  }>({ spotlight: null, quickHits: [] });
+
   // Data fetch
   useEffect(() => {
     setLoading(true);
-    fetch('/api/intel/feed?limit=30&hours=168')
-      .then((res) => res.json())
-      .then((data) => setItems(data.items || []))
-      .catch(() => setItems([]))
+    Promise.all([
+      fetch('/api/intel/feed?limit=30&hours=168').then((r) => r.json()),
+      fetch('/api/intel/quick-hits').then((r) => r.json()),
+    ])
+      .then(([feedData, qhData]) => {
+        setItems(feedData.items || []);
+        setQuickHitsData({
+          spotlight: qhData.spotlight || null,
+          quickHits: qhData.quickHits || [],
+        });
+      })
+      .catch(() => {
+        setItems([]);
+        setQuickHitsData({ spotlight: null, quickHits: [] });
+      })
       .finally(() => setLoading(false));
   }, []);
 
-  // Split items: featured (first), quick hits (next 7), river (rest)
+  // Split items: featured (first), river (rest — skip 8 to leave room)
   const featured = items[0] || null;
-  const quickHits = items.slice(1, 8);
   const riverItems = items.slice(8);
 
   // Group river items by section
@@ -215,7 +230,37 @@ export default function IntelPage() {
                   <h3>Quick Hits</h3>
                   <span className="ip-qh-live">LIVE</span>
                 </div>
-                {quickHits.map((item) => {
+
+                {/* Spotlight — only shows if there's a matching article */}
+                {quickHitsData.spotlight && (
+                  <div className="ip-spotlight">
+                    <div className="ip-spotlight-header">
+                      <span className={`ip-sev-dot ${quickHitsData.spotlight.accentColor}`} />
+                      <h3 className="ip-spotlight-label">{quickHitsData.spotlight.label}</h3>
+                    </div>
+                    <a
+                      href={quickHitsData.spotlight.article.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ip-spotlight-card"
+                    >
+                      <span className="ip-spotlight-title">
+                        {quickHitsData.spotlight.article.title}
+                      </span>
+                      <span className="ip-spotlight-summary">
+                        {quickHitsData.spotlight.article.summary}
+                      </span>
+                      <span className="ip-spotlight-meta">
+                        <span className="ip-cell-source">{quickHitsData.spotlight.article.source}</span>
+                        <span className="ip-sep">&middot;</span>
+                        <span>{formatTime(quickHitsData.spotlight.article.pub_date)}</span>
+                      </span>
+                    </a>
+                  </div>
+                )}
+
+                {/* Quick Hits list — heat-scored */}
+                {quickHitsData.quickHits.map((item) => {
                   const color = PILLAR_COLORS[item.pillar] || 'blue';
                   return (
                     <a

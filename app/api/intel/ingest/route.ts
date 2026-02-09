@@ -5,6 +5,7 @@ import { fetchHackerNews } from '@/lib/intel/hn-fetcher';
 import { prefilterItems } from '@/lib/intel/prefilter';
 import { classifyBatch } from '@/lib/intel/classifier';
 import { getKnownUrls, storeItems } from '@/lib/intel/store';
+import { calculateHeatScore } from '@/lib/intel/heat-scorer';
 
 export const runtime = 'nodejs';
 
@@ -70,6 +71,29 @@ export async function GET(request: NextRequest) {
     // Step 5: Store (FREE)
     const stored = await storeItems(classified);
     log.push(`Stored: ${stored} new items`);
+
+    // Step 6: Recalculate heat scores for all recent articles (freshness decays)
+    const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString();
+    const { data: recentItems } = await supabase
+      .from('intel_items')
+      .select('id, relevance, pub_date, hn_points, hn_comments')
+      .gte('pub_date', threeDaysAgo);
+
+    if (recentItems && recentItems.length > 0) {
+      for (const item of recentItems) {
+        const heat = calculateHeatScore({
+          relevance: item.relevance,
+          pubDate: item.pub_date,
+          hn_points: item.hn_points,
+          hn_comments: item.hn_comments,
+        });
+        await supabase
+          .from('intel_items')
+          .update({ heat_score: heat })
+          .eq('id', item.id);
+      }
+      log.push(`Recalculated heat scores for ${recentItems.length} recent items`);
+    }
 
     return NextResponse.json({
       log,

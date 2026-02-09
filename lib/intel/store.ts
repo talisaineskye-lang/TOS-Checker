@@ -24,6 +24,7 @@
 
 import { supabase } from '@/lib/supabase';
 import { ClassifiedItem } from './types';
+import { calculateHeatScore } from './heat-scorer';
 
 /**
  * Check which URLs already exist in the DB.
@@ -70,6 +71,14 @@ export async function storeItems(items: ClassifiedItem[]): Promise<number> {
     affected_vendors: item.affectedVendors,
     tags: item.tags,
     suggested_post: item.suggestedPost,
+    hn_points: item.hn_points || 0,
+    hn_comments: item.hn_comments || 0,
+    heat_score: calculateHeatScore({
+      relevance: item.relevance,
+      pubDate: item.pubDate,
+      hn_points: item.hn_points,
+      hn_comments: item.hn_comments,
+    }),
   }));
 
   // Use upsert with onConflict to skip duplicates silently

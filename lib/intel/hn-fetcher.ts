@@ -24,6 +24,8 @@ export async function fetchHackerNews(): Promise<RawFeedItem[]> {
         source: 'Hacker News',
         sourceUrl: `https://news.ycombinator.com/item?id=${s.id}`,
         pillarHint: 'market_shift' as const,
+        hn_points: s.score || 0,
+        hn_comments: s.descendants || 0,
       }));
   } catch {
     return [];

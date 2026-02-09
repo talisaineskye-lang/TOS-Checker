@@ -105,6 +105,8 @@ ${itemsList}`;
         tags: r.tags || [],
         suggestedPost: (r.tweet || '').replace('{{link}}', orig.link),
         isRelevant: r.relevant,
+        hn_points: orig.hn_points,
+        hn_comments: orig.hn_comments,
       };
     }).filter(Boolean) as ClassifiedItem[];
   } catch (err) {

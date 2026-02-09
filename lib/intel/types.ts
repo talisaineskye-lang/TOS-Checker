@@ -18,6 +18,8 @@ export interface RawFeedItem {
   source: string;
   sourceUrl: string;
   pillarHint: ContentPillar;
+  hn_points?: number;
+  hn_comments?: number;
 }
 
 export interface ClassifiedItem {
@@ -34,4 +36,7 @@ export interface ClassifiedItem {
   tags: string[];
   suggestedPost: string;
   isRelevant: boolean;
+  hn_points?: number;
+  hn_comments?: number;
+  heat_score?: number;
 }
