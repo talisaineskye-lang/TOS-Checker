@@ -47,7 +47,7 @@ export async function POST() {
       // Safety Net 1: Empty/tiny content protection — if fetch returned
       // garbage (blocked, error page, empty), skip entirely to avoid
       // poisoning the baseline or creating false "content removed" alerts
-      if (content.length < 200) {
+      if (content.length < 500) {
         console.warn(`[trigger-check] Skipping "${displayName}" — fetched content too small (${content.length} chars), likely a failed fetch or blocked request`);
         results.push({ document: displayName, status: 'fetch_empty', contentLength: content.length });
         continue;
