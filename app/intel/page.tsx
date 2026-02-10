@@ -3,6 +3,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { Logo } from '../components/Logo';
 import { SubscribeForm } from '../components/SubscribeForm';
+import { useAuth } from '../components/AuthProvider';
+import { UserMenu } from '../components/UserMenu';
+import { LoginModal } from '../components/LoginModal';
 
 interface IntelItem {
   id: string;
@@ -75,6 +78,8 @@ export default function IntelPage() {
   const [items, setItems] = useState<IntelItem[]>([]);
   const [loading, setLoading] = useState(true);
   const pageRef = useRef<HTMLDivElement>(null);
+  const { user, loading: authLoading } = useAuth();
+  const [showLogin, setShowLogin] = useState(false);
 
   // Scroll-reveal observer
   useEffect(() => {
@@ -159,7 +164,19 @@ export default function IntelPage() {
             <a href="/#how" className="ip-nav-link">How it works</a>
             <a href="/pricing" className="ip-nav-link">Pricing</a>
           </div>
-          <a className="ip-nav-pill" href="/onboarding">Start monitoring</a>
+          <div className="ip-nav-right">
+            {!authLoading && (
+              <>
+                {user ? (
+                  <UserMenu />
+                ) : (
+                  <button className="ip-nav-pill" onClick={() => setShowLogin(true)}>
+                    Sign in
+                  </button>
+                )}
+              </>
+            )}
+          </div>
         </div>
       </nav>
 
@@ -408,6 +425,8 @@ export default function IntelPage() {
           <span className="ip-footer-copy">&copy; 2026 StackDrift</span>
         </footer>
       </div>
+
+      <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} />
     </main>
   );
 }

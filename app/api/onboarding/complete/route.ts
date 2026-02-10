@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const createdVendors: string[] = [];
+    const createdVendors: { id: string; name: string }[] = [];
     const errors: string[] = [];
 
     // Create catalog vendors
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
       if (docsError) {
         errors.push(`Failed to create documents for ${vendor.name}: ${docsError.message}`);
       } else {
-        createdVendors.push(vendor.name);
+        createdVendors.push({ id: vendorData.id, name: vendor.name });
       }
     }
 
@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
       if (docsError) {
         errors.push(`Failed to create documents for ${custom.name}: ${docsError.message}`);
       } else {
-        createdVendors.push(custom.name);
+        createdVendors.push({ id: vendorData.id, name: custom.name });
       }
     }
 

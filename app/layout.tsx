@@ -2,6 +2,7 @@ import './globals.css';
 import type { ReactNode } from 'react';
 import localFont from 'next/font/local';
 import { Exo_2, Space_Mono } from 'next/font/google';
+import { AuthProvider } from './components/AuthProvider';
 
 // CODEX — wordmark only
 const codex = localFont({
@@ -37,7 +38,9 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${codex.variable} ${exo2.variable} ${spaceMono.variable}`}>
-      <body>{children}</body>
+      <body>
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   );
 }

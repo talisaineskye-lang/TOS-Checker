@@ -1,10 +1,15 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Logo } from './components/Logo';
+import { useAuth } from './components/AuthProvider';
+import { UserMenu } from './components/UserMenu';
+import { LoginModal } from './components/LoginModal';
 
 export default function LandingPage() {
   const revealRefs = useRef<(HTMLElement | null)[]>([]);
+  const { user, loading: authLoading } = useAuth();
+  const [showLogin, setShowLogin] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -34,7 +39,17 @@ export default function LandingPage() {
             <a href="/intel" className="nav-link">Intel</a>
           </div>
           <div className="nav-right">
-            <a className="nav-cta" href="/onboarding">Start monitoring</a>
+            {!authLoading && (
+              <>
+                {user ? (
+                  <UserMenu />
+                ) : (
+                  <button className="nav-cta" onClick={() => setShowLogin(true)}>
+                    Sign in
+                  </button>
+                )}
+              </>
+            )}
           </div>
         </div>
       </nav>
@@ -356,6 +371,8 @@ export default function LandingPage() {
           </div>
         </footer>
       </div>
+
+      <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} />
     </main>
   );
 }

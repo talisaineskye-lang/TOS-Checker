@@ -11,6 +11,7 @@ import { CATEGORY_LABELS, VendorCategory, VendorTemplate, CustomVendor } from '@
 import { SearchBar } from './SearchBar';
 import { VendorCard } from './VendorCard';
 import { CustomVendorForm } from './CustomVendorForm';
+import { useAuth } from './AuthProvider';
 
 const CATEGORY_CONFIG: Record<VendorCategory, {
   color: string;
@@ -46,6 +47,7 @@ const CATEGORY_CONFIG: Record<VendorCategory, {
 
 export function VendorGrid() {
   const router = useRouter();
+  const { user } = useAuth();
 
   const [selectedSlugs, setSelectedSlugs] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
@@ -156,6 +158,19 @@ export function VendorGrid() {
 
       if (!response.ok) {
         throw new Error(data.error || 'Failed to complete onboarding');
+      }
+
+      // Save vendor selections to user watchlist if authenticated
+      if (user && data.createdVendors?.length > 0) {
+        await Promise.all(
+          data.createdVendors.map((v: { id: string }) =>
+            fetch('/api/user/vendors', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ vendor_id: v.id }),
+            })
+          )
+        );
       }
 
       router.push('/dashboard');
