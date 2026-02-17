@@ -15,6 +15,7 @@ export function UserMenu() {
   const { user, signOut } = useAuth();
   const [open, setOpen] = useState(false);
   const [plan, setPlan] = useState<string>('free');
+  const [cancelAt, setCancelAt] = useState<string | null>(null);
   const [watchlistCount, setWatchlistCount] = useState<number>(0);
   const [prefs, setPrefs] = useState<UserPrefs>({
     email_alerts: true,
@@ -56,12 +57,13 @@ export function UserMenu() {
     // Fetch profile (plan + notification prefs)
     const { data: profile } = await supabase
       .from('user_profiles')
-      .select('plan, email_alerts, weekly_digest, critical_only')
+      .select('plan, email_alerts, weekly_digest, critical_only, cancel_at')
       .eq('id', user.id)
       .single();
 
     if (profile) {
       setPlan(profile.plan || 'free');
+      setCancelAt(profile.cancel_at ?? null);
       setPrefs({
         email_alerts: profile.email_alerts ?? true,
         weekly_digest: profile.weekly_digest ?? true,
@@ -112,6 +114,11 @@ export function UserMenu() {
 
   const currentPlan = planLabels[plan] || planLabels.free;
 
+  const isCancelling = cancelAt && new Date(cancelAt) > new Date();
+  const cancelDate = isCancelling
+    ? new Date(cancelAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    : null;
+
   return (
     <div className="user-menu" ref={ref}>
       <button className="user-menu-trigger" onClick={() => setOpen(!open)}>
@@ -144,6 +151,9 @@ export function UserMenu() {
             <span className={`ud-plan-badge ${currentPlan.color}`}>
               {currentPlan.label}
             </span>
+            {isCancelling && (
+              <span className="ud-cancel-notice">Cancels {cancelDate}</span>
+            )}
           </div>
 
           <div className="user-dropdown-divider" />
@@ -202,6 +212,13 @@ export function UserMenu() {
             <a href="/pricing" className="ud-upgrade-btn">
               Upgrade to Solo &rarr; $9/mo
             </a>
+          ) : isCancelling ? (
+            <div className="ud-cancel-billing">
+              <span className="ud-cancel-text">Your plan ends {cancelDate}</span>
+              <button className="ud-resubscribe" onClick={() => goToPortal()}>
+                Resubscribe
+              </button>
+            </div>
           ) : (
             <button
               className="user-dropdown-item"

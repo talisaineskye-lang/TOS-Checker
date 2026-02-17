@@ -9,10 +9,10 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-async function updatePlan(customerId: string, plan: string) {
+async function updateProfile(customerId: string, fields: Record<string, unknown>) {
   await supabaseAdmin
     .from('user_profiles')
-    .update({ plan })
+    .update(fields)
     .eq('stripe_customer_id', customerId);
 }
 
@@ -47,13 +47,22 @@ export async function POST(request: Request) {
       const customerId = sub.customer as string;
 
       if (sub.status === 'active' || sub.status === 'trialing') {
-        const priceId = sub.items.data[0]?.price?.id;
-        const plan = priceId ? planFromPriceId(priceId) : null;
-        if (plan) {
-          await updatePlan(customerId, plan);
+        if (sub.cancel_at_period_end) {
+          // User cancelled — keep plan, record when it expires
+          const cancelAt = sub.cancel_at
+            ? new Date(sub.cancel_at * 1000).toISOString()
+            : null;
+          await updateProfile(customerId, { cancel_at: cancelAt });
+        } else {
+          // Active or resubscribed — set plan, clear cancel_at
+          const priceId = sub.items.data[0]?.price?.id;
+          const plan = priceId ? planFromPriceId(priceId) : null;
+          if (plan) {
+            await updateProfile(customerId, { plan, cancel_at: null });
+          }
         }
       } else if (sub.status === 'canceled' || sub.status === 'unpaid') {
-        await updatePlan(customerId, 'free');
+        await updateProfile(customerId, { plan: 'free', cancel_at: null });
       }
       break;
     }
@@ -61,7 +70,7 @@ export async function POST(request: Request) {
     case 'customer.subscription.deleted': {
       const sub = event.data.object as Stripe.Subscription;
       const customerId = sub.customer as string;
-      await updatePlan(customerId, 'free');
+      await updateProfile(customerId, { plan: 'free', cancel_at: null });
       break;
     }
 
