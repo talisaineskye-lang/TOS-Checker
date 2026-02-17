@@ -1,19 +1,24 @@
-import { RadarBeacon } from './RadarBeacon';
-
 interface LogoProps {
   size?: 'sm' | 'md' | 'lg';
-  showIcon?: boolean;
 }
 
-export function Logo({ size = 'md', showIcon = true }: LogoProps) {
-  const beaconSizes = { sm: 'xs' as const, md: 'sm' as const, lg: 'md' as const };
+const SIZES = {
+  sm: { height: 28 },
+  md: { height: 36 },
+  lg: { height: 48 },
+};
+
+export function Logo({ size = 'md' }: LogoProps) {
+  const { height } = SIZES[size];
 
   return (
     <span className={`logo-lockup logo-${size}`}>
-      {showIcon && <RadarBeacon size={beaconSizes[size]} />}
-      <span className="font-codex logo-wordmark">
-        STACK<span className="text-gradient">DRIFT</span>
-      </span>
+      <img
+        src="/logo.png"
+        alt="StackDrift"
+        height={height}
+        style={{ display: 'block' }}
+      />
     </span>
   );
 }
