@@ -91,7 +91,6 @@ export default function LandingPage() {
 
         <div className="hero-radar">
           <div className="radar-container">
-            <div className="radar-glow" />
             <div className="radar-ring radar-ring-1" />
             <div className="radar-ring radar-ring-2" />
             <div className="radar-ring radar-ring-3" />
@@ -99,15 +98,6 @@ export default function LandingPage() {
             <div className="radar-sweep-trail" />
             <div className="radar-sweep" />
             <div className="radar-core" />
-            <svg className="radar-triangle-svg" width="64" height="140" viewBox="0 0 64 140">
-              <defs>
-                <linearGradient id="tg" x1="50%" y1="0%" x2="50%" y2="100%">
-                  <stop offset="0%" stopColor="#4d8eff" stopOpacity="0.8" />
-                  <stop offset="100%" stopColor="#00d4ff" stopOpacity="0.3" />
-                </linearGradient>
-              </defs>
-              <polygon points="32,0 4,140 60,140" fill="url(#tg)" />
-            </svg>
             <div className="radar-blip blip-1" />
             <div className="radar-blip blip-2" />
             <div className="radar-blip blip-3" />
@@ -368,6 +358,8 @@ export default function LandingPage() {
           <div className="f-links">
             <a href="/intel">Intel</a>
             <a href="/onboarding">Get started</a>
+            <a href="/terms">Terms</a>
+            <a href="/privacy">Privacy</a>
           </div>
         </footer>
       </div>

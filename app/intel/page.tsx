@@ -423,6 +423,10 @@ export default function IntelPage() {
             <Logo size="sm" />
           </a>
           <span className="ip-footer-copy">&copy; 2026 StackDrift</span>
+          <div className="f-links">
+            <a href="/terms">Terms</a>
+            <a href="/privacy">Privacy</a>
+          </div>
         </footer>
       </div>
 

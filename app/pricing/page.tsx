@@ -304,6 +304,10 @@ export default function PricingPage() {
           <Logo size="sm" />
         </a>
         <span>&copy; 2026 StackDrift</span>
+        <div className="f-links">
+          <a href="/terms">Terms</a>
+          <a href="/privacy">Privacy</a>
+        </div>
       </footer>
 
       <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} />

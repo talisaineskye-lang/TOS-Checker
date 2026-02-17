@@ -311,6 +311,8 @@ export default async function Page() {
             <a href="/intel">Intel</a>
             <a href="/onboarding">Onboarding</a>
             <a href="/admin">Admin</a>
+            <a href="/terms">Terms</a>
+            <a href="/privacy">Privacy</a>
           </div>
         </footer>
       </div>
