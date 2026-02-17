@@ -9,6 +9,8 @@ export interface DashChange {
   severity: 'critical' | 'warning' | 'notice' | 'low';
   title: string;
   summary: string;
+  impact: string | null;
+  action: string | null;
   categories: string[];
   detectedAt: string;
   documentUrl: string;
@@ -142,6 +144,19 @@ export function DashboardAlerts({ changes }: { changes: DashChange[] }) {
 
                 <div className="ac-title">{change.title}</div>
                 <div className="ac-summary">{summary}</div>
+
+                {change.impact && (
+                  <div className="ac-impact">
+                    <span className="ac-label">Why it matters</span>
+                    {change.impact}
+                  </div>
+                )}
+                {change.action && (
+                  <div className="ac-action-tip">
+                    <span className="ac-label">What to do</span>
+                    {change.action}
+                  </div>
+                )}
 
                 {change.categories.length > 0 && (
                   <div className="ac-tags">

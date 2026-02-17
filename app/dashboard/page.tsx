@@ -31,6 +31,8 @@ interface ChangeRow {
   vendor_id: string;
   document_id: string;
   summary: string | null;
+  impact: string | null;
+  action: string | null;
   risk_level: 'low' | 'medium' | 'high' | null;
   risk_priority: RiskPriority | null;
   risk_bucket: string | null;
@@ -101,7 +103,7 @@ async function getData() {
 
   const { data: changes } = await supabase
     .from('changes')
-    .select('id, vendor_id, document_id, summary, risk_level, risk_priority, risk_bucket, categories, detected_at, notified, vendors(name), documents(doc_type, url)')
+    .select('id, vendor_id, document_id, summary, impact, action, risk_level, risk_priority, risk_bucket, categories, detected_at, notified, vendors(name), documents(doc_type, url)')
     .order('detected_at', { ascending: false })
     .limit(20);
 
@@ -158,6 +160,8 @@ export default async function Page() {
       severity,
       title: `${vendorName} ${DOCUMENT_TYPE_LABELS[docType] || docType} updated — ${bucketLabel} change detected`,
       summary: c.summary || 'No summary available.',
+      impact: c.impact || null,
+      action: c.action || null,
       categories: c.categories || [],
       detectedAt: c.detected_at,
       documentUrl: c.documents?.url || '#',

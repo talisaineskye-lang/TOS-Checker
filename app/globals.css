@@ -408,6 +408,24 @@ a { color: inherit; text-decoration: none; }
   max-width: 640px;
 }
 
+.ac-impact,
+.ac-action-tip {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--wd-white-dim);
+  margin-bottom: 8px;
+  max-width: 640px;
+}
+.ac-label {
+  font-family: var(--wd-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--wd-white-faint);
+  display: block;
+  margin-bottom: 2px;
+}
+
 .ac-tags { display: flex; gap: 5px; flex-wrap: wrap; }
 
 .ac-tag {

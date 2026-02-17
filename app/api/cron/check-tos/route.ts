@@ -141,6 +141,8 @@ export async function GET(request: NextRequest) {
                 old_snapshot_id: lastSnapshot.id,
                 new_snapshot_id: newSnapshot.id,
                 summary: analysis.summary,
+                impact: analysis.impact,
+                action: analysis.action,
                 risk_level: effectiveRiskLevel,
                 risk_bucket: analysis.riskBucket,
                 risk_priority: isNoise ? 'low' : analysis.riskPriority,
