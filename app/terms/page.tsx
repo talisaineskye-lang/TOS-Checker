@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service — StackDrift',
+  title: 'Terms of Service',
   description: 'Terms and conditions for using the StackDrift vendor monitoring service.',
 };
 

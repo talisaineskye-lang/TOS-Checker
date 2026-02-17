@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy — StackDrift',
+  title: 'Privacy Policy',
   description: 'How StackDrift collects, uses, and protects your personal information.',
 };
 

@@ -42,12 +42,13 @@
   text-decoration: none;
   color: inherit;
 }
-.logo-sm { gap: 6px; }
-.logo-sm .logo-wordmark { font-size: 19px; }
-.logo-md { gap: 8px; }
-.logo-md .logo-wordmark { font-size: 18px; }
-.logo-lg { gap: 12px; }
-.logo-lg .logo-wordmark { font-size: 30px; }
+.logo-wordmark { display: block; }
+.logo-icon { display: none; }
+
+@media (max-width: 640px) {
+  .logo-wordmark { display: none; }
+  .logo-icon { display: block; }
+}
 
 /* ============ BASE RESET ============ */
 
