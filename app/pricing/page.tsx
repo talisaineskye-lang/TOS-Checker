@@ -85,7 +85,7 @@ export default function PricingPage() {
           </div>
           <div className="pp-period">/month</div>
           <div className="pp-annual">
-            {annual ? <><span className="pp-hl">$84/yr</span> — save $24</> : '$108/yr billed annually'}
+            {annual ? '$84/yr billed annually' : 'Switch to annual — save 20%'}
           </div>
           <a href="/onboarding" className="pp-cta">Start monitoring</a>
           <div className="pp-divider" />
@@ -140,7 +140,7 @@ export default function PricingPage() {
           </div>
           <div className="pp-period">/month</div>
           <div className="pp-annual">
-            {annual ? <><span className="pp-hl">$276/yr</span> — save $72</> : '$348/yr billed annually'}
+            {annual ? '$276/yr billed annually' : 'Switch to annual — save 20%'}
           </div>
           <a href="/onboarding" className="pp-cta">Start monitoring</a>
           <div className="pp-divider" />
@@ -186,7 +186,7 @@ export default function PricingPage() {
           </div>
           <div className="pp-period">/month</div>
           <div className="pp-annual">
-            {annual ? <><span className="pp-hl">$948/yr</span> — save $240</> : '$1,188/yr billed annually'}
+            {annual ? '$948/yr billed annually' : 'Switch to annual — save 20%'}
           </div>
           <a href="#" className="pp-cta">Contact us</a>
           <div className="pp-divider" />
