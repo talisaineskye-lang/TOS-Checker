@@ -5,6 +5,8 @@ import { Logo } from '../components/Logo';
 import { useAuth } from '../components/AuthProvider';
 import { UserMenu } from '../components/UserMenu';
 import { LoginModal } from '../components/LoginModal';
+import { goToCheckout } from '@/lib/stripe/actions';
+import type { PlanName } from '@/lib/stripe/prices';
 
 export default function PricingPage() {
   const [annual, setAnnual] = useState(false);
@@ -87,7 +89,7 @@ export default function PricingPage() {
           <div className="pp-annual">
             {annual ? '$84/yr billed annually' : 'Switch to annual — save 20%'}
           </div>
-          <a href="/onboarding" className="pp-cta">Start monitoring</a>
+          <button className="pp-cta" onClick={() => goToCheckout('solo', annual ? 'annual' : 'monthly')}>Start monitoring</button>
           <div className="pp-divider" />
           <div className="pp-features">
             <div className="pp-feat">
@@ -142,7 +144,7 @@ export default function PricingPage() {
           <div className="pp-annual">
             {annual ? '$276/yr billed annually' : 'Switch to annual — save 20%'}
           </div>
-          <a href="/onboarding" className="pp-cta">Start monitoring</a>
+          <button className="pp-cta" onClick={() => goToCheckout('pro', annual ? 'annual' : 'monthly')}>Start monitoring</button>
           <div className="pp-divider" />
           <div className="pp-features">
             <div className="pp-feat">
@@ -188,7 +190,7 @@ export default function PricingPage() {
           <div className="pp-annual">
             {annual ? '$948/yr billed annually' : 'Switch to annual — save 20%'}
           </div>
-          <a href="#" className="pp-cta">Contact us</a>
+          <button className="pp-cta" onClick={() => goToCheckout('business', annual ? 'annual' : 'monthly')}>Contact us</button>
           <div className="pp-divider" />
           <div className="pp-features">
             <div className="pp-feat">

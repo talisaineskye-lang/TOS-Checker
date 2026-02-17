@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthProvider';
 import { createBrowserClient } from '@supabase/ssr';
+import { goToPortal } from '@/lib/stripe/actions';
 
 interface UserPrefs {
   email_alerts: boolean;
@@ -204,9 +205,7 @@ export function UserMenu() {
           ) : (
             <button
               className="user-dropdown-item"
-              onClick={() => {
-                window.location.href = '/pricing';
-              }}
+              onClick={() => goToPortal()}
             >
               <span className="ud-item-icon">{'\u{1F4B3}'}</span>
               Manage subscription
