@@ -34,10 +34,10 @@ const spaceMono = Space_Mono({
 export const metadata: Metadata = {
   title: {
     default: 'StackDrift — Vendor Policy Monitoring for SaaS Teams',
-    template: '%s — StackDrift',
+    template: '%s | StackDrift',
   },
   description:
-    'Track changes to Terms of Service, privacy policies, and pricing pages across your SaaS stack. AI-powered analysis with real-time alerts.',
+    'Monitor vendor Terms of Service, Privacy Policies, and Pricing pages. Get severity-scored alerts when your vendors change the rules.',
   metadataBase: new URL('https://www.stackdrift.app'),
   openGraph: {
     type: 'website',

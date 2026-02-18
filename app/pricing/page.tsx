@@ -15,8 +15,29 @@ export default function PricingPage() {
 
   const toggleBilling = () => setAnnual((prev) => !prev);
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'StackDrift Pricing',
+    url: 'https://www.stackdrift.app/pricing',
+    description: 'Simple plans for monitoring your vendor stack.',
+    mainEntity: {
+      '@type': 'Product',
+      name: 'StackDrift',
+      offers: [
+        { '@type': 'Offer', name: 'Solo', price: '9', priceCurrency: 'USD', billingDuration: 'P1M' },
+        { '@type': 'Offer', name: 'Pro', price: '29', priceCurrency: 'USD', billingDuration: 'P1M' },
+        { '@type': 'Offer', name: 'Business', price: '99', priceCurrency: 'USD', billingDuration: 'P1M' },
+      ],
+    },
+  };
+
   return (
     <main className="pricing-page">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Nav */}
       <nav className="lp-nav">
         <div className="inner">

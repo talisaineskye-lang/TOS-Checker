@@ -144,8 +144,25 @@ export default function IntelPage() {
   });
   const radarVendors = Array.from(vendorMap.values()).slice(0, 6);
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'Drift Intel',
+    url: 'https://www.stackdrift.app/intel',
+    description: 'Latest vendor policy changes detected by StackDrift. Real-time monitoring of Terms of Service, Privacy Policies, and Pricing pages.',
+    publisher: {
+      '@type': 'Organization',
+      name: 'StackDrift',
+      url: 'https://www.stackdrift.app',
+    },
+  };
+
   return (
     <main className="intel-page" ref={pageRef}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* ── Logo Rail ── */}
       <div className="ip-logo-rail">
         <span className="ip-rail-text">

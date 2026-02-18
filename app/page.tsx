@@ -24,8 +24,34 @@ export default function LandingPage() {
     return () => observer.disconnect();
   }, []);
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'StackDrift',
+    applicationCategory: 'BusinessApplication',
+    operatingSystem: 'Web',
+    url: 'https://www.stackdrift.app',
+    description: 'Monitor vendor Terms of Service, Privacy Policies, and Pricing pages. Get severity-scored alerts when your vendors change the rules.',
+    offers: {
+      '@type': 'AggregateOffer',
+      priceCurrency: 'USD',
+      lowPrice: '0',
+      highPrice: '99',
+      offerCount: '4',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'StackDrift',
+      url: 'https://www.stackdrift.app',
+    },
+  };
+
   return (
     <main className="landing-page">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Nav */}
       <nav className="lp-nav">
         <div className="inner">
@@ -37,6 +63,7 @@ export default function LandingPage() {
             <a href="#targets" className="nav-link">What we track</a>
             <a href="#scoring" className="nav-link">Scoring</a>
             <a href="/intel" className="nav-link">Intel</a>
+            <a href="/pricing" className="nav-link">Pricing</a>
           </div>
           <div className="nav-right">
             {!authLoading && (
@@ -357,9 +384,10 @@ export default function LandingPage() {
           <span>&copy; 2026 StackDrift</span>
           <div className="f-links">
             <a href="/intel">Intel</a>
-            <a href="/onboarding">Get started</a>
-            <a href="/terms">Terms</a>
+            <a href="/pricing">Pricing</a>
             <a href="/privacy">Privacy</a>
+            <a href="/terms">Terms</a>
+            <a href="mailto:support@stackdrift.app">support@stackdrift.app</a>
           </div>
         </footer>
       </div>

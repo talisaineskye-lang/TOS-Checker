@@ -309,10 +309,9 @@ export default async function Page() {
           <span>&copy; 2026 StackDrift</span>
           <div className="f-links">
             <a href="/intel">Intel</a>
-            <a href="/onboarding">Onboarding</a>
-            <a href="/admin">Admin</a>
-            <a href="/terms">Terms</a>
             <a href="/privacy">Privacy</a>
+            <a href="/terms">Terms</a>
+            <a href="mailto:support@stackdrift.app">Support</a>
           </div>
         </footer>
       </div>

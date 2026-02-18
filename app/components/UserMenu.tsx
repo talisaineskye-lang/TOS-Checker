@@ -23,6 +23,9 @@ export function UserMenu() {
     critical_only: false,
   });
   const [saving, setSaving] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteInput, setDeleteInput] = useState('');
+  const [deleting, setDeleting] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   const supabase = createBrowserClient(
@@ -98,6 +101,23 @@ export function UserMenu() {
       .eq('id', user.id);
 
     setSaving(false);
+  };
+
+  const handleDeleteAccount = async () => {
+    if (deleteInput !== 'DELETE' || deleting) return;
+    setDeleting(true);
+
+    const { data: { session } } = await supabase.auth.getSession();
+    const token = session?.access_token;
+    if (!token) return;
+
+    await fetch('/api/account/delete', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    await signOut();
+    window.location.href = '/';
   };
 
   if (!user) return null;
@@ -235,6 +255,57 @@ export function UserMenu() {
           <button onClick={signOut} className="user-dropdown-item logout">
             Sign out
           </button>
+
+          <div className="user-dropdown-divider" />
+
+          {/* Legal & support */}
+          <div className="ud-legal-links">
+            <a href="/privacy">Privacy</a>
+            <a href="/terms">Terms</a>
+            <a href="mailto:support@stackdrift.app">Support</a>
+          </div>
+
+          {/* Delete account */}
+          {!showDeleteConfirm ? (
+            <button
+              className="user-dropdown-item danger"
+              onClick={() => setShowDeleteConfirm(true)}
+            >
+              Delete account
+            </button>
+          ) : (
+            <div className="ud-delete-confirm">
+              <p className="ud-delete-warning">
+                This will permanently delete your account, cancel any active
+                subscription, and remove all your data. This cannot be undone.
+              </p>
+              <input
+                className="ud-delete-input"
+                type="text"
+                placeholder='Type "DELETE" to confirm'
+                value={deleteInput}
+                onChange={(e) => setDeleteInput(e.target.value)}
+              />
+              <div className="ud-delete-actions">
+                <button
+                  className="ud-delete-cancel"
+                  onClick={() => {
+                    setShowDeleteConfirm(false);
+                    setDeleteInput('');
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="ud-delete-btn"
+                  disabled={deleteInput !== 'DELETE' || deleting}
+                  onClick={handleDeleteAccount}
+                >
+                  {deleting ? 'Deleting...' : 'Delete my account'}
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
