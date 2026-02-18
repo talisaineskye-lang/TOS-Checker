@@ -10,10 +10,11 @@ const supabaseAdmin = createClient(
 );
 
 async function updateProfile(customerId: string, fields: Record<string, unknown>) {
-  await supabaseAdmin
+  const { error, count } = await supabaseAdmin
     .from('user_profiles')
     .update(fields)
     .eq('stripe_customer_id', customerId);
+  console.log('UPDATE PROFILE:', { customerId, fields, error, count });
 }
 
 export async function POST(request: Request) {
@@ -46,8 +47,16 @@ export async function POST(request: Request) {
       const sub = event.data.object as Stripe.Subscription;
       const customerId = sub.customer as string;
 
+      console.log('WEBHOOK DEBUG:', {
+        eventType: event.type,
+        customerId,
+        status: sub.status,
+        cancelAtPeriodEnd: sub.cancel_at_period_end,
+        cancelAt: sub.cancel_at,
+      });
+
       if (sub.status === 'active' || sub.status === 'trialing') {
-        if (sub.cancel_at_period_end) {
+        if (sub.cancel_at_period_end || sub.cancel_at) {
           // User cancelled — keep plan, record when it expires
           const cancelAt = sub.cancel_at
             ? new Date(sub.cancel_at * 1000).toISOString()
