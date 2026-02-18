@@ -101,6 +101,22 @@ export default async function AdminPage() {
   const criticalCount = changes.filter((c) => c.risk_priority === 'critical').length;
   const highCount = changes.filter((c) => c.risk_priority === 'high').length;
 
+  // Build unique vendor list for re-analysis (most recent change per vendor)
+  const vendorChangeMap = new Map<string, { vendorName: string; changeId: string; summary: string }>();
+  for (const change of changes) {
+    if (!vendorChangeMap.has(change.vendor_id)) {
+      vendorChangeMap.set(change.vendor_id, {
+        vendorName: change.vendors?.name || 'Unknown',
+        changeId: change.id,
+        summary: change.summary || 'No summary',
+      });
+    }
+  }
+  const reanalyzeVendors = Array.from(vendorChangeMap.entries()).map(([id, data]) => ({
+    id,
+    ...data,
+  }));
+
   return (
     <main className="admin-page">
       <nav className="wd-nav">
@@ -148,7 +164,7 @@ export default async function AdminPage() {
         {/* Manual Actions */}
         <section className="admin-section">
           <h2>Actions</h2>
-          <AdminActions />
+          <AdminActions vendors={reanalyzeVendors} />
         </section>
 
         {/* Monitoring Status */}

@@ -633,8 +633,34 @@ a { color: inherit; text-decoration: none; }
 .admin-actions {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  max-width: 400px;
+  gap: 24px;
+}
+.admin-action-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 600px;
+}
+.reanalyze-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.reanalyze-select {
+  flex: 1;
+  min-width: 180px;
+  padding: 8px 12px;
+  background: var(--wd-white-ghost, rgba(255,255,255,0.04));
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 6px;
+  color: var(--wd-white, #fff);
+  font-family: var(--wd-sans);
+  font-size: 14px;
+}
+.reanalyze-select:focus {
+  outline: none;
+  border-color: rgba(255,255,255,0.2);
 }
 
 .action-result {
