@@ -472,6 +472,8 @@ a { color: inherit; text-decoration: none; }
   color: var(--wd-white-muted);
 }
 
+.vt-icon-logo { background: transparent; overflow: hidden; }
+.vt-logo-img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; }
 .vt-icon.changed { background: rgba(255,68,68,0.08); color: var(--wd-red); }
 .vt-icon.warning { background: rgba(255,159,26,0.08); color: var(--wd-amber); }
 

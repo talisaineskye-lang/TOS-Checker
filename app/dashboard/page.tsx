@@ -5,6 +5,7 @@ import { RiskPriority } from '@/lib/risk-buckets';
 import { DashboardAlerts, DashChange } from '../components/DashboardAlerts';
 import { Logo } from '../components/Logo';
 import { DashboardNav } from '../components/DashboardNav';
+import { VendorLogo } from '../components/VendorLogo';
 
 export const dynamic = 'force-dynamic';
 
@@ -173,6 +174,7 @@ export default async function Page() {
     id: string;
     name: string;
     initial: string;
+    logoUrl: string | null;
     detail: string;
     docTypes: { short: string; cssClass: string }[];
     statusClass: string;
@@ -219,6 +221,7 @@ export default async function Page() {
       id: vendor.id,
       name: vendor.name,
       initial: vendor.name.charAt(0).toUpperCase(),
+      logoUrl: vendor.logo_url,
       detail,
       docTypes: vendorDocs.map((d) => ({
         short: DOC_TYPE_SHORT[d.doc_type] || d.doc_type.toUpperCase(),
@@ -285,9 +288,7 @@ export default async function Page() {
             <div className="vendor-table">
               {vendorRows.map((v) => (
                 <div key={v.id} className="vt-row">
-                  <div className={`vt-icon ${v.statusClass !== 'stable' ? v.statusClass : ''}`}>
-                    {v.initial}
-                  </div>
+                  <VendorLogo logoUrl={v.logoUrl} initial={v.initial} statusClass={v.statusClass} />
                   <div className="vt-info">
                     <div className="vt-name">{v.name}</div>
                     <div className="vt-detail">{v.detail}</div>
