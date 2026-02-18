@@ -146,6 +146,8 @@ Respond with JSON only (no markdown, no backticks):
     // Derive priority from the LLM's risk level for consistency
     const finalPriority = riskLevelToPriority(finalRiskLevel);
 
+    console.log(`[analyzer] "${serviceName}" → Sonnet: suggestedRiskLevel=${finalRiskLevel}, isNoise=${llmResult.isNoise} → stored: risk_level=${finalRiskLevel}, risk_priority=${finalPriority}`);
+
     // Generate title based on platform and primary bucket
     const title = generateAlertTitle(serviceName, classification.primaryBucket);
 
@@ -184,11 +186,14 @@ Respond with JSON only (no markdown, no backticks):
   }
 }
 
+// Map Sonnet's risk level to dashboard priority.
+// Shift up so: high→critical, medium→high(warning), low→medium(notice).
+// Noise is forced to 'low' priority before this function is called.
 function riskLevelToPriority(level: 'low' | 'medium' | 'high' | 'critical'): RiskPriority {
   switch (level) {
     case 'critical': return 'critical';
-    case 'high': return 'high';
-    case 'medium': return 'medium';
-    case 'low': return 'low';
+    case 'high': return 'critical';
+    case 'medium': return 'high';
+    case 'low': return 'medium';
   }
 }

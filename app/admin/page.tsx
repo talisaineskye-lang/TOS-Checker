@@ -116,6 +116,7 @@ export default async function AdminPage() {
     id,
     ...data,
   }));
+  const allChangeIds = changes.map((c) => c.id);
 
   return (
     <main className="admin-page">
@@ -164,7 +165,7 @@ export default async function AdminPage() {
         {/* Manual Actions */}
         <section className="admin-section">
           <h2>Actions</h2>
-          <AdminActions vendors={reanalyzeVendors} />
+          <AdminActions vendors={reanalyzeVendors} allChangeIds={allChangeIds} />
         </section>
 
         {/* Monitoring Status */}

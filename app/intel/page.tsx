@@ -96,6 +96,8 @@ export default function IntelPage() {
     return () => observer.disconnect();
   }, [items]);
 
+  const [scannerMeta, setScannerMeta] = useState({ totalChangesThisWeek: 0 });
+
   const [quickHitsData, setQuickHitsData] = useState<{
     spotlight: { label: string; accentColor: string; article: IntelItem } | null;
     quickHits: IntelItem[];
@@ -110,6 +112,7 @@ export default function IntelPage() {
     ])
       .then(([feedData, qhData]) => {
         setItems(feedData.items || []);
+        setScannerMeta(feedData.scannerMeta || { totalChangesThisWeek: 0 });
         setQuickHitsData({
           spotlight: qhData.spotlight || null,
           quickHits: qhData.quickHits || [],
@@ -122,9 +125,14 @@ export default function IntelPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  // Separate scanner-detected items from regular feed
+  const scannerItems = items.filter((i) => i.source === 'scanner');
+  const feedItems = items.filter((i) => i.source !== 'scanner');
+  const scannerExtra = Math.max(0, scannerMeta.totalChangesThisWeek - scannerItems.length);
+
   // Split items: featured (first), river (rest — skip 8 to leave room)
-  const featured = items[0] || null;
-  const riverItems = items.slice(8);
+  const featured = feedItems[0] || null;
+  const riverItems = feedItems.slice(8);
 
   // Group river items by section
   const riverSections = RIVER_SECTIONS.map((section) => ({
@@ -134,7 +142,7 @@ export default function IntelPage() {
 
   // Collect unique vendors for radar strip
   const vendorMap = new Map<string, { name: string; severity: string }>();
-  items.forEach((item) => {
+  feedItems.forEach((item) => {
     item.affected_vendors?.forEach((v) => {
       const existing = vendorMap.get(v);
       if (!existing || severityRank(item.severity) > severityRank(existing.severity)) {
@@ -201,7 +209,7 @@ export default function IntelPage() {
       <div className="ip-page">
         {loading ? (
           <div className="ip-loading">Loading intel&hellip;</div>
-        ) : items.length === 0 ? (
+        ) : feedItems.length === 0 && scannerItems.length === 0 ? (
           <div className="ip-empty">No intel items yet. Check back soon.</div>
         ) : (
           <>
@@ -318,6 +326,58 @@ export default function IntelPage() {
                 })}
               </div>
             </div>
+
+            {/* ── Scanner Detections ── */}
+            {scannerItems.length > 0 && (
+              <div className="ip-scanner-section ip-reveal">
+                <div className="ip-scanner-header">
+                  <span className="ip-scanner-badge">
+                    <span className="ip-scanner-pulse" />
+                    DETECTED BY STACKDRIFT
+                  </span>
+                  <span className="ip-scanner-sub">Real-time TOS &amp; policy monitoring</span>
+                </div>
+                <div className="ip-scanner-cards">
+                  {scannerItems.map((item) => {
+                    const sevColor =
+                      item.severity === 'critical' ? 'red' :
+                      item.severity === 'warning' ? 'red' : 'blue';
+                    return (
+                      <a
+                        key={item.id}
+                        href={item.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`ip-scanner-card a-${sevColor}`}
+                      >
+                        <div className="ip-scanner-card-top">
+                          <span className={`ip-sev-dot ${sevColor}`} />
+                          <span className="ip-scanner-sev">{item.severity.toUpperCase()}</span>
+                        </div>
+                        <div className="ip-scanner-card-title">{item.title}</div>
+                        <p className="ip-scanner-card-summary">{item.summary}</p>
+                        <div className="ip-scanner-card-meta">
+                          {item.affected_vendors?.map((v) => (
+                            <span key={v} className="ip-chip vendor">{v}</span>
+                          ))}
+                          <span>{formatTime(item.pub_date)}</span>
+                        </div>
+                      </a>
+                    );
+                  })}
+                </div>
+                {scannerExtra > 0 && (
+                  <div className="ip-scanner-cta">
+                    <p>
+                      We detected <strong>{scannerExtra} more change{scannerExtra !== 1 ? 's' : ''}</strong> this week.
+                    </p>
+                    <a href="/onboarding" className="ip-scanner-cta-btn">
+                      Sign up to see them all &rarr;
+                    </a>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* ── Vendor Radar Strip ── */}
             {radarVendors.length > 0 && (

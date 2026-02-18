@@ -5,6 +5,7 @@ import { hashContent, hasChanged, getBasicDiff } from '@/lib/differ';
 import { analyzeChanges } from '@/lib/analyzer';
 import { sendChangeAlert } from '@/lib/notifier';
 import { DOCUMENT_TYPE_LABELS, DocumentType } from '@/lib/types';
+import { updateScannerIntelItems } from '@/lib/intel/store';
 
 export const runtime = 'nodejs';
 
@@ -230,6 +231,16 @@ export async function GET(request: NextRequest) {
         status: 'error',
         error: err instanceof Error ? err.message : 'Unknown error',
       });
+    }
+  }
+
+  // Update scanner intel items if any changes were detected this cycle
+  const hasChanges = results.some((r) => r.status === 'changed');
+  if (hasChanges) {
+    try {
+      await updateScannerIntelItems();
+    } catch (err) {
+      console.error('[check-tos] Failed to update scanner intel items:', err);
     }
   }
 

@@ -9,13 +9,20 @@ interface ReanalyzeVendor {
   summary: string;
 }
 
-export function AdminActions({ vendors }: { vendors: ReanalyzeVendor[] }) {
+export function AdminActions({
+  vendors,
+  allChangeIds,
+}: {
+  vendors: ReanalyzeVendor[];
+  allChangeIds: string[];
+}) {
   const [isRunning, setIsRunning] = useState(false);
   const [result, setResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const [selectedVendor, setSelectedVendor] = useState('');
   const [reanalyzing, setReanalyzing] = useState(false);
+  const [reanalyzeProgress, setReanalyzeProgress] = useState('');
   const [reanalyzeResult, setReanalyzeResult] = useState<string | null>(null);
   const [reanalyzeError, setReanalyzeError] = useState<string | null>(null);
 
@@ -51,6 +58,7 @@ export function AdminActions({ vendors }: { vendors: ReanalyzeVendor[] }) {
     setReanalyzing(true);
     setReanalyzeResult(null);
     setReanalyzeError(null);
+    setReanalyzeProgress('');
 
     try {
       const res = await fetch('/api/admin/reanalyze', {
@@ -66,7 +74,7 @@ export function AdminActions({ vendors }: { vendors: ReanalyzeVendor[] }) {
       }
 
       setReanalyzeResult(
-        `${vendor.vendorName} re-analyzed → ${data.riskLevel?.toUpperCase() || 'unknown'} risk. Summary: "${data.summary}"`
+        `${vendor.vendorName} re-analyzed → ${data.riskLevel?.toUpperCase() || 'unknown'} risk (priority: ${data.riskPriority}). Summary: "${data.summary}"`
       );
     } catch (err) {
       setReanalyzeError(err instanceof Error ? err.message : 'Something went wrong');
@@ -75,8 +83,8 @@ export function AdminActions({ vendors }: { vendors: ReanalyzeVendor[] }) {
     }
   };
 
-  const handleReanalyzeAll = async () => {
-    if (vendors.length === 0) return;
+  const handleReanalyzeAllChanges = async () => {
+    if (allChangeIds.length === 0) return;
 
     setReanalyzing(true);
     setReanalyzeResult(null);
@@ -84,13 +92,16 @@ export function AdminActions({ vendors }: { vendors: ReanalyzeVendor[] }) {
 
     let success = 0;
     let failed = 0;
+    const total = allChangeIds.length;
 
-    for (const vendor of vendors) {
+    for (const changeId of allChangeIds) {
+      setReanalyzeProgress(`Re-analyzing ${success + failed + 1} of ${total}...`);
+
       try {
         const res = await fetch('/api/admin/reanalyze', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ changeId: vendor.changeId }),
+          body: JSON.stringify({ changeId }),
         });
 
         if (res.ok) {
@@ -103,8 +114,9 @@ export function AdminActions({ vendors }: { vendors: ReanalyzeVendor[] }) {
       }
     }
 
+    setReanalyzeProgress('');
     setReanalyzeResult(
-      `Re-analyzed ${success} vendor${success !== 1 ? 's' : ''} successfully.${failed > 0 ? ` ${failed} failed.` : ''}`
+      `Re-analyzed ${success} of ${total} changes successfully.${failed > 0 ? ` ${failed} failed.` : ''} Refresh the page to see updated results.`
     );
     setReanalyzing(false);
   };
@@ -148,17 +160,19 @@ export function AdminActions({ vendors }: { vendors: ReanalyzeVendor[] }) {
           >
             {reanalyzing ? 'Re-analyzing...' : 'Re-analyze'}
           </button>
-          <button
-            className="pill pill-ghost"
-            onClick={handleReanalyzeAll}
-            disabled={reanalyzing || vendors.length === 0}
-          >
-            {reanalyzing ? 'Processing...' : `Re-analyze All (${vendors.length})`}
-          </button>
         </div>
+        <button
+          className="pill pill-ghost"
+          onClick={handleReanalyzeAllChanges}
+          disabled={reanalyzing || allChangeIds.length === 0}
+          style={{ alignSelf: 'flex-start' }}
+        >
+          {reanalyzing ? 'Processing...' : `Re-analyze All Changes (${allChangeIds.length})`}
+        </button>
         <p className="action-hint">
-          Re-run AI analysis on a vendor's most recent change using the updated prompt. Overwrites summary, impact, action, and severity.
+          Re-run AI analysis using the updated prompt. Overwrites summary, impact, action, and severity for all selected changes.
         </p>
+        {reanalyzeProgress && <p className="action-result" style={{ color: 'var(--wd-white-muted)' }}>{reanalyzeProgress}</p>}
         {reanalyzeResult && <p className="action-result success">{reanalyzeResult}</p>}
         {reanalyzeError && <p className="action-result error">{reanalyzeError}</p>}
       </div>

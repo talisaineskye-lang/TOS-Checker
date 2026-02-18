@@ -95,6 +95,88 @@ export async function storeItems(items: ClassifiedItem[]): Promise<number> {
   return data?.length ?? 0;
 }
 
+/**
+ * Update scanner-detected intel items.
+ * Called after each TOS check cycle that detected changes.
+ * Shows top 2 most severe non-noise changes from past 7 days.
+ */
+export async function updateScannerIntelItems(): Promise<number> {
+  const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+  const { data: changes } = await supabase
+    .from('changes')
+    .select('*, vendors(name), documents(doc_type, url)')
+    .eq('is_noise', false)
+    .gte('detected_at', cutoff)
+    .order('detected_at', { ascending: false });
+
+  if (!changes || changes.length === 0) {
+    // No changes this week — clear old scanner items
+    await supabase.from('intel_items').delete().eq('source', 'scanner');
+    return 0;
+  }
+
+  // Sort by severity (critical > high > medium > low) then recency
+  const priorityOrder: Record<string, number> = { critical: 4, high: 3, medium: 2, low: 1 };
+  const sorted = [...changes].sort((a, b) => {
+    const aPri = priorityOrder[a.risk_priority || 'low'] || 0;
+    const bPri = priorityOrder[b.risk_priority || 'low'] || 0;
+    if (bPri !== aPri) return bPri - aPri;
+    return new Date(b.detected_at).getTime() - new Date(a.detected_at).getTime();
+  });
+
+  const top2 = sorted.slice(0, 2);
+  const totalCount = sorted.length;
+
+  // Map risk_priority to intel severity
+  const severityMap: Record<string, string> = {
+    critical: 'critical',
+    high: 'warning',
+    medium: 'notice',
+    low: 'stable',
+  };
+
+  // Delete existing scanner items
+  await supabase.from('intel_items').delete().eq('source', 'scanner');
+
+  const rows = top2.map((change, idx) => ({
+    title: change.summary || 'Policy change detected',
+    link: `${change.documents?.url || 'https://stackdrift.app'}#stackdrift-${change.id}`,
+    description: change.impact || '',
+    pub_date: change.detected_at,
+    source: 'scanner',
+    pillar: 'policy_watch',
+    severity: severityMap[change.risk_priority || 'low'] || 'notice',
+    relevance: 95 - idx,
+    summary: change.impact || change.summary || '',
+    affected_vendors: [change.vendors?.name || 'Unknown'],
+    tags: change.categories || [],
+    suggested_post: String(totalCount),
+    heat_score: 100 - idx,
+  }));
+
+  const { error } = await supabase.from('intel_items').insert(rows);
+
+  if (error) {
+    console.error('[intel] Scanner items store error:', error.message);
+    return 0;
+  }
+
+  console.log(`[intel] Updated scanner intel items: ${rows.length} items (${totalCount} total changes this week)`);
+  return rows.length;
+}
+
+/** Get the count of non-noise changes from the past 7 days. */
+export async function getWeeklyChangeCount(): Promise<number> {
+  const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const { count } = await supabase
+    .from('changes')
+    .select('*', { count: 'exact', head: true })
+    .eq('is_noise', false)
+    .gte('detected_at', cutoff);
+  return count || 0;
+}
+
 /** Get feed items for the briefing page. */
 export async function getFeed(options: {
   pillar?: string;
