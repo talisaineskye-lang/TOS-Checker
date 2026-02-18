@@ -1,15 +1,15 @@
 export const STRIPE_PRICES = {
   solo: {
-    monthly: 'price_1T1uRsDE0k8k5QDhjr8c4uZ8',
-    annual: 'price_1T1uTTDE0k8k5QDhxWaE2Cop',
+    monthly: 'price_1T2GGEDXXJaDQ2FYKWYSqJ3U',
+    annual: 'price_1T2GGCDXXJaDQ2FYrprT6tdp',
   },
   pro: {
-    monthly: 'price_1T1uUrDE0k8k5QDhSE1AQdwr',
-    annual: 'price_1T1uVTDE0k8k5QDhZLSTc6e6',
+    monthly: 'price_1T2GGFDXXJaDQ2FYr4qWVHZs',
+    annual: 'price_1T2GGEDXXJaDQ2FYkYRip6Ep',
   },
   business: {
-    monthly: 'price_1T1uWSDE0k8k5QDhyqXxazu4',
-    annual: 'price_1T1uXWDE0k8k5QDhmB7PB9GN',
+    monthly: 'price_1T2GGFDXXJaDQ2FY5MHVnIdm',
+    annual: 'price_1T2GGFDXXJaDQ2FYi4pFsUcC',
   },
 } as const;
 
