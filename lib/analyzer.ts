@@ -10,7 +10,7 @@ export interface AnalysisResult {
   summary: string;
   impact: string;
   action: string;
-  riskLevel: 'low' | 'medium' | 'high';
+  riskLevel: 'low' | 'medium' | 'high' | 'critical';
   riskBucket: RiskBucket | null;
   riskPriority: RiskPriority;
   categories: string[];
@@ -26,7 +26,8 @@ function extractTextContent(content: Anthropic.Messages.Message['content']) {
 export async function analyzeChanges(
   serviceName: string,
   added: string[],
-  removed: string[]
+  removed: string[],
+  effectiveDate?: string | null
 ): Promise<AnalysisResult> {
   // First, classify the change using keyword detection
   const addedText = added.join('\n');
@@ -40,13 +41,14 @@ export async function analyzeChanges(
         .join('\n')
     : 'No specific risk categories detected from keywords.';
 
-  const prompt = `You are analyzing a policy/TOS change for "${serviceName}", a tool used by indie developers and SaaS builders. Your analysis will appear in a developer newsletter called "Drift Intel" — write like a smart colleague giving a heads-up, not a lawyer drafting a memo.
+  const prompt = `You are analyzing a policy/TOS change for "${serviceName}", a tool used by indie developers and SaaS founders. Write as if briefing a busy indie founder who has 30 seconds to decide if this matters to their business.
 
 Here are the sentences that were ADDED:
 ${added.map((sentence) => `+ ${sentence}`).join('\n') || '(none)'}
 
 Here are the sentences that were REMOVED:
 ${removed.map((sentence) => `- ${sentence}`).join('\n') || '(none)'}
+${effectiveDate ? `\nDocument effective/update date: ${effectiveDate}` : ''}
 
 Our keyword analysis detected these risk categories:
 ${detectedBucketInfo}
@@ -60,16 +62,17 @@ Risk categories to consider:
 - deprecation: Model retirements, API version sunsets, migration deadlines
 
 Analyze this change and respond with the following fields:
-- summary: One sentence — what specifically changed. Lead with the consequence, not the legalese.
-- impact: One to two sentences — why this matters to an indie dev's business. Be concrete: mention specific scenarios, dollar amounts if applicable, workflow changes. Think "If you're doing X, this means Y for you."
-- action: One sentence — what the developer should do about it. Be specific (e.g., "Check your settings at X", "Evaluate alternatives before DATE", "No action required.").
-- suggestedRiskLevel: "low", "medium", or "high"
-- isNoise: true if this is a non-substantive change (language translations, tracking ID rotations, session tokens, minor whitespace/formatting, internal reference numbers). false for everything else — even low-risk changes like contact email updates or minor date corrections are NOT noise.
+- summary: One sentence — what changed and why a founder should care. Lead with the business consequence, not the legalese.
+- impact: One to two sentences — who is affected and how. Be specific: "If you're a solo founder using X for client work..." or "Teams on the free tier who..." Reference dollar amounts, deadlines, or workflow changes when applicable.
+- action: One sentence — what to do right now. Be specific (e.g., "Check your settings at X", "Budget for the Pro tier before DATE", "No action needed — this doesn't affect paid plans").
+- suggestedRiskLevel: "low", "medium", "high", or "critical"
+- isNoise: true if this is a non-substantive change (language translations, tracking ID rotations, session tokens, minor whitespace/formatting, internal reference numbers). false for everything else — even low-risk changes like contact email updates are NOT noise.
 
 Risk levels:
-- low: Minor wording changes, clarifications, no material impact, language/translation changes with no policy substance change
-- medium: Changes that could affect users — visibility defaults, export restrictions, pricing adjustments, new usage caps
-- high: Ownership/IP changes, AI training policy changes, major restrictions, model deprecations or retirements
+- low: Minor wording changes, clarifications, contact info updates — no material impact on your business
+- medium: Changes worth noting — visibility defaults, pricing adjustments, new usage caps, export tweaks
+- high: Significant restrictions or policy shifts — training data opt-outs removed, model deprecations with deadlines, major export limitations
+- critical: Immediate business impact — IP/ownership rights changed, code licensing modified, retroactive policy changes, service discontinuation
 
 Here are examples of the tone and specificity expected:
 
@@ -84,28 +87,28 @@ Example 1 (low / noise — tracking ID rotation):
 
 Example 2 (medium — pricing cap change):
 {
-  "summary": "Free tier build minutes reduced from 6,000 to 3,000 per month.",
-  "impact": "If you're deploying more than twice a day on Hobby, you'll hit the new cap mid-month. Projects with CI/CD pipelines will be affected first.",
-  "action": "Check your current build minute usage in your dashboard. If you're over 3,000/mo, budget for the Pro upgrade ($20/mo) or reduce deploy frequency.",
+  "summary": "Free tier build minutes cut in half — you'll hit the cap faster if you deploy frequently.",
+  "impact": "If you're a solo founder deploying more than twice a day on Hobby, you'll burn through the new 3,000/mo cap by mid-month. CI/CD-heavy projects are hit first.",
+  "action": "Check your build minute usage in your dashboard. If you're over 3,000/mo, budget $20/mo for Pro or reduce deploy frequency.",
   "suggestedRiskLevel": "medium",
   "isNoise": false
 }
 
-Example 3 (high — IP/licensing change):
+Example 3 (high — training data change):
 {
-  "summary": "Code generated on the platform now grants a perpetual, royalty-free license for the platform to use, display, and create derivative works.",
-  "impact": "Any code you generate using this tool can now be used by the platform for any purpose, including training future models or showcasing in marketing. This applies retroactively to existing projects. If you're building proprietary software or client work, your code is no longer fully yours.",
-  "action": "Review the updated licensing terms immediately. Consider exporting critical projects and moving to an alternative tool before the effective date.",
+  "summary": "The opt-out for AI model training on private repos has been removed — your code is now training data.",
+  "impact": "If you're building proprietary software or working under client NDAs, your private code is now included in training data with no way to prevent it. This is a compliance risk for anyone with data handling clauses in their contracts.",
+  "action": "Migrate sensitive repos to an alternative platform before the next training cycle. Review client contracts for conflicting data handling clauses.",
   "suggestedRiskLevel": "high",
   "isNoise": false
 }
 
-Example 4 (high — training data opt-out removal):
+Example 4 (critical — IP/licensing change):
 {
-  "summary": "The opt-out for AI model training on private repositories has been removed.",
-  "impact": "Your private code is now included in training data with no way to prevent it. If you're working on proprietary algorithms or client projects under NDA, this is a compliance risk.",
-  "action": "Migrate sensitive repositories to an alternative platform before the next training cycle. Check if your client contracts have data handling clauses that conflict with this change.",
-  "suggestedRiskLevel": "high",
+  "summary": "Your generated code now comes with a perpetual license for the platform to use, display, and create derivative works — this applies retroactively.",
+  "impact": "If you're building proprietary SaaS or client work, your code is no longer fully yours. The platform can use it for marketing, training, or competing products. Solo founders with a single flagship product are most exposed.",
+  "action": "Review the updated licensing terms immediately. Export critical projects and evaluate alternative tools before the effective date.",
+  "suggestedRiskLevel": "critical",
   "isNoise": false
 }
 
@@ -116,7 +119,7 @@ Respond with JSON only (no markdown, no backticks):
   "summary": "...",
   "impact": "...",
   "action": "...",
-  "suggestedRiskLevel": "low" | "medium" | "high",
+  "suggestedRiskLevel": "low" | "medium" | "high" | "critical",
   "isNoise": true | false
 }`;
 
@@ -132,7 +135,7 @@ Respond with JSON only (no markdown, no backticks):
       summary: string;
       impact: string;
       action: string;
-      suggestedRiskLevel: 'low' | 'medium' | 'high';
+      suggestedRiskLevel: 'low' | 'medium' | 'high' | 'critical';
       isNoise: boolean;
     };
 
@@ -181,9 +184,10 @@ Respond with JSON only (no markdown, no backticks):
   }
 }
 
-function riskLevelToPriority(level: 'low' | 'medium' | 'high'): RiskPriority {
+function riskLevelToPriority(level: 'low' | 'medium' | 'high' | 'critical'): RiskPriority {
   switch (level) {
-    case 'high': return 'critical';
+    case 'critical': return 'critical';
+    case 'high': return 'high';
     case 'medium': return 'medium';
     case 'low': return 'low';
   }

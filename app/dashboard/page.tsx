@@ -33,7 +33,7 @@ interface ChangeRow {
   summary: string | null;
   impact: string | null;
   action: string | null;
-  risk_level: 'low' | 'medium' | 'high' | null;
+  risk_level: 'low' | 'medium' | 'high' | 'critical' | null;
   risk_priority: RiskPriority | null;
   risk_bucket: string | null;
   categories: string[] | null;

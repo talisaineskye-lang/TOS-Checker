@@ -65,3 +65,34 @@ export async function fetchTosContent(url: string): Promise<string> {
 
   return cleaned;
 }
+
+/**
+ * Extract document effective/update date from content header.
+ * Looks for common patterns in the first 500 characters.
+ */
+export function extractEffectiveDate(content: string): string | null {
+  const header = content.slice(0, 500);
+
+  const patterns = [
+    /(?:last\s+(?:updated|modified|revised))\s*[:–—-]?\s*([A-Za-z]+ \d{1,2},? \d{4})/i,
+    /(?:effective\s+(?:date|as\s+of))\s*[:–—-]?\s*([A-Za-z]+ \d{1,2},? \d{4})/i,
+    /(?:updated\s+on)\s*[:–—-]?\s*([A-Za-z]+ \d{1,2},? \d{4})/i,
+    /(?:revised)\s*[:–—-]?\s*([A-Za-z]+ \d{1,2},? \d{4})/i,
+    /(?:last\s+(?:updated|modified|revised))\s*[:–—-]?\s*(\d{1,2}\/\d{1,2}\/\d{2,4})/i,
+    /(?:effective\s+(?:date|as\s+of))\s*[:–—-]?\s*(\d{1,2}\/\d{1,2}\/\d{2,4})/i,
+  ];
+
+  for (const pattern of patterns) {
+    const match = header.match(pattern);
+    if (match?.[1]) {
+      const dateStr = match[1].trim();
+      const parsed = new Date(dateStr);
+      if (!isNaN(parsed.getTime())) {
+        return parsed.toISOString().split('T')[0];
+      }
+      return dateStr;
+    }
+  }
+
+  return null;
+}

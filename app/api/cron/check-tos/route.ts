@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import { fetchTosContent } from '@/lib/fetcher';
+import { fetchTosContent, extractEffectiveDate } from '@/lib/fetcher';
 import { hashContent, hasChanged, getBasicDiff } from '@/lib/differ';
 import { analyzeChanges } from '@/lib/analyzer';
 import { sendChangeAlert } from '@/lib/notifier';
@@ -88,6 +88,29 @@ export async function GET(request: NextRequest) {
           .single();
 
         if (lastSnapshot && newSnapshot) {
+          // First-scan guard: check if this document has any prior change records
+          const { count: priorChangeCount } = await supabase
+            .from('changes')
+            .select('*', { count: 'exact', head: true })
+            .eq('document_id', doc.id);
+
+          const isFirstComparison = (priorChangeCount ?? 0) === 0;
+
+          // Stale baseline guard: if last snapshot is very old (>30 days),
+          // the document was likely inactive/reactivated. Treat as baseline reset.
+          const lastFetchedAt = new Date(lastSnapshot.fetched_at);
+          const daysSinceLastFetch = (Date.now() - lastFetchedAt.getTime()) / (1000 * 60 * 60 * 24);
+
+          if (daysSinceLastFetch > 30) {
+            console.log(`[check-tos] Stale baseline reset for "${displayName}" — last snapshot was ${Math.round(daysSinceLastFetch)} days old`);
+            await supabase
+              .from('documents')
+              .update({ last_changed_at: new Date().toISOString() })
+              .eq('id', doc.id);
+            results.push({ document: displayName, status: 'stale_baseline_reset', daysSince: Math.round(daysSinceLastFetch) });
+            continue;
+          }
+
           const diff = getBasicDiff(lastSnapshot.content, content);
 
           // Safety Net 2: Full-document replacement detection — if 80%+ of
@@ -127,11 +150,24 @@ export async function GET(request: NextRequest) {
             results.push({ document: displayName, status: 'full_replacement_baseline', changeRatio: Math.round(changeRatio * 100) });
           } else {
             // Normal incremental change — run AI analysis
-            const analysis = await analyzeChanges(displayName, diff.added, diff.removed);
+            const effectiveDate = extractEffectiveDate(content);
+            const analysis = await analyzeChanges(displayName, diff.added, diff.removed, effectiveDate);
 
             // Safety Net 3: For noise changes, force risk_level to 'low'
             const isNoise = analysis.isNoise ?? false;
             const effectiveRiskLevel = isNoise ? 'low' : analysis.riskLevel;
+
+            // First-scan noise suppression: on first-ever comparison,
+            // auto-silence noise/low changes from dynamic page content
+            if (isFirstComparison && (isNoise || effectiveRiskLevel === 'low')) {
+              console.log(`[check-tos] First-scan calibration for "${displayName}" — ${effectiveRiskLevel} change suppressed`);
+              await supabase
+                .from('documents')
+                .update({ last_changed_at: new Date().toISOString() })
+                .eq('id', doc.id);
+              results.push({ document: displayName, status: 'first_scan_calibration', riskLevel: effectiveRiskLevel });
+              continue;
+            }
 
             const { data: changeRecord } = await supabase
               .from('changes')
