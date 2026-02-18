@@ -211,7 +211,7 @@ export default function PricingPage() {
           <div className="pp-annual">
             {annual ? '$948/yr billed annually' : 'Switch to annual — save 20%'}
           </div>
-          <button className="pp-cta" onClick={() => goToCheckout('business', annual ? 'annual' : 'monthly')}>Contact us</button>
+          <a className="pp-cta" href="mailto:info@stackdrift.app?subject=StackDrift Business Plan Inquiry">Contact us</a>
           <div className="pp-divider" />
           <div className="pp-features">
             <div className="pp-feat">
