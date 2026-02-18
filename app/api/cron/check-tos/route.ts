@@ -6,6 +6,8 @@ import { analyzeChanges } from '@/lib/analyzer';
 import { sendChangeAlert } from '@/lib/notifier';
 import { DOCUMENT_TYPE_LABELS, DocumentType } from '@/lib/types';
 import { updateScannerIntelItems } from '@/lib/intel/store';
+import { deliverWebhooks } from '@/lib/webhooks/deliver';
+import { deliverSlackNotifications } from '@/lib/webhooks/slack';
 
 export const runtime = 'nodejs';
 
@@ -204,6 +206,28 @@ export async function GET(request: NextRequest) {
                   .from('changes')
                   .update({ notified: true })
                   .eq('id', changeRecord.id);
+
+                // Deliver webhooks and Slack notifications
+                const webhookData = {
+                  changeId: changeRecord.id,
+                  vendorId: doc.vendor_id,
+                  vendorName,
+                  documentType: docTypeLabel,
+                  severity: effectiveRiskLevel,
+                  summary: analysis.summary,
+                  impact: analysis.impact || '',
+                  action: analysis.action || '',
+                  tags: analysis.categories,
+                };
+
+                try {
+                  await Promise.allSettled([
+                    deliverWebhooks(webhookData),
+                    deliverSlackNotifications(webhookData),
+                  ]);
+                } catch (err) {
+                  console.error('[check-tos] Webhook/Slack delivery error:', err);
+                }
               }
             }
 
