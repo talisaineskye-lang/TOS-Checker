@@ -324,60 +324,60 @@ export default function IntelPage() {
                     </a>
                   );
                 })}
-              </div>
-            </div>
 
-            {/* ── Scanner Detections ── */}
-            {scannerItems.length > 0 && (
-              <div className="ip-scanner-section ip-reveal">
-                <div className="ip-scanner-header">
-                  <span className="ip-scanner-badge">
-                    <span className="ip-scanner-pulse" />
-                    DETECTED BY STACKDRIFT
-                  </span>
-                  <span className="ip-scanner-sub">Real-time TOS &amp; policy monitoring</span>
-                </div>
-                <div className="ip-scanner-cards">
-                  {scannerItems.map((item) => {
-                    const sevColor =
-                      item.severity === 'critical' ? 'red' :
-                      item.severity === 'warning' ? 'red' : 'blue';
-                    return (
-                      <a
-                        key={item.id}
-                        href={item.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`ip-scanner-card a-${sevColor}`}
-                      >
-                        <div className="ip-scanner-card-top">
-                          <span className={`ip-sev-dot ${sevColor}`} />
-                          <span className="ip-scanner-sev">{item.severity.toUpperCase()}</span>
-                        </div>
-                        <div className="ip-scanner-card-title">{item.title}</div>
-                        <p className="ip-scanner-card-summary">{item.summary}</p>
-                        <div className="ip-scanner-card-meta">
-                          {item.affected_vendors?.map((v) => (
-                            <span key={v} className="ip-chip vendor">{v}</span>
-                          ))}
-                          <span>{formatTime(item.pub_date)}</span>
-                        </div>
-                      </a>
-                    );
-                  })}
-                </div>
-                {scannerExtra > 0 && (
-                  <div className="ip-scanner-cta">
-                    <p>
-                      We detected <strong>{scannerExtra} more change{scannerExtra !== 1 ? 's' : ''}</strong> this week.
-                    </p>
-                    <a href="/onboarding" className="ip-scanner-cta-btn">
-                      Sign up to see them all &rarr;
-                    </a>
+                {/* ── Scanner Detections (in sidebar) ── */}
+                {scannerItems.length > 0 && (
+                  <div className="ip-scanner-section ip-reveal">
+                    <div className="ip-scanner-header">
+                      <span className="ip-scanner-badge">
+                        <span className="ip-scanner-pulse" />
+                        DETECTED BY STACKDRIFT
+                      </span>
+                      <span className="ip-scanner-sub">Real-time TOS &amp; policy monitoring</span>
+                    </div>
+                    <div className="ip-scanner-cards">
+                      {scannerItems.map((item) => {
+                        const sevColor =
+                          item.severity === 'critical' ? 'red' :
+                          item.severity === 'warning' ? 'red' : 'blue';
+                        return (
+                          <a
+                            key={item.id}
+                            href={item.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={`ip-scanner-card a-${sevColor}`}
+                          >
+                            <div className="ip-scanner-card-top">
+                              <span className={`ip-sev-dot ${sevColor}`} />
+                              <span className="ip-scanner-sev">{item.severity.toUpperCase()}</span>
+                            </div>
+                            <div className="ip-scanner-card-title">{item.title}</div>
+                            <p className="ip-scanner-card-summary">{item.summary}</p>
+                            <div className="ip-scanner-card-meta">
+                              {item.affected_vendors?.map((v) => (
+                                <span key={v} className="ip-chip vendor">{v}</span>
+                              ))}
+                              <span>{formatTime(item.pub_date)}</span>
+                            </div>
+                          </a>
+                        );
+                      })}
+                    </div>
+                    {scannerExtra > 0 && (
+                      <div className="ip-scanner-cta">
+                        <p>
+                          We detected <strong>{scannerExtra} more change{scannerExtra !== 1 ? 's' : ''}</strong> this week.
+                        </p>
+                        <a href="/onboarding" className="ip-scanner-cta-btn">
+                          Sign up to see them all &rarr;
+                        </a>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
-            )}
+            </div>
 
             {/* ── Vendor Radar Strip ── */}
             {radarVendors.length > 0 && (

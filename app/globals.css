@@ -4952,16 +4952,17 @@ a { color: inherit; text-decoration: none; }
 /* ============ INTEL SCANNER DETECTIONS ============ */
 
 .ip-scanner-section {
-  max-width: 900px;
-  margin: 0 auto 40px;
-  padding: 0 24px;
+  padding: 20px 28px 0;
+  border-top: 1px solid var(--ip-border);
+  margin-top: 4px;
 }
 
 .ip-scanner-header {
   display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 20px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  margin-bottom: 16px;
 }
 
 .ip-scanner-badge {
@@ -5002,9 +5003,9 @@ a { color: inherit; text-decoration: none; }
 
 .ip-scanner-cards {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  margin-bottom: 16px;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
 .ip-scanner-card {
@@ -5097,10 +5098,12 @@ a { color: inherit; text-decoration: none; }
 
 .ip-scanner-cta {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  padding: 16px 20px;
+  text-align: center;
+  gap: 10px;
+  padding: 14px 16px;
   background: rgba(0,212,255,0.03);
   border: 1px solid rgba(0,212,255,0.08);
   border-radius: 10px;
@@ -5134,21 +5137,6 @@ a { color: inherit; text-decoration: none; }
   box-shadow: 0 4px 16px rgba(0,212,255,0.25);
 }
 
-@media (max-width: 640px) {
-  .ip-scanner-cards {
-    grid-template-columns: 1fr;
-  }
-  .ip-scanner-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-  }
-  .ip-scanner-cta {
-    flex-direction: column;
-    text-align: center;
-    gap: 10px;
-  }
-}
 
 /* ============ CHANGE HISTORY PAGE ============ */
 
