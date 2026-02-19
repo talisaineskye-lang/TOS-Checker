@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import { Exo_2, Space_Mono } from 'next/font/google';
 import { AuthProvider } from './components/AuthProvider';
+import { Analytics } from '@vercel/analytics/next';
 
 // CODEX — wordmark only
 const codex = localFont({
@@ -75,6 +76,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en" className={`${codex.variable} ${exo2.variable} ${spaceMono.variable}`}>
       <body>
         <AuthProvider>{children}</AuthProvider>
+        <Analytics />
       </body>
     </html>
   );
