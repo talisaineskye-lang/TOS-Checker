@@ -2,10 +2,12 @@ import { redirect } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { DOCUMENT_TYPE_LABELS, DocumentType } from '@/lib/types';
 import { RiskPriority } from '@/lib/risk-buckets';
+import { hasAccess } from '@/lib/plan-gates';
 import { DashboardAlerts, DashChange } from '../components/DashboardAlerts';
 import { Logo } from '../components/Logo';
 import { DashboardNav } from '../components/DashboardNav';
 import { VendorLogo } from '../components/VendorLogo';
+import { VendorTagButton } from '../components/VendorTagButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -108,10 +110,36 @@ async function getData() {
     .order('detected_at', { ascending: false })
     .limit(20);
 
+  // Fetch user plan
+  const { data: profile } = await supabase
+    .from('user_profiles')
+    .select('plan')
+    .limit(1)
+    .single();
+
+  // Fetch vendor tags
+  const { data: vendorTags } = await supabase
+    .from('vendor_tags')
+    .select('id, vendor_id, tag_name');
+
+  // Fetch upcoming contract renewals (next 90 days) for Business users
+  const now = new Date();
+  const in90 = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000);
+  const { data: contracts } = await supabase
+    .from('vendor_contracts')
+    .select('id, vendor_id, contract_renewal_date, notice_period_days, auto_renews, contract_value, vendors(name)')
+    .gte('contract_renewal_date', now.toISOString().split('T')[0])
+    .lte('contract_renewal_date', in90.toISOString().split('T')[0])
+    .order('contract_renewal_date', { ascending: true })
+    .limit(5);
+
   return {
     vendors: (vendors ?? []) as Vendor[],
     documents: (documents ?? []) as Document[],
     changes: (changes ?? []) as unknown as ChangeRow[],
+    plan: profile?.plan || 'free',
+    vendorTags: (vendorTags ?? []) as { id: string; vendor_id: string; tag_name: string }[],
+    contracts: (contracts ?? []) as { id: string; vendor_id: string; contract_renewal_date: string; notice_period_days: number; auto_renews: boolean; contract_value: string | null; vendors: { name: string } | { name: string }[] | null }[],
   };
 }
 
@@ -121,8 +149,17 @@ export default async function Page() {
     redirect('/onboarding');
   }
 
-  const { vendors, documents, changes } = await getData();
+  const { vendors, documents, changes, plan, vendorTags, contracts } = await getData();
+  const isBusiness = hasAccess(plan, 'business');
   const documentMap = new Map(documents.map((d) => [d.id, d]));
+
+  // Group vendor tags by vendor
+  const tagsByVendor = new Map<string, { id: string; tag_name: string }[]>();
+  vendorTags.forEach((t) => {
+    const existing = tagsByVendor.get(t.vendor_id) || [];
+    existing.push({ id: t.id, tag_name: t.tag_name });
+    tagsByVendor.set(t.vendor_id, existing);
+  });
 
   // Group documents by vendor
   const docsByVendor = new Map<string, Document[]>();
@@ -272,6 +309,35 @@ export default async function Page() {
 
         <DashboardAlerts changes={dashChanges} />
 
+        {isBusiness && contracts.length > 0 && (
+          <div className="renewal-widget">
+            <div className="section-head">
+              <h2>Upcoming Renewals</h2>
+              <a href="/dashboard/settings" className="section-action">Manage &rarr;</a>
+            </div>
+            <div className="renewal-list">
+              {contracts.map((c) => {
+                const vendorObj = Array.isArray(c.vendors) ? c.vendors[0] : c.vendors;
+                const vendorName = vendorObj?.name || 'Unknown';
+                const days = Math.ceil((new Date(c.contract_renewal_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+                const urgency = days <= 14 ? 'urgent' : days <= 30 ? 'soon' : 'ok';
+                return (
+                  <div key={c.id} className={`renewal-card ${urgency}`}>
+                    <div className="renewal-vendor">{vendorName}</div>
+                    <div className="renewal-date">
+                      {new Date(c.contract_renewal_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    </div>
+                    <div className={`renewal-days ${urgency}`}>
+                      {days}d
+                    </div>
+                    {c.auto_renews && <span className="renewal-auto">Auto</span>}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         <div className="vendor-section">
           <div className="section-head">
             <h2>Tracked vendors</h2>
@@ -293,6 +359,7 @@ export default async function Page() {
                     <div className="vt-name">{v.name}</div>
                     <div className="vt-detail">{v.detail}</div>
                   </div>
+                  <VendorTagButton vendorId={v.id} plan={plan} initialTags={tagsByVendor.get(v.id) || []} />
                   <div className="vt-tags">
                     {v.docTypes.map((dt, i) => (
                       <span key={i} className={`vt-tag ${dt.cssClass}`}>{dt.short}</span>

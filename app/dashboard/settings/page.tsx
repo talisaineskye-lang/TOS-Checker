@@ -6,7 +6,7 @@ import { useAuth } from '../../components/AuthProvider';
 import { DashboardNav } from '../../components/DashboardNav';
 import { hasAccess } from '@/lib/plan-gates';
 
-type SettingsTab = 'webhooks' | 'api' | 'slack' | 'team' | 'audit';
+type SettingsTab = 'webhooks' | 'api' | 'slack' | 'team' | 'contracts' | 'audit';
 
 interface Webhook {
   id: string;
@@ -55,6 +55,28 @@ interface TeamMember {
   joined_at: string | null;
 }
 
+interface AlertRoute {
+  id: string;
+  email: string;
+  severity_filter: string;
+  vendor_filter: string;
+  active: boolean;
+  created_at: string;
+}
+
+interface VendorContract {
+  id: string;
+  vendor_id: string;
+  contract_renewal_date: string;
+  notice_period_days: number;
+  contract_value: string | null;
+  notes: string | null;
+  auto_renews: boolean;
+  reminder_sent: boolean;
+  created_at: string;
+  vendors: { name: string } | { name: string }[] | null;
+}
+
 interface AuditEntry {
   id: string;
   action: string;
@@ -68,6 +90,7 @@ const TAB_CONFIG: { id: SettingsTab; label: string; requiredPlan: string }[] = [
   { id: 'api', label: 'API Keys', requiredPlan: 'pro' },
   { id: 'slack', label: 'Slack', requiredPlan: 'pro' },
   { id: 'team', label: 'Team', requiredPlan: 'business' },
+  { id: 'contracts', label: 'Contracts', requiredPlan: 'business' },
   { id: 'audit', label: 'Audit Log', requiredPlan: 'business' },
 ];
 
@@ -111,6 +134,26 @@ export default function SettingsPage() {
   const [teamLoading, setTeamLoading] = useState(false);
   const [teamError, setTeamError] = useState<string | null>(null);
   const [teamName, setTeamName] = useState('');
+
+  // Alert route state
+  const [alertRoutes, setAlertRoutes] = useState<AlertRoute[]>([]);
+  const [newRouteEmail, setNewRouteEmail] = useState('');
+  const [newRouteSeverity, setNewRouteSeverity] = useState('all');
+  const [newRouteVendor, setNewRouteVendor] = useState('all');
+  const [routeLoading, setRouteLoading] = useState(false);
+  const [routeError, setRouteError] = useState<string | null>(null);
+
+  // Contract state
+  const [contracts, setContracts] = useState<VendorContract[]>([]);
+  const [contractVendorId, setContractVendorId] = useState('');
+  const [contractDate, setContractDate] = useState('');
+  const [contractNotice, setContractNotice] = useState('30');
+  const [contractValue, setContractValue] = useState('');
+  const [contractNotes, setContractNotes] = useState('');
+  const [contractAutoRenews, setContractAutoRenews] = useState(true);
+  const [contractLoading, setContractLoading] = useState(false);
+  const [contractError, setContractError] = useState<string | null>(null);
+  const [vendors, setVendors] = useState<{ id: string; name: string }[]>([]);
 
   // Audit state
   const [auditEntries, setAuditEntries] = useState<AuditEntry[]>([]);
@@ -184,6 +227,33 @@ export default function SettingsPage() {
     }
   }, [hasBusiness]);
 
+  // Fetch alert routes
+  const fetchAlertRoutes = useCallback(async () => {
+    if (!hasBusiness) return;
+    const res = await fetch('/api/teams/alert-routes');
+    const data = await res.json();
+    if (res.ok) setAlertRoutes(data.routes ?? []);
+  }, [hasBusiness]);
+
+  // Fetch contracts
+  const fetchContracts = useCallback(async () => {
+    if (!hasBusiness) return;
+    const res = await fetch('/api/vendor-contracts');
+    const data = await res.json();
+    if (res.ok) setContracts(data.contracts ?? []);
+  }, [hasBusiness]);
+
+  // Fetch vendor list for contract dropdown
+  const fetchVendors = useCallback(async () => {
+    if (!hasBusiness) return;
+    const { data } = await supabase
+      .from('vendors')
+      .select('id, name')
+      .eq('is_active', true)
+      .order('name');
+    setVendors(data ?? []);
+  }, [hasBusiness, supabase]);
+
   // Fetch audit log
   const fetchAudit = useCallback(async () => {
     if (!hasBusiness) return;
@@ -204,7 +274,10 @@ export default function SettingsPage() {
     fetchApiKeys();
     fetchSlack();
     fetchTeam();
-  }, [fetchWebhooks, fetchApiKeys, fetchSlack, fetchTeam]);
+    fetchAlertRoutes();
+    fetchContracts();
+    fetchVendors();
+  }, [fetchWebhooks, fetchApiKeys, fetchSlack, fetchTeam, fetchAlertRoutes, fetchContracts, fetchVendors]);
 
   useEffect(() => {
     if (activeTab === 'audit') fetchAudit();
@@ -334,6 +407,93 @@ export default function SettingsPage() {
     setSlackFilters(['critical', 'warning', 'notice']);
     setSlackActive(true);
   };
+
+  // ── Alert route handlers ──
+  const addAlertRoute = async () => {
+    if (!newRouteEmail) return;
+    setRouteLoading(true);
+    setRouteError(null);
+    const res = await fetch('/api/teams/alert-routes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: newRouteEmail,
+        severity_filter: newRouteSeverity,
+        vendor_filter: newRouteVendor,
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      setRouteError(data.error);
+    } else {
+      setNewRouteEmail('');
+      fetchAlertRoutes();
+    }
+    setRouteLoading(false);
+  };
+
+  const deleteAlertRoute = async (id: string) => {
+    await fetch('/api/teams/alert-routes', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    });
+    fetchAlertRoutes();
+  };
+
+  // ── Contract handlers ──
+  const addContract = async () => {
+    if (!contractVendorId || !contractDate) return;
+    setContractLoading(true);
+    setContractError(null);
+    const res = await fetch('/api/vendor-contracts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        vendor_id: contractVendorId,
+        contract_renewal_date: contractDate,
+        notice_period_days: parseInt(contractNotice) || 30,
+        contract_value: contractValue || null,
+        notes: contractNotes || null,
+        auto_renews: contractAutoRenews,
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      setContractError(data.error);
+    } else {
+      setContractVendorId('');
+      setContractDate('');
+      setContractNotice('30');
+      setContractValue('');
+      setContractNotes('');
+      setContractAutoRenews(true);
+      fetchContracts();
+    }
+    setContractLoading(false);
+  };
+
+  const deleteContract = async (id: string) => {
+    await fetch('/api/vendor-contracts', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    });
+    fetchContracts();
+  };
+
+  function getVendorName(contract: VendorContract): string {
+    const v = contract.vendors;
+    if (!v) return 'Unknown';
+    if (Array.isArray(v)) return v[0]?.name || 'Unknown';
+    return v.name;
+  }
+
+  function daysUntil(dateStr: string): number {
+    const d = new Date(dateStr);
+    const now = new Date();
+    return Math.ceil((d.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+  }
 
   // ── Team handlers ──
   const createTeam = async () => {
@@ -715,7 +875,152 @@ export default function SettingsPage() {
                           </div>
                         ))}
                     </div>
+
+                    {/* Shared Alert Routing */}
+                    {teamRole === 'owner' && (
+                      <div className="sett-alert-routes">
+                        <h3 className="sett-sub-heading">Shared Alert Routing</h3>
+                        <p className="sett-desc">Route alerts to shared email addresses like legal@, compliance@, or security@. Max 5 routes.</p>
+
+                        <div className="sett-form-row">
+                          <input
+                            type="email"
+                            className="sett-input"
+                            placeholder="legal@company.com"
+                            value={newRouteEmail}
+                            onChange={(e) => setNewRouteEmail(e.target.value)}
+                          />
+                          <select className="sett-select" value={newRouteSeverity} onChange={(e) => setNewRouteSeverity(e.target.value)}>
+                            <option value="all">All severities</option>
+                            <option value="critical">Critical only</option>
+                            <option value="warning_critical">Warning + Critical</option>
+                          </select>
+                          <button className="pill pill-solid pill-sm" onClick={addAlertRoute} disabled={routeLoading || !newRouteEmail}>
+                            {routeLoading ? 'Adding...' : 'Add route'}
+                          </button>
+                        </div>
+                        {routeError && <p className="sett-error">{routeError}</p>}
+
+                        {alertRoutes.length === 0 ? (
+                          <p className="sett-empty">No shared alert routes configured.</p>
+                        ) : (
+                          <div className="sett-list">
+                            {alertRoutes.map((route) => (
+                              <div key={route.id} className="sett-item">
+                                <div className="sett-item-main">
+                                  <span className="sett-item-url">{route.email}</span>
+                                  <span className="sett-item-filter">{route.severity_filter}</span>
+                                </div>
+                                <div className="sett-item-actions">
+                                  <button className="pill pill-ghost pill-sm danger" onClick={() => deleteAlertRoute(route.id)}>Remove</button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </>
+                )}
+              </div>
+            )}
+
+            {/* ── Contracts Tab (Business only) ── */}
+            {activeTab === 'contracts' && hasBusiness && (
+              <div className="sett-section">
+                <h2>Renewal Reminders</h2>
+                <p className="sett-desc">Track vendor contract renewal dates and get notified before they expire.</p>
+
+                <div className="sett-contract-form">
+                  <div className="sett-form-row">
+                    <select
+                      className="sett-select"
+                      value={contractVendorId}
+                      onChange={(e) => setContractVendorId(e.target.value)}
+                    >
+                      <option value="">Select vendor...</option>
+                      {vendors.map((v) => (
+                        <option key={v.id} value={v.id}>{v.name}</option>
+                      ))}
+                    </select>
+                    <input
+                      type="date"
+                      className="sett-input"
+                      value={contractDate}
+                      onChange={(e) => setContractDate(e.target.value)}
+                    />
+                    <button className="pill pill-solid pill-sm" onClick={addContract} disabled={contractLoading || !contractVendorId || !contractDate}>
+                      {contractLoading ? 'Adding...' : 'Add reminder'}
+                    </button>
+                  </div>
+                  <div className="sett-form-row">
+                    <input
+                      type="number"
+                      className="sett-input sett-input-sm"
+                      placeholder="Notice days"
+                      value={contractNotice}
+                      onChange={(e) => setContractNotice(e.target.value)}
+                      min="1"
+                      max="365"
+                    />
+                    <input
+                      type="text"
+                      className="sett-input"
+                      placeholder="Contract value (optional)"
+                      value={contractValue}
+                      onChange={(e) => setContractValue(e.target.value)}
+                    />
+                    <label className="sett-check">
+                      <input
+                        type="checkbox"
+                        checked={contractAutoRenews}
+                        onChange={(e) => setContractAutoRenews(e.target.checked)}
+                      />
+                      Auto-renews
+                    </label>
+                  </div>
+                  <input
+                    type="text"
+                    className="sett-input"
+                    placeholder="Notes (optional)"
+                    value={contractNotes}
+                    onChange={(e) => setContractNotes(e.target.value)}
+                  />
+                </div>
+                {contractError && <p className="sett-error">{contractError}</p>}
+
+                {contracts.length === 0 ? (
+                  <p className="sett-empty">No renewal reminders configured yet.</p>
+                ) : (
+                  <div className="sett-list">
+                    {contracts.map((c) => {
+                      const days = daysUntil(c.contract_renewal_date);
+                      const urgency = days <= 0 ? 'expired' : days <= 30 ? 'urgent' : days <= 60 ? 'soon' : 'ok';
+                      return (
+                        <div key={c.id} className="sett-item">
+                          <div className="sett-item-main">
+                            <span className="sett-item-url">{getVendorName(c)}</span>
+                            <span className={`sett-contract-days ${urgency}`}>
+                              {days <= 0 ? 'Expired' : `${days}d remaining`}
+                            </span>
+                            <span className="sett-item-filter">
+                              Renews: {new Date(c.contract_renewal_date).toLocaleDateString()}
+                            </span>
+                            {c.auto_renews && <span className="sett-contract-auto">Auto</span>}
+                            {c.contract_value && <span className="sett-item-filter">{c.contract_value}</span>}
+                          </div>
+                          <div className="sett-item-meta">
+                            <span className="sett-item-filter">Notice: {c.notice_period_days}d</span>
+                            {c.notes && <span className="sett-item-filter">{c.notes}</span>}
+                            {c.reminder_sent && <span className="sett-contract-sent">Reminder sent</span>}
+                          </div>
+                          <div className="sett-item-actions">
+                            <button className="pill pill-ghost pill-sm danger" onClick={() => deleteContract(c.id)}>Remove</button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 )}
               </div>
             )}

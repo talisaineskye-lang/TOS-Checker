@@ -195,10 +195,15 @@ export async function GET(request: NextRequest) {
             if (effectiveRiskLevel !== 'low' && !isNoise) {
               await sendChangeAlert({
                 serviceName: displayName,
+                docType: docTypeLabel,
                 summary: analysis.summary,
+                impact: analysis.impact || undefined,
+                action: analysis.action || undefined,
                 riskLevel: effectiveRiskLevel,
                 categories: analysis.categories,
                 detectedAt: new Date(),
+                vendorId: doc.vendor_id,
+                changeId: changeRecord?.id,
               });
 
               if (changeRecord?.id) {

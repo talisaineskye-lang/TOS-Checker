@@ -5925,6 +5925,19 @@ a { color: inherit; text-decoration: none; }
   font-family: var(--font-mono, 'Space Mono', monospace);
 }
 
+/* ── Settings sub-headings / alert routes ── */
+.sett-sub-heading {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--wd-white, #e8e8ed);
+  margin-bottom: 6px;
+}
+.sett-alert-routes {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--wd-line, #1a1a2e);
+}
+
 /* ── Audit log ── */
 .sett-audit-table {
   width: 100%;
@@ -5954,4 +5967,273 @@ a { color: inherit; text-decoration: none; }
   .sett-tabs {
     overflow-x: auto;
   }
+}
+
+/* ── Vendor Tag Button ── */
+.vtb-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.vtb-badges {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.vtb-badge {
+  font-size: 10px;
+  font-family: var(--font-mono, 'Space Mono', monospace);
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(123,47,255,0.12);
+  color: #b07fff;
+  white-space: nowrap;
+}
+.vtb-btn {
+  background: none;
+  border: 1px solid var(--wd-line, #1a1a2e);
+  border-radius: 6px;
+  color: var(--wd-white-faint, #555);
+  font-size: 14px;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+.vtb-btn:hover {
+  color: #4d8eff;
+  border-color: rgba(77,142,255,0.3);
+}
+.vtb-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 50;
+  width: 280px;
+  margin-top: 6px;
+  background: var(--wd-card-bg, #0d0d1a);
+  border: 1px solid var(--wd-line, #1a1a2e);
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+.vtb-gate {
+  text-align: center;
+  padding: 8px 0;
+}
+.vtb-gate p {
+  font-size: 12px;
+  color: var(--wd-white-muted, #999);
+  margin-bottom: 10px;
+}
+.vtb-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--wd-white, #e8e8ed);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.vtb-current {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+.vtb-tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(123,47,255,0.12);
+  color: #b07fff;
+}
+.vtb-tag-x {
+  background: none;
+  border: none;
+  color: #b07fff;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+  line-height: 1;
+}
+.vtb-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+.vtb-preset {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px dashed var(--wd-line, #1a1a2e);
+  background: none;
+  color: var(--wd-white-muted, #999);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.vtb-preset:hover {
+  border-color: rgba(77,142,255,0.3);
+  color: #4d8eff;
+}
+.vtb-custom {
+  display: flex;
+  gap: 4px;
+}
+.vtb-input {
+  flex: 1;
+  padding: 6px 8px;
+  font-size: 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--wd-line, #1a1a2e);
+  border-radius: 6px;
+  color: var(--wd-white-dim, #ccc);
+  font-family: var(--font-sans, 'Exo 2', sans-serif);
+}
+.vtb-input:focus {
+  outline: none;
+  border-color: rgba(77,142,255,0.3);
+}
+.vtb-add {
+  padding: 6px 10px;
+  font-size: 11px;
+  border-radius: 6px;
+  border: none;
+  background: #4d8eff;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+}
+.vtb-add:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ============ RENEWAL WIDGET (Dashboard) ============ */
+
+.renewal-widget {
+  margin-bottom: 32px;
+}
+.renewal-list {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.renewal-card {
+  flex: 0 0 auto;
+  min-width: 160px;
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--wd-line, rgba(255,255,255,0.08));
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.renewal-card.urgent {
+  border-color: rgba(255,68,68,0.3);
+  background: rgba(255,68,68,0.04);
+}
+.renewal-card.soon {
+  border-color: rgba(255,159,26,0.3);
+  background: rgba(255,159,26,0.04);
+}
+.renewal-vendor {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--wd-white, #f0f0f0);
+}
+.renewal-date {
+  font-size: 12px;
+  color: var(--wd-white-muted, #8b8d9e);
+  font-family: var(--wd-mono);
+}
+.renewal-days {
+  font-size: 18px;
+  font-weight: 700;
+  font-family: var(--wd-mono);
+  color: var(--wd-green, #00e87b);
+}
+.renewal-days.urgent {
+  color: var(--wd-red, #ff4444);
+}
+.renewal-days.soon {
+  color: var(--wd-amber, #ff9f1a);
+}
+.renewal-auto {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--wd-white-faint, #5a5d70);
+  font-family: var(--wd-mono);
+}
+
+/* ============ CONTRACT SETTINGS ============ */
+
+.sett-contract-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.sett-input-sm {
+  max-width: 120px;
+}
+.sett-contract-days {
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--wd-mono);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.sett-contract-days.ok {
+  color: var(--wd-green, #00e87b);
+  background: rgba(0,232,123,0.08);
+}
+.sett-contract-days.soon {
+  color: var(--wd-amber, #ff9f1a);
+  background: rgba(255,159,26,0.08);
+}
+.sett-contract-days.urgent {
+  color: var(--wd-red, #ff4444);
+  background: rgba(255,68,68,0.08);
+}
+.sett-contract-days.expired {
+  color: var(--wd-red, #ff4444);
+  background: rgba(255,68,68,0.15);
+}
+.sett-contract-auto {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(77,142,255,0.1);
+  color: var(--wd-blue, #4a9eff);
+  font-family: var(--wd-mono);
+}
+.sett-contract-sent {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(0,232,123,0.1);
+  color: var(--wd-green, #00e87b);
+  font-family: var(--wd-mono);
+}
+.sett-item-meta {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding-top: 4px;
 }

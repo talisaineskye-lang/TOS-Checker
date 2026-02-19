@@ -101,7 +101,7 @@ export default function PricingPage() {
         {/* Solo */}
         <div className="pp-tier pp-solo">
           <div className="pp-tier-name">Solo</div>
-          <div className="pp-tier-tagline">Stay informed. Know when your vendors change the rules.</div>
+          <div className="pp-tier-tagline">Stay informed. Know the moment your vendors change the rules.</div>
           <div className="pp-price">
             <span className="pp-currency">$</span>
             <span className="pp-amount">{annual ? '7' : '9'}</span>
@@ -202,7 +202,7 @@ export default function PricingPage() {
         {/* Business */}
         <div className="pp-tier pp-biz">
           <div className="pp-tier-name">Business</div>
-          <div className="pp-tier-tagline">Compliance-ready. For teams that need a paper trail.</div>
+          <div className="pp-tier-tagline">Compliance-ready. Built for teams that manage vendor risk.</div>
           <div className="pp-price">
             <span className="pp-currency">$</span>
             <span className="pp-amount">{annual ? '79' : '99'}</span>
@@ -233,6 +233,18 @@ export default function PricingPage() {
             <div className="pp-feat">
               <span className="pp-fi biz">&#10003;</span>
               <span className="pp-fl">Audit log &amp; data retention</span>
+            </div>
+            <div className="pp-feat">
+              <span className="pp-fi biz">&#10003;</span>
+              <span className="pp-fl">Shared alert routing<span className="pp-fd">Route to legal@, compliance@, security@</span></span>
+            </div>
+            <div className="pp-feat">
+              <span className="pp-fi biz">&#10003;</span>
+              <span className="pp-fl">Compliance tagging<span className="pp-fd">GDPR, HIPAA, SOC 2, PCI DSS &amp; custom</span></span>
+            </div>
+            <div className="pp-feat">
+              <span className="pp-fi biz">&#10003;</span>
+              <span className="pp-fl">Renewal reminders<span className="pp-fd">Never miss a contract renewal deadline</span></span>
             </div>
             <div className="pp-feat">
               <span className="pp-fi biz">&#10003;</span>
@@ -270,6 +282,9 @@ export default function PricingPage() {
             <tr><td>Team seats</td><td className="pp-tv">1</td><td className="pp-tv">1</td><td className="pp-tv">Up to 10</td></tr>
             <tr><td>Redline PDF exports</td><td className="pp-td">&mdash;</td><td className="pp-td">&mdash;</td><td className="pp-tc">&#10003;</td></tr>
             <tr><td>Audit log</td><td className="pp-td">&mdash;</td><td className="pp-td">&mdash;</td><td className="pp-tc">&#10003;</td></tr>
+            <tr><td>Shared alert routing</td><td className="pp-td">&mdash;</td><td className="pp-td">&mdash;</td><td className="pp-tc">&#10003;</td></tr>
+            <tr><td>Compliance tagging</td><td className="pp-td">&mdash;</td><td className="pp-td">&mdash;</td><td className="pp-tc">&#10003;</td></tr>
+            <tr><td>Renewal reminders</td><td className="pp-td">&mdash;</td><td className="pp-td">&mdash;</td><td className="pp-tc">&#10003;</td></tr>
           </tbody>
         </table>
       </section>
