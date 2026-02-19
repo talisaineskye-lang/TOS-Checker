@@ -2,8 +2,9 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
-  description: 'How StackDrift collects, uses, and protects your personal information. PIPEDA compliant.',
+  description: 'How StackDrift collects, uses, and protects your data. PIPEDA and GDPR compliant privacy policy covering account data, Stripe payments, and third-party services.',
   alternates: { canonical: '/privacy' },
+  openGraph: { url: '/privacy' },
 };
 
 export default function PrivacyPolicyPage() {

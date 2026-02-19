@@ -10,6 +10,7 @@ export default function LandingPage() {
   const revealRefs = useRef<(HTMLElement | null)[]>([]);
   const { user, loading: authLoading } = useAuth();
   const [showLogin, setShowLogin] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -28,22 +29,107 @@ export default function LandingPage() {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
     name: 'StackDrift',
+    description: 'SaaS vendor policy monitoring platform that tracks changes to Terms of Service, Privacy Policies, and Pricing pages across 29+ SaaS vendors. Built for indie developers and small SaaS teams.',
     applicationCategory: 'BusinessApplication',
+    applicationSubCategory: 'Vendor Management, Policy Monitoring, Compliance',
     operatingSystem: 'Web',
     url: 'https://www.stackdrift.app',
-    description: 'Monitor vendor Terms of Service, Privacy Policies, and Pricing pages. Get severity-scored alerts when your vendors change the rules.',
-    offers: {
-      '@type': 'AggregateOffer',
-      priceCurrency: 'USD',
-      lowPrice: '0',
-      highPrice: '99',
-      offerCount: '4',
-    },
-    publisher: {
+    offers: [
+      {
+        '@type': 'Offer',
+        name: 'Solo',
+        price: '9',
+        priceCurrency: 'USD',
+        priceValidUntil: '2026-12-31',
+        description: 'Monitor 29 curated vendors with AI-powered change summaries',
+      },
+      {
+        '@type': 'Offer',
+        name: 'Pro',
+        price: '29',
+        priceCurrency: 'USD',
+        priceValidUntil: '2026-12-31',
+        description: 'Webhooks, Slack integration, and full change history for workflow automation',
+      },
+      {
+        '@type': 'Offer',
+        name: 'Business',
+        price: '99',
+        priceCurrency: 'USD',
+        priceValidUntil: '2026-12-31',
+        description: 'Team seats, audit logs, redline PDF exports, and renewal reminders for compliance-ready teams',
+      },
+    ],
+    featureList: [
+      'Automated vendor policy change detection',
+      'AI-powered change analysis and severity classification',
+      'Terms of Service monitoring',
+      'Privacy Policy monitoring',
+      'Pricing page monitoring',
+      'Real-time email and Slack alerts',
+      'Webhook and JSON API integration',
+      'Redline PDF compliance reports',
+    ],
+    creator: {
       '@type': 'Organization',
       name: 'StackDrift',
       url: 'https://www.stackdrift.app',
     },
+  };
+
+  const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'What is StackDrift?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'StackDrift is a SaaS vendor policy monitoring platform that automatically tracks changes to Terms of Service, Privacy Policies, Acceptable Use Policies, and Pricing pages across 29+ SaaS vendors including Stripe, AWS, Vercel, OpenAI, and Anthropic.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Who is StackDrift for?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'StackDrift is built for indie developers, startup founders, and small SaaS teams who depend on third-party vendors but don\'t have legal departments to monitor policy changes.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'How does StackDrift detect vendor policy changes?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'StackDrift automatically fetches and hashes vendor policy documents on a regular schedule. When a change is detected, AI analyzes the diff to determine what changed, why it matters, and what action you should take, then classifies the severity as critical, warning, or notice.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'What vendors does StackDrift monitor?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'StackDrift monitors 29+ SaaS vendors across categories including payment processors (Stripe, PayPal, Square), cloud infrastructure (AWS, Vercel, Netlify), AI platforms (OpenAI, Anthropic, Google Gemini), and development tools (GitHub, Cursor, Bolt.new).',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'How much does StackDrift cost?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'StackDrift offers three paid plans: Solo at $9/month for individual monitoring, Pro at $29/month for automation and workflow integration, and Business at $99/month for teams needing compliance features like audit logs and redline PDF exports. Annual billing saves 20%.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'What is Drift Intel?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Drift Intel is StackDrift\'s free weekly newsletter and news feed covering SaaS vendor policy changes, AI industry developments, compliance updates, and business news relevant to indie developers and SaaS builders.',
+        },
+      },
+    ],
   };
 
   return (
@@ -51,6 +137,10 @@ export default function LandingPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       {/* Nav */}
       <nav className="lp-nav">
@@ -370,12 +460,88 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* Brand Definition */}
+        <section className="lp-brand lp-reveal" ref={(el) => { revealRefs.current[6] = el; }}>
+          <div className="tag">About StackDrift</div>
+          <h2>What is StackDrift?</h2>
+          <p>
+            StackDrift is a <strong>vendor policy monitoring platform</strong> built for
+            SaaS teams, indie developers, and compliance professionals. It automatically
+            tracks changes to Terms of Service, privacy policies, acceptable use
+            policies, and pricing pages across your entire vendor stack.
+          </p>
+          <p>
+            When a vendor updates their legal or pricing documents, StackDrift detects
+            the change within hours, classifies its severity using AI, and delivers a
+            plain-English summary with a line-by-line diff. Alerts route to Slack,
+            email, or webhooks &mdash; so legal, finance, and engineering each see what
+            matters to them.
+          </p>
+          <p>
+            Founded in 2026 and based in Canada, StackDrift currently monitors 29+
+            curated vendors across payments, cloud infrastructure, AI platforms, and
+            developer tools &mdash; with support for unlimited custom vendors on higher
+            tiers.
+          </p>
+        </section>
+
         {/* CTA */}
-        <section className="lp-cta lp-reveal" ref={(el) => { revealRefs.current[6] = el; }}>
+        <section className="lp-cta lp-reveal" ref={(el) => { revealRefs.current[7] = el; }}>
           <h2>Stop getting<br />blindsided.</h2>
           <p>Start monitoring your vendor stack today. Free during early access.</p>
           <div className="cta-pills">
             <a className="btn-primary" href="/onboarding">Get early access</a>
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section className="lp-faq lp-reveal" ref={(el) => { revealRefs.current[8] = el; }}>
+          <div className="tag">Frequently asked questions</div>
+          <h2>Common questions about StackDrift</h2>
+          <div className="lp-faq-list">
+            {[
+              {
+                q: 'What does StackDrift monitor?',
+                a: 'StackDrift monitors Terms of Service, privacy policies, acceptable use policies, and pricing pages for SaaS vendors. We scan documents every 6 hours and detect changes using AI-powered diff analysis.',
+              },
+              {
+                q: 'Who is StackDrift for?',
+                a: 'StackDrift is built for indie developers, startup founders, and small SaaS teams who depend on third-party vendors but don\u2019t have legal departments to monitor policy changes.',
+              },
+              {
+                q: 'How does severity scoring work?',
+                a: 'Each detected change is classified by AI into four severity levels: Critical (liability shifts, data sharing changes), Warning (pricing changes, new restrictions), Notice (minor wording updates), and Stable (no changes detected). This helps you prioritize what needs attention.',
+              },
+              {
+                q: 'Which vendors does StackDrift track?',
+                a: 'We monitor 29+ vendors across payments (Stripe, PayPal), cloud (AWS, Vercel, Cloudflare), AI (OpenAI, Anthropic), and developer tools (GitHub, Cursor). Pro and Business plans let you add custom vendors.',
+              },
+              {
+                q: 'How is StackDrift different from a Google Alert?',
+                a: 'Google Alerts monitors news mentions. StackDrift monitors the actual legal and pricing documents themselves, detects exact changes with line-by-line diffs, classifies severity with AI, and routes alerts to the right team. It\u2019s purpose-built for vendor risk.',
+              },
+              {
+                q: 'Can I integrate StackDrift with my existing tools?',
+                a: 'Yes. Pro and Business plans include Slack integration, webhooks, and a JSON API. You can route alerts by severity to different channels \u2014 critical changes to legal, pricing changes to finance, API changes to engineering.',
+              },
+            ].map((item, i) => (
+              <div
+                key={i}
+                className={`lp-faq-item${openFaq === i ? ' open' : ''}`}
+              >
+                <button
+                  className="lp-faq-q"
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  aria-expanded={openFaq === i}
+                >
+                  <span>{item.q}</span>
+                  <span className="lp-faq-icon">{openFaq === i ? '\u2212' : '+'}</span>
+                </button>
+                <div className="lp-faq-a">
+                  <p>{item.a}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 
@@ -385,6 +551,7 @@ export default function LandingPage() {
           <div className="f-links">
             <a href="/intel">Intel</a>
             <a href="/pricing">Pricing</a>
+            <a href="/about">About</a>
             <a href="/privacy">Privacy</a>
             <a href="/terms">Terms</a>
             <a href="mailto:support@stackdrift.app">support@stackdrift.app</a>

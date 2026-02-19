@@ -2,9 +2,10 @@ import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 
 export const metadata: Metadata = {
-  title: 'Intel',
-  description: 'Latest vendor policy changes detected by StackDrift. Real-time monitoring of Terms of Service, Privacy Policies, and Pricing pages.',
+  title: 'Drift Intel — SaaS Vendor Policy News & Analysis',
+  description: 'Drift Intel delivers curated SaaS vendor policy news and AI-classified updates on Terms of Service, privacy policies, and pricing changes every week.',
   alternates: { canonical: '/intel' },
+  openGraph: { url: '/intel' },
 };
 
 export default function IntelLayout({ children }: { children: ReactNode }) {

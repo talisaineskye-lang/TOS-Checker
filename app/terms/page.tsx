@@ -2,8 +2,9 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Terms of Service',
-  description: 'Terms and conditions for using StackDrift vendor monitoring services.',
+  description: 'Terms of Service for StackDrift, the SaaS vendor policy monitoring platform. Covers subscriptions, API usage, data accuracy disclaimers, and acceptable use.',
   alternates: { canonical: '/terms' },
+  openGraph: { url: '/terms' },
 };
 
 export default function TermsOfServicePage() {

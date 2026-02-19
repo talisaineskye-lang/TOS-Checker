@@ -142,10 +142,20 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: 'id is required' }, { status: 400 });
   }
 
-  const { error } = await supabase
+  const teamId = await getTeamId(gate.userId);
+
+  let query = supabase
     .from('vendor_contracts')
     .delete()
     .eq('id', id);
+
+  if (teamId) {
+    query = query.eq('team_id', teamId);
+  } else {
+    query = query.eq('user_id', gate.userId);
+  }
+
+  const { error } = await query;
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

@@ -20,14 +20,42 @@ export default function PricingPage() {
     '@type': 'WebPage',
     name: 'StackDrift Pricing',
     url: 'https://www.stackdrift.app/pricing',
-    description: 'Simple plans for monitoring your vendor stack.',
+    description: 'StackDrift pricing plans for SaaS vendor monitoring. Solo, Pro, and Business tiers.',
     mainEntity: {
       '@type': 'Product',
       name: 'StackDrift',
+      description: 'SaaS vendor policy monitoring with AI-powered change detection and alerts.',
       offers: [
-        { '@type': 'Offer', name: 'Solo', price: '9', priceCurrency: 'USD', billingDuration: 'P1M' },
-        { '@type': 'Offer', name: 'Pro', price: '29', priceCurrency: 'USD', billingDuration: 'P1M' },
-        { '@type': 'Offer', name: 'Business', price: '99', priceCurrency: 'USD', billingDuration: 'P1M' },
+        {
+          '@type': 'Offer',
+          name: 'Solo',
+          price: '9',
+          priceCurrency: 'USD',
+          priceValidUntil: '2026-12-31',
+          description: '29 curated vendors, up to 5 custom vendors, weekly digest, AI summaries.',
+          url: 'https://www.stackdrift.app/pricing',
+          availability: 'https://schema.org/InStock',
+        },
+        {
+          '@type': 'Offer',
+          name: 'Pro',
+          price: '29',
+          priceCurrency: 'USD',
+          priceValidUntil: '2026-12-31',
+          description: 'Everything in Solo plus real-time alerts, Slack, webhooks, API, 20 custom vendors.',
+          url: 'https://www.stackdrift.app/pricing',
+          availability: 'https://schema.org/InStock',
+        },
+        {
+          '@type': 'Offer',
+          name: 'Business',
+          price: '99',
+          priceCurrency: 'USD',
+          priceValidUntil: '2026-12-31',
+          description: 'Everything in Pro plus team seats, compliance tagging, redline PDFs, unlimited vendors.',
+          url: 'https://www.stackdrift.app/pricing',
+          availability: 'https://schema.org/InStock',
+        },
       ],
     },
   };
@@ -68,7 +96,7 @@ export default function PricingPage() {
       {/* Hero */}
       <section className="pp-hero">
         <div className="pp-badge"><span className="pp-badge-dot" /> PRICING</div>
-        <h1>Stay informed.<br /><span className="dim">Stay ahead.</span></h1>
+        <h1>StackDrift Pricing<br /><span className="dim">Plans for Every Team Size</span></h1>
         <p className="pp-sub">
           Know the moment your vendors change the rules. Choose the tier that fits how you work.
         </p>

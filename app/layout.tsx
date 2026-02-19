@@ -34,20 +34,21 @@ const spaceMono = Space_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: 'StackDrift — Vendor Policy Monitoring for SaaS Teams',
+    default: 'StackDrift — Automated Vendor Policy Monitoring | Track TOS, Privacy & Pricing Changes',
     template: '%s | StackDrift',
   },
   description:
-    'Monitor vendor Terms of Service, Privacy Policies, and Pricing pages. Get severity-scored alerts when your vendors change the rules.',
+    'StackDrift monitors Terms of Service, Privacy Policies, and Pricing pages across 29+ SaaS vendors. Get AI-powered change detection, severity scoring, and real-time alerts. Built for indie devs and SaaS teams.',
   metadataBase: new URL('https://www.stackdrift.app'),
+  alternates: { canonical: '/' },
   openGraph: {
     type: 'website',
     locale: 'en_CA',
     url: 'https://www.stackdrift.app',
     siteName: 'StackDrift',
-    title: 'StackDrift — Vendor Policy Monitoring for SaaS Teams',
+    title: 'StackDrift — Automated Vendor Policy Monitoring | Track TOS, Privacy & Pricing Changes',
     description:
-      'Track changes to Terms of Service, privacy policies, and pricing pages across your SaaS stack. AI-powered analysis with real-time alerts.',
+      'StackDrift monitors Terms of Service, Privacy Policies, and Pricing pages across 29+ SaaS vendors. AI-powered change detection, severity scoring, and real-time alerts.',
     images: [
       {
         url: 'https://www.stackdrift.app/og-image.png',
@@ -60,9 +61,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'StackDrift — Vendor Policy Monitoring for SaaS Teams',
+    title: 'StackDrift — Automated Vendor Policy Monitoring | Track TOS, Privacy & Pricing Changes',
     description:
-      'Track changes to Terms of Service, privacy policies, and pricing pages across your SaaS stack.',
+      'StackDrift monitors Terms of Service, Privacy Policies, and Pricing pages across 29+ SaaS vendors. AI-powered change detection with real-time alerts.',
     images: ['https://www.stackdrift.app/og-image.png'],
   },
   icons: {

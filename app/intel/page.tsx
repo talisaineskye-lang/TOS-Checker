@@ -223,7 +223,7 @@ export default function IntelPage() {
                 </div>
 
                 <h1 className="ip-hero-title">
-                  What&apos;s moving<br />in your <span className="ip-accent">stack.</span>
+                  Drift Intel<br /><span className="ip-accent">SaaS Vendor Policy News &amp; Analysis</span>
                 </h1>
 
                 <p className="ip-hero-sub">
