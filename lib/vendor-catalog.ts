@@ -5,7 +5,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'stripe',
     name: 'Stripe',
-    logoUrl: 'https://logo.clearbit.com/stripe.com',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://stripe.com',
     category: 'payment_finance',
     baseUrl: 'https://stripe.com',
     documents: [
@@ -20,7 +20,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'paypal',
     name: 'PayPal',
-    logoUrl: 'https://logo.clearbit.com/paypal.com',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://paypal.com',
     category: 'payment_finance',
     baseUrl: 'https://paypal.com',
     documents: [
@@ -33,7 +33,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'square',
     name: 'Square',
-    logoUrl: 'https://logo.clearbit.com/squareup.com',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://squareup.com',
     category: 'payment_finance',
     baseUrl: 'https://squareup.com',
     documents: [
@@ -46,7 +46,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'wise',
     name: 'Wise',
-    logoUrl: 'https://logo.clearbit.com/wise.com',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://wise.com',
     category: 'payment_finance',
     baseUrl: 'https://wise.com',
     documents: [
@@ -58,7 +58,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'gumroad',
     name: 'Gumroad',
-    logoUrl: 'https://logo.clearbit.com/gumroad.com',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://gumroad.com',
     category: 'payment_finance',
     baseUrl: 'https://gumroad.com',
     documents: [
@@ -71,7 +71,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'paddle',
     name: 'Paddle',
-    logoUrl: 'https://logo.clearbit.com/paddle.com',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://paddle.com',
     category: 'payment_finance',
     baseUrl: 'https://paddle.com',
     documents: [
@@ -86,7 +86,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'aws',
     name: 'AWS',
-    logoUrl: 'https://logo.clearbit.com/aws.amazon.com',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://aws.amazon.com',
     category: 'cloud_infrastructure',
     baseUrl: 'https://aws.amazon.com',
     documents: [
@@ -98,7 +98,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'google-cloud',
     name: 'Google Cloud',
-    logoUrl: 'https://logo.clearbit.com/cloud.google.com',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://cloud.google.com',
     category: 'cloud_infrastructure',
     baseUrl: 'https://cloud.google.com',
     documents: [
@@ -111,7 +111,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'azure',
     name: 'Azure',
-    logoUrl: 'https://logo.clearbit.com/azure.microsoft.com',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://azure.microsoft.com',
     category: 'cloud_infrastructure',
     baseUrl: 'https://azure.microsoft.com',
     documents: [
@@ -123,7 +123,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'cloudflare',
     name: 'Cloudflare',
-    logoUrl: 'https://logo.clearbit.com/cloudflare.com',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://cloudflare.com',
     category: 'cloud_infrastructure',
     baseUrl: 'https://cloudflare.com',
     documents: [
@@ -135,7 +135,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'vercel',
     name: 'Vercel',
-    logoUrl: 'https://logo.clearbit.com/vercel.com',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://vercel.com',
     category: 'cloud_infrastructure',
     baseUrl: 'https://vercel.com',
     documents: [
@@ -148,7 +148,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'netlify',
     name: 'Netlify',
-    logoUrl: 'https://logo.clearbit.com/netlify.com',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://netlify.com',
     category: 'cloud_infrastructure',
     baseUrl: 'https://netlify.com',
     documents: [
@@ -162,7 +162,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'openai',
     name: 'OpenAI',
-    logoUrl: 'https://logo.clearbit.com/openai.com',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://openai.com',
     category: 'ai_ml',
     baseUrl: 'https://openai.com',
     documents: [
@@ -177,7 +177,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'anthropic',
     name: 'Anthropic',
-    logoUrl: 'https://logo.clearbit.com/anthropic.com',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://anthropic.com',
     category: 'ai_ml',
     baseUrl: 'https://anthropic.com',
     documents: [
@@ -191,7 +191,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'google-gemini',
     name: 'Google Gemini',
-    logoUrl: 'https://logo.clearbit.com/gemini.google.com',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://gemini.google.com',
     category: 'ai_ml',
     baseUrl: 'https://gemini.google.com',
     documents: [
@@ -205,7 +205,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'perplexity',
     name: 'Perplexity',
-    logoUrl: 'https://logo.clearbit.com/perplexity.ai',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://perplexity.ai',
     category: 'ai_ml',
     baseUrl: 'https://perplexity.ai',
     documents: [
@@ -217,7 +217,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'huggingface',
     name: 'Hugging Face',
-    logoUrl: 'https://logo.clearbit.com/huggingface.co',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://huggingface.co',
     category: 'ai_ml',
     baseUrl: 'https://huggingface.co',
     documents: [
@@ -229,7 +229,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'replicate',
     name: 'Replicate',
-    logoUrl: 'https://logo.clearbit.com/replicate.com',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://replicate.com',
     category: 'ai_ml',
     baseUrl: 'https://replicate.com',
     documents: [
@@ -244,7 +244,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'lovable',
     name: 'Lovable',
-    logoUrl: 'https://logo.clearbit.com/lovable.dev',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://lovable.dev',
     category: 'ai_builders',
     baseUrl: 'https://lovable.dev',
     documents: [
@@ -256,7 +256,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'bolt',
     name: 'Bolt.new',
-    logoUrl: 'https://logo.clearbit.com/bolt.new',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://bolt.new',
     category: 'ai_builders',
     baseUrl: 'https://bolt.new',
     documents: [
@@ -268,7 +268,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'cursor',
     name: 'Cursor',
-    logoUrl: 'https://logo.clearbit.com/cursor.com',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://cursor.com',
     category: 'ai_builders',
     baseUrl: 'https://cursor.com',
     documents: [
@@ -280,7 +280,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'replit',
     name: 'Replit',
-    logoUrl: 'https://logo.clearbit.com/replit.com',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://replit.com',
     category: 'ai_builders',
     baseUrl: 'https://replit.com',
     documents: [
@@ -292,7 +292,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'vercel-v0',
     name: 'Vercel v0',
-    logoUrl: 'https://logo.clearbit.com/v0.dev',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://v0.dev',
     category: 'ai_builders',
     baseUrl: 'https://v0.dev',
     documents: [
@@ -304,7 +304,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'bubble',
     name: 'Bubble',
-    logoUrl: 'https://logo.clearbit.com/bubble.io',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://bubble.io',
     category: 'ai_builders',
     baseUrl: 'https://bubble.io',
     documents: [
@@ -316,7 +316,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'flutterflow',
     name: 'FlutterFlow',
-    logoUrl: 'https://logo.clearbit.com/flutterflow.io',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://flutterflow.io',
     category: 'ai_builders',
     baseUrl: 'https://flutterflow.io',
     documents: [
@@ -328,7 +328,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'webflow',
     name: 'Webflow',
-    logoUrl: 'https://logo.clearbit.com/webflow.com',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://webflow.com',
     category: 'ai_builders',
     baseUrl: 'https://webflow.com',
     documents: [
@@ -340,7 +340,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'framer',
     name: 'Framer',
-    logoUrl: 'https://logo.clearbit.com/framer.com',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://framer.com',
     category: 'ai_builders',
     baseUrl: 'https://framer.com',
     documents: [
@@ -352,7 +352,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'durable',
     name: 'Durable',
-    logoUrl: 'https://logo.clearbit.com/durable.co',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://durable.co',
     category: 'ai_builders',
     baseUrl: 'https://durable.co',
     documents: [
@@ -366,7 +366,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'github',
     name: 'GitHub',
-    logoUrl: 'https://logo.clearbit.com/github.com',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://github.com',
     category: 'developer_tools',
     baseUrl: 'https://github.com',
     documents: [

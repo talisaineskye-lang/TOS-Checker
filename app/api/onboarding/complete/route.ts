@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
         .insert({
           name: custom.name,
           slug: custom.name.toLowerCase().replace(/\s+/g, '-'),
-          logo_url: `https://logo.clearbit.com/${new URL(custom.baseUrl).hostname}`,
+          logo_url: `https://www.google.com/s2/favicons?sz=128&domain_url=${custom.baseUrl}`,
           category: null,
           base_url: custom.baseUrl,
           is_custom: true,
