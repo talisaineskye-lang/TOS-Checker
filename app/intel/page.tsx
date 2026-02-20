@@ -96,8 +96,6 @@ export default function IntelPage() {
     return () => observer.disconnect();
   }, [items]);
 
-  const [scannerMeta, setScannerMeta] = useState({ totalChangesThisWeek: 0 });
-
   const [quickHitsData, setQuickHitsData] = useState<{
     spotlight: { label: string; accentColor: string; article: IntelItem } | null;
     quickHits: IntelItem[];
@@ -112,7 +110,6 @@ export default function IntelPage() {
     ])
       .then(([feedData, qhData]) => {
         setItems(feedData.items || []);
-        setScannerMeta(feedData.scannerMeta || { totalChangesThisWeek: 0 });
         setQuickHitsData({
           spotlight: qhData.spotlight || null,
           quickHits: qhData.quickHits || [],
@@ -128,8 +125,6 @@ export default function IntelPage() {
   // Separate scanner-detected items from regular feed
   const scannerItems = items.filter((i) => i.source === 'scanner');
   const feedItems = items.filter((i) => i.source !== 'scanner');
-  const scannerExtra = Math.max(0, scannerMeta.totalChangesThisWeek - scannerItems.length);
-
   // Split items: featured (first), river (rest — skip 8 to leave room)
   const featured = feedItems[0] || null;
   const riverItems = feedItems.slice(8);
@@ -397,16 +392,6 @@ export default function IntelPage() {
                     );
                   })}
                 </div>
-                {scannerExtra > 0 && (
-                  <div className="ip-scanner-cta">
-                    <p>
-                      We detected <strong>{scannerExtra} more change{scannerExtra !== 1 ? 's' : ''}</strong> this week.
-                    </p>
-                    <a href="/onboarding" className="ip-scanner-cta-btn">
-                      Sign up to see them all &rarr;
-                    </a>
-                  </div>
-                )}
               </div>
             )}
 
