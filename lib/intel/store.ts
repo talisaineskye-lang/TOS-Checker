@@ -107,6 +107,7 @@ export async function updateScannerIntelItems(): Promise<number> {
     .from('changes')
     .select('*, vendors(name), documents(doc_type, url)')
     .eq('is_noise', false)
+    .neq('analysis_failed', true)
     .gte('detected_at', cutoff)
     .order('detected_at', { ascending: false });
 

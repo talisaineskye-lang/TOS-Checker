@@ -120,7 +120,7 @@ export function AlertCard({
       )}
 
       <div className="alert-card-actions">
-        {isFallback && changeId && (
+        {changeId && (
           <button
             onClick={handleReanalyze}
             disabled={analyzing}

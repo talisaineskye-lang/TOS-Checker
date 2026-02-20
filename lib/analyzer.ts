@@ -16,11 +16,39 @@ export interface AnalysisResult {
   categories: string[];
   title: string;
   isNoise: boolean;
+  analysisFailed: boolean;
+}
+
+const MAX_DIFF_CHARS = 12_000;
+const TRUNCATED_HALF = 5_000;
+
+/** Returns true for transient errors worth retrying (rate limit, server error, network). */
+function isRetryable(err: unknown): boolean {
+  if (err && typeof err === 'object' && 'status' in err) {
+    const status = (err as { status: number }).status;
+    return status === 429 || status >= 500;
+  }
+  // Network/timeout errors don't have a status code
+  if (err instanceof Error && (err.message.includes('timeout') || err.message.includes('ECONNRESET') || err.message.includes('fetch failed'))) {
+    return true;
+  }
+  return false;
 }
 
 function extractTextContent(content: Anthropic.Messages.Message['content']) {
   const textBlock = content.find((block) => block.type === 'text');
   return textBlock && 'text' in textBlock ? textBlock.text : '';
+}
+
+/** Extract JSON from a response that might be wrapped in markdown code blocks. */
+function extractJson(raw: string): string {
+  // Strip markdown code fences if present: ```json ... ``` or ``` ... ```
+  const fenced = raw.match(/```(?:json)?\s*\n?([\s\S]*?)\n?\s*```/);
+  if (fenced) return fenced[1].trim();
+  // Otherwise try to extract the first { ... } object
+  const braces = raw.match(/\{[\s\S]*\}/);
+  if (braces) return braces[0];
+  return raw.trim();
 }
 
 export async function analyzeChanges(
@@ -32,7 +60,30 @@ export async function analyzeChanges(
   // First, classify the change using keyword detection
   const addedText = added.join('\n');
   const removedText = removed.join('\n');
+  const totalDiffChars = addedText.length + removedText.length;
   const classification = classifyChange(addedText, removedText);
+
+  // Truncate large diffs to prevent context-length errors
+  let effectiveAdded = added;
+  let effectiveRemoved = removed;
+  let truncationNote = '';
+
+  if (totalDiffChars > MAX_DIFF_CHARS) {
+    console.warn(`[analyzer] Diff for "${serviceName}" is ${totalDiffChars} chars — truncating to ~${TRUNCATED_HALF * 2} chars`);
+    const truncateLines = (lines: string[], limit: number) => {
+      const result: string[] = [];
+      let chars = 0;
+      for (const line of lines) {
+        if (chars + line.length > limit) break;
+        result.push(line);
+        chars += line.length;
+      }
+      return result;
+    };
+    effectiveAdded = truncateLines(added, TRUNCATED_HALF);
+    effectiveRemoved = truncateLines(removed, TRUNCATED_HALF);
+    truncationNote = `\n\n[Diff truncated — showing first ~${TRUNCATED_HALF} chars of each section out of ${totalDiffChars} total chars. Focus your analysis on the visible changes.]`;
+  }
 
   // Build context about detected risk buckets
   const detectedBucketInfo = classification.buckets.length > 0
@@ -44,10 +95,10 @@ export async function analyzeChanges(
   const prompt = `You are analyzing a policy/TOS change for "${serviceName}", a tool used by indie developers and SaaS founders. Write as if briefing a busy indie founder who has 30 seconds to decide if this matters to their business.
 
 Here are the sentences that were ADDED:
-${added.map((sentence) => `+ ${sentence}`).join('\n') || '(none)'}
+${effectiveAdded.map((sentence) => `+ ${sentence}`).join('\n') || '(none)'}
 
 Here are the sentences that were REMOVED:
-${removed.map((sentence) => `- ${sentence}`).join('\n') || '(none)'}
+${effectiveRemoved.map((sentence) => `- ${sentence}`).join('\n') || '(none)'}${truncationNote}
 ${effectiveDate ? `\nDocument effective/update date: ${effectiveDate}` : ''}
 
 Our keyword analysis detected these risk categories:
@@ -123,67 +174,109 @@ Respond with JSON only (no markdown, no backticks):
   "isNoise": true | false
 }`;
 
-  try {
-    const message = await anthropic.messages.create({
+  const callSonnet = () =>
+    anthropic.messages.create({
       model: 'claude-sonnet-4-20250514',
       max_tokens: 800,
       messages: [{ role: 'user', content: prompt }],
     });
 
-    const responseText = extractTextContent(message.content);
-    const llmResult = JSON.parse(responseText) as {
-      summary: string;
-      impact: string;
-      action: string;
-      suggestedRiskLevel: 'low' | 'medium' | 'high' | 'critical';
-      isNoise: boolean;
-    };
+  let lastError: unknown;
 
-    // Trust the LLM's risk assessment as primary signal — it understands context
-    // (e.g. translations, rewording) that keyword matching cannot distinguish
-    const finalRiskLevel = llmResult.suggestedRiskLevel;
+  // Attempt up to 2 times: initial call + 1 retry for transient errors
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const message = await callSonnet();
 
-    // Derive priority from the LLM's risk level for consistency
-    const finalPriority = riskLevelToPriority(finalRiskLevel);
+      const responseText = extractTextContent(message.content);
+      const jsonText = extractJson(responseText);
 
-    console.log(`[analyzer] "${serviceName}" → Sonnet: suggestedRiskLevel=${finalRiskLevel}, isNoise=${llmResult.isNoise} → stored: risk_level=${finalRiskLevel}, risk_priority=${finalPriority}`);
+      console.log(`[analyzer] Raw Sonnet response for "${serviceName}" (${responseText.length} chars):`, responseText.slice(0, 500));
 
-    // Generate title based on platform and primary bucket
-    const title = generateAlertTitle(serviceName, classification.primaryBucket);
+      const llmResult = JSON.parse(jsonText) as {
+        summary: string;
+        impact: string;
+        action: string;
+        suggestedRiskLevel: 'low' | 'medium' | 'high' | 'critical';
+        isNoise: boolean;
+      };
 
-    return {
-      summary: llmResult.summary,
-      impact: llmResult.impact,
-      action: llmResult.action,
-      riskLevel: finalRiskLevel,
-      riskBucket: classification.primaryBucket,
-      riskPriority: finalPriority,
-      categories: classification.buckets,
-      title,
-      isNoise: llmResult.isNoise,
-    };
-  } catch (err) {
-    // Log the actual error so we can diagnose API failures
-    console.error(
-      `[analyzer] Claude API failed for "${serviceName}":`,
-      err instanceof Error ? err.message : err
-    );
+      // Guard against missing fields — Sonnet might use different key names
+      if (!llmResult.summary || !llmResult.impact || !llmResult.suggestedRiskLevel) {
+        console.error(`[analyzer] Sonnet returned incomplete JSON for "${serviceName}":`, JSON.stringify(llmResult));
+        throw new Error('Sonnet returned incomplete JSON — missing required fields');
+      }
 
-    // Fallback to keyword-only classification
-    const title = generateAlertTitle(serviceName, classification.primaryBucket);
+      // Trust the LLM's risk assessment as primary signal — it understands context
+      // (e.g. translations, rewording) that keyword matching cannot distinguish
+      const finalRiskLevel = llmResult.suggestedRiskLevel;
 
-    return {
-      summary: 'Policy change detected. Review the document for details.',
-      impact: 'Unable to assess impact — review the document manually.',
-      action: 'Review the linked document for details.',
-      riskLevel: classification.riskLevel,
-      riskBucket: classification.primaryBucket,
-      riskPriority: classification.priority,
-      categories: classification.buckets,
-      title,
-      isNoise: false,
-    };
+      // Derive priority from the LLM's risk level for consistency
+      const finalPriority = riskLevelToPriority(finalRiskLevel);
+
+      console.log(`[analyzer] "${serviceName}" → Sonnet: suggestedRiskLevel=${finalRiskLevel}, isNoise=${llmResult.isNoise} → stored: risk_level=${finalRiskLevel}, risk_priority=${finalPriority}${totalDiffChars > MAX_DIFF_CHARS ? ` (diff was truncated from ${totalDiffChars} chars)` : ''}`);
+
+      // Generate title based on platform and primary bucket
+      const title = generateAlertTitle(serviceName, classification.primaryBucket);
+
+      return {
+        summary: llmResult.summary,
+        impact: llmResult.impact,
+        action: llmResult.action,
+        riskLevel: finalRiskLevel,
+        riskBucket: classification.primaryBucket,
+        riskPriority: finalPriority,
+        categories: classification.buckets,
+        title,
+        isNoise: llmResult.isNoise,
+        analysisFailed: false,
+      };
+    } catch (err) {
+      lastError = err;
+
+      // Build structured error info for logging
+      const errStatus = err && typeof err === 'object' && 'status' in err ? (err as { status: number }).status : null;
+      const errName = err instanceof Error ? err.name : 'UnknownError';
+      const errMsg = err instanceof Error ? err.message : String(err);
+
+      console.error(`[analyzer] Claude API failed for "${serviceName}" (attempt ${attempt}/2):`, {
+        errorType: errName,
+        status: errStatus,
+        message: errMsg,
+        diffChars: totalDiffChars,
+        addedLines: added.length,
+        removedLines: removed.length,
+        truncated: totalDiffChars > MAX_DIFF_CHARS,
+      });
+
+      // Only retry on transient errors; bail immediately on 400 (context length) or other client errors
+      if (attempt === 1 && isRetryable(err)) {
+        console.log(`[analyzer] Retrying "${serviceName}" in 2s...`);
+        await new Promise((r) => setTimeout(r, 2000));
+        continue;
+      }
+
+      break;
+    }
   }
+
+  // All attempts exhausted — return fallback with analysisFailed flag
+  console.error(`[analyzer] All attempts failed for "${serviceName}" — returning fallback classification`);
+
+  const title = generateAlertTitle(serviceName, classification.primaryBucket);
+
+  return {
+    summary: 'Policy change detected. Review the document for details.',
+    impact: 'Unable to assess impact — review the document manually.',
+    action: 'Review the linked document for details.',
+    riskLevel: classification.riskLevel,
+    riskBucket: classification.primaryBucket,
+    riskPriority: classification.priority,
+    categories: classification.buckets,
+    title,
+    isNoise: false,
+    analysisFailed: true,
+  };
 }
 
 // Map Sonnet's risk level to dashboard priority.

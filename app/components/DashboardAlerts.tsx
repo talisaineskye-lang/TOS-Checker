@@ -167,15 +167,13 @@ export function DashboardAlerts({ changes }: { changes: DashChange[] }) {
                 )}
 
                 <div className="ac-action">
-                  {isFallback(summary) && (
-                    <button
-                      className="pill pill-ghost pill-sm"
-                      onClick={() => handleReanalyze(change.id)}
-                      disabled={reanalyzing === change.id}
-                    >
-                      {reanalyzing === change.id ? 'Analyzing...' : 'Re-analyze'}
-                    </button>
-                  )}
+                  <button
+                    className="pill pill-ghost pill-sm"
+                    onClick={() => handleReanalyze(change.id)}
+                    disabled={reanalyzing === change.id}
+                  >
+                    {reanalyzing === change.id ? 'Analyzing...' : 'Re-analyze'}
+                  </button>
                   <a
                     href={change.documentUrl}
                     target="_blank"
