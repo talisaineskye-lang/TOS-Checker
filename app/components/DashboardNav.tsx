@@ -20,7 +20,7 @@ export function DashboardNav() {
           <a href="/dashboard" className="nav-link active">Dashboard</a>
           <a href="/dashboard/history" className="nav-link">History</a>
           <a href="/dashboard/settings" className="nav-link">Settings</a>
-          <a href="/intel" className="nav-link">Intel</a>
+          <a href="/intel" className="nav-link">Drift Intel</a>
           {isAdmin && <a href="/admin" className="nav-link">Admin</a>}
         </div>
         <div className="nav-right">

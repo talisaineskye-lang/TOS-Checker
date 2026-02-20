@@ -288,7 +288,7 @@ export function VendorGrid() {
           <span>&copy; 2026 StackDrift</span>
           <div className="wd-footer-links">
             <a href="/dashboard">Dashboard</a>
-            <a href="/intel">Intel</a>
+            <a href="/intel">Drift Intel</a>
             <a href="/admin">Admin</a>
           </div>
         </footer>

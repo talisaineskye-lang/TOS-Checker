@@ -525,7 +525,7 @@ export default function HistoryPage() {
         <footer className="dash-footer">
           <span>&copy; 2026 StackDrift</span>
           <div className="f-links">
-            <a href="/intel">Intel</a>
+            <a href="/intel">Drift Intel</a>
             <a href="/privacy">Privacy</a>
             <a href="/terms">Terms</a>
             <a href="mailto:support@stackdrift.app">Support</a>

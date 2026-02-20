@@ -128,7 +128,7 @@ export default async function AdminPage() {
           <span className="nav-breadcrumb">/ admin</span>
           <div className="wd-nav-right">
             <a href="/dashboard" className="wd-nav-link">Dashboard</a>
-            <a href="/intel" className="wd-nav-link">Intel</a>
+            <a href="/intel" className="wd-nav-link">Drift Intel</a>
             <a href="/onboarding" className="wd-nav-link">Onboarding</a>
           </div>
         </div>
@@ -260,7 +260,7 @@ export default async function AdminPage() {
         <span>&copy; 2026 StackDrift</span>
         <div className="wd-footer-links">
           <a href="/dashboard">Dashboard</a>
-          <a href="/intel">Intel</a>
+          <a href="/intel">Drift Intel</a>
           <a href="/onboarding">Onboarding</a>
         </div>
       </footer>

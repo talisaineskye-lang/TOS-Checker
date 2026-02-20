@@ -152,7 +152,7 @@ export default function LandingPage() {
             <a href="#monitor" className="nav-link">How it works</a>
             <a href="#targets" className="nav-link">What we track</a>
             <a href="#scoring" className="nav-link">Scoring</a>
-            <a href="/intel" className="nav-link">Intel</a>
+            <a href="/intel" className="nav-link">Drift Intel</a>
             <a href="/pricing" className="nav-link">Pricing</a>
           </div>
           <div className="nav-right">
@@ -549,7 +549,7 @@ export default function LandingPage() {
         <footer className="lp-footer">
           <span>&copy; 2026 StackDrift</span>
           <div className="f-links">
-            <a href="/intel">Intel</a>
+            <a href="/intel">Drift Intel</a>
             <a href="/pricing">Pricing</a>
             <a href="/about">About</a>
             <a href="/privacy">Privacy</a>

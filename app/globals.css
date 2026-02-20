@@ -4952,17 +4952,16 @@ a { color: inherit; text-decoration: none; }
 /* ============ INTEL SCANNER DETECTIONS ============ */
 
 .ip-scanner-section {
-  padding: 20px 28px 0;
-  border-top: 1px solid var(--ip-border);
-  margin-top: 4px;
+  max-width: 900px;
+  margin: 0 auto 40px;
+  padding: 0 24px;
 }
 
 .ip-scanner-header {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
-  margin-bottom: 16px;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
 }
 
 .ip-scanner-badge {
@@ -5003,9 +5002,9 @@ a { color: inherit; text-decoration: none; }
 
 .ip-scanner-cards {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-  margin-bottom: 12px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
 }
 
 .ip-scanner-card {
@@ -5098,12 +5097,10 @@ a { color: inherit; text-decoration: none; }
 
 .ip-scanner-cta {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  gap: 10px;
-  padding: 14px 16px;
+  gap: 16px;
+  padding: 16px 20px;
   background: rgba(0,212,255,0.03);
   border: 1px solid rgba(0,212,255,0.08);
   border-radius: 10px;
@@ -5137,6 +5134,44 @@ a { color: inherit; text-decoration: none; }
   box-shadow: 0 4px 16px rgba(0,212,255,0.25);
 }
 
+@media (max-width: 640px) {
+  .ip-scanner-cards {
+    grid-template-columns: 1fr;
+  }
+  .ip-scanner-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .ip-scanner-cta {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+}
+
+/* ── Mini subscribe box in hero ── */
+.intel-page .ip-hero-subscribe {
+  max-width: 360px;
+  margin-bottom: 24px;
+}
+.intel-page .ip-hero-subscribe .subscribe-form-wrap {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--ip-border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.intel-page .ip-hero-subscribe .subscribe-form-wrap form {
+  gap: 8px;
+}
+.intel-page .ip-hero-subscribe .subscribe-form-wrap input {
+  font-size: 13px;
+  padding: 8px 12px;
+}
+.intel-page .ip-hero-subscribe .subscribe-form-wrap button {
+  font-size: 11px;
+  padding: 8px 16px;
+}
 
 /* ============ CHANGE HISTORY PAGE ============ */
 

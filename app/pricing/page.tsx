@@ -73,7 +73,7 @@ export default function PricingPage() {
             <a className="nav-logo" href="/">
               <Logo size="sm" />
             </a>
-            <a href="/intel" className="nav-link">Intel</a>
+            <a href="/intel" className="nav-link">Drift Intel</a>
             <a href="/#how" className="nav-link">How it works</a>
             <a href="/pricing" className="nav-link active">Pricing</a>
           </div>

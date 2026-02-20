@@ -185,7 +185,7 @@ export default function IntelPage() {
             <a className="ip-nav-logo" href="/">
               <Logo size="sm" />
             </a>
-            <a href="/intel" className="ip-nav-link active">Intel</a>
+            <a href="/intel" className="ip-nav-link active">Drift Intel</a>
             <a href="/#how" className="ip-nav-link">How it works</a>
             <a href="/pricing" className="ip-nav-link">Pricing</a>
           </div>
@@ -230,6 +230,10 @@ export default function IntelPage() {
                   Curated intel from vendor blogs, AI trends and tech news
                   &mdash; classified by AI, delivered every Monday.
                 </p>
+
+                <div className="ip-hero-subscribe">
+                  <SubscribeForm />
+                </div>
 
                 {/* Featured story */}
                 {featured && (
@@ -324,58 +328,6 @@ export default function IntelPage() {
                     </a>
                   );
                 })}
-
-                {/* ── Scanner Detections (in sidebar) ── */}
-                {scannerItems.length > 0 && (
-                  <div className="ip-scanner-section ip-reveal">
-                    <div className="ip-scanner-header">
-                      <span className="ip-scanner-badge">
-                        <span className="ip-scanner-pulse" />
-                        DETECTED BY STACKDRIFT
-                      </span>
-                      <span className="ip-scanner-sub">Real-time TOS &amp; policy monitoring</span>
-                    </div>
-                    <div className="ip-scanner-cards">
-                      {scannerItems.map((item) => {
-                        const sevColor =
-                          item.severity === 'critical' ? 'red' :
-                          item.severity === 'warning' ? 'red' : 'blue';
-                        return (
-                          <a
-                            key={item.id}
-                            href={item.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={`ip-scanner-card a-${sevColor}`}
-                          >
-                            <div className="ip-scanner-card-top">
-                              <span className={`ip-sev-dot ${sevColor}`} />
-                              <span className="ip-scanner-sev">{item.severity.toUpperCase()}</span>
-                            </div>
-                            <div className="ip-scanner-card-title">{item.title}</div>
-                            <p className="ip-scanner-card-summary">{item.summary}</p>
-                            <div className="ip-scanner-card-meta">
-                              {item.affected_vendors?.map((v) => (
-                                <span key={v} className="ip-chip vendor">{v}</span>
-                              ))}
-                              <span>{formatTime(item.pub_date)}</span>
-                            </div>
-                          </a>
-                        );
-                      })}
-                    </div>
-                    {scannerExtra > 0 && (
-                      <div className="ip-scanner-cta">
-                        <p>
-                          We detected <strong>{scannerExtra} more change{scannerExtra !== 1 ? 's' : ''}</strong> this week.
-                        </p>
-                        <a href="/onboarding" className="ip-scanner-cta-btn">
-                          Sign up to see them all &rarr;
-                        </a>
-                      </div>
-                    )}
-                  </div>
-                )}
               </div>
             </div>
 
@@ -403,6 +355,58 @@ export default function IntelPage() {
                     );
                   })}
                 </div>
+              </div>
+            )}
+
+            {/* ── Scanner Detections ── */}
+            {scannerItems.length > 0 && (
+              <div className="ip-scanner-section ip-reveal">
+                <div className="ip-scanner-header">
+                  <span className="ip-scanner-badge">
+                    <span className="ip-scanner-pulse" />
+                    DETECTED BY STACKDRIFT
+                  </span>
+                  <span className="ip-scanner-sub">Real-time TOS &amp; policy monitoring</span>
+                </div>
+                <div className="ip-scanner-cards">
+                  {scannerItems.map((item) => {
+                    const sevColor =
+                      item.severity === 'critical' ? 'red' :
+                      item.severity === 'warning' ? 'red' : 'blue';
+                    return (
+                      <a
+                        key={item.id}
+                        href={item.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`ip-scanner-card a-${sevColor}`}
+                      >
+                        <div className="ip-scanner-card-top">
+                          <span className={`ip-sev-dot ${sevColor}`} />
+                          <span className="ip-scanner-sev">{item.severity.toUpperCase()}</span>
+                        </div>
+                        <div className="ip-scanner-card-title">{item.title}</div>
+                        <p className="ip-scanner-card-summary">{item.summary}</p>
+                        <div className="ip-scanner-card-meta">
+                          {item.affected_vendors?.map((v) => (
+                            <span key={v} className="ip-chip vendor">{v}</span>
+                          ))}
+                          <span>{formatTime(item.pub_date)}</span>
+                        </div>
+                      </a>
+                    );
+                  })}
+                </div>
+                {scannerExtra > 0 && (
+                  <div className="ip-scanner-cta">
+                    <p>
+                      We detected <strong>{scannerExtra} more change{scannerExtra !== 1 ? 's' : ''}</strong> this week.
+                    </p>
+                    <a href="/onboarding" className="ip-scanner-cta-btn">
+                      Sign up to see them all &rarr;
+                    </a>
+                  </div>
+                )}
               </div>
             )}
 

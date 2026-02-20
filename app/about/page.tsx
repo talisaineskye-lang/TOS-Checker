@@ -174,7 +174,7 @@ export default function AboutPage() {
         <footer className="about-footer">
           <span>&copy; 2026 StackDrift</span>
           <div className="f-links">
-            <a href="/intel">Intel</a>
+            <a href="/intel">Drift Intel</a>
             <a href="/pricing">Pricing</a>
             <a href="/privacy">Privacy</a>
             <a href="/terms">Terms</a>
