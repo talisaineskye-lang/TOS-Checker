@@ -4,6 +4,7 @@ import { getBasicDiff } from '@/lib/differ';
 import { extractEffectiveDate } from '@/lib/fetcher';
 import { analyzeChanges } from '@/lib/analyzer';
 import { DOCUMENT_TYPE_LABELS, DocumentType } from '@/lib/types';
+import { updateScannerIntelItems } from '@/lib/intel/store';
 
 export const runtime = 'nodejs';
 
@@ -142,6 +143,16 @@ export async function POST(request: NextRequest) {
     .single();
 
   console.log(`[reanalyze] Verification read for ${changeId}:`, JSON.stringify(verify));
+
+  // Refresh scanner Intel items so the Intel page picks up the new analysis
+  if (!analysis.analysisFailed) {
+    try {
+      await updateScannerIntelItems();
+      console.log(`[reanalyze] Refreshed scanner Intel items after successful re-analysis`);
+    } catch (err) {
+      console.error(`[reanalyze] Failed to refresh scanner Intel items:`, err);
+    }
+  }
 
   return NextResponse.json({
     success: true,

@@ -103,6 +103,8 @@ export async function storeItems(items: ClassifiedItem[]): Promise<number> {
 export async function updateScannerIntelItems(): Promise<number> {
   const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
+  const FALLBACK_SUMMARY = 'Policy change detected. Review the document for details.';
+
   const { data: changes } = await supabase
     .from('changes')
     .select('*, vendors(name), documents(doc_type, url)')
@@ -111,15 +113,20 @@ export async function updateScannerIntelItems(): Promise<number> {
     .gte('detected_at', cutoff)
     .order('detected_at', { ascending: false });
 
-  if (!changes || changes.length === 0) {
-    // No changes this week — clear old scanner items
+  // Filter out any remaining fallback text (covers older records without analysis_failed flag)
+  const analyzed = (changes || []).filter(
+    (c) => c.summary && c.summary !== FALLBACK_SUMMARY
+  );
+
+  if (analyzed.length === 0) {
+    // No properly analyzed changes this week — clear old scanner items
     await supabase.from('intel_items').delete().eq('source', 'scanner');
     return 0;
   }
 
   // Sort by severity (critical > high > medium > low) then recency
   const priorityOrder: Record<string, number> = { critical: 4, high: 3, medium: 2, low: 1 };
-  const sorted = [...changes].sort((a, b) => {
+  const sorted = [...analyzed].sort((a, b) => {
     const aPri = priorityOrder[a.risk_priority || 'low'] || 0;
     const bPri = priorityOrder[b.risk_priority || 'low'] || 0;
     if (bPri !== aPri) return bPri - aPri;
@@ -127,7 +134,7 @@ export async function updateScannerIntelItems(): Promise<number> {
   });
 
   const top2 = sorted.slice(0, 2);
-  const totalCount = sorted.length;
+  const totalCount = analyzed.length;
 
   // Map risk_priority to intel severity
   const severityMap: Record<string, string> = {
