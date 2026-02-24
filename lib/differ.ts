@@ -38,3 +38,26 @@ export function getBasicDiff(oldContent: string, newContent: string): {
 
   return { added, removed };
 }
+
+/**
+ * Calculate the removal ratio: what fraction of the old content's sentences
+ * are missing from the new content. Used for the 90% removal sanity check.
+ */
+export function getRemovalRatio(oldContent: string, newContent: string): number {
+  const oldSentences = oldContent
+    .split(/[.!?]+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  if (oldSentences.length === 0) return 0;
+
+  const newSentenceSet = new Set(
+    newContent
+      .split(/[.!?]+/)
+      .map((s) => s.trim())
+      .filter(Boolean)
+  );
+
+  const removedCount = oldSentences.filter((s) => !newSentenceSet.has(s)).length;
+  return removedCount / oldSentences.length;
+}

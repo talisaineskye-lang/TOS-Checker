@@ -97,6 +97,9 @@ export interface Change {
   categories: string[] | null; // All matched risk buckets
   detected_at: string;
   notified: boolean;
+  is_noise: boolean;
+  pending_review: boolean;
+  analysis_failed: boolean;
 }
 
 // For custom vendor creation

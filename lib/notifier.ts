@@ -182,6 +182,68 @@ export async function sendChangeAlert(change: ChangeNotification) {
   await deliverTeamAlertRoutes(change, riskLabel, fromEmail);
 }
 
+/**
+ * Notify admin when a change is held for manual review (>90% content removed).
+ * Sends to ALERT_EMAIL only — NOT to team routes, webhooks, or Slack.
+ */
+export async function notifyAdminPendingReview(params: {
+  displayName: string;
+  documentUrl: string;
+  removalRatio: number;
+  changeId: string;
+}): Promise<void> {
+  const alertEmail = process.env.ALERT_EMAIL;
+  if (!alertEmail || !process.env.RESEND_API_KEY) return;
+
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'StackDrift Alerts <alerts@stackdrift.app>';
+  const pct = Math.round(params.removalRatio * 100);
+
+  try {
+    await resend.emails.send({
+      from: fromEmail,
+      to: alertEmail,
+      subject: `[REVIEW NEEDED] ${params.displayName} — ${pct}% content removed`,
+      html: `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f9fafb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;padding:24px 0;">
+<tr><td align="center">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:8px;border:1px solid #e5e7eb;overflow:hidden;">
+  <tr><td style="height:4px;background:#fbbf24;"></td></tr>
+  <tr><td style="padding:24px;">
+    <p style="margin:0 0 4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#d97706;">Pending Manual Review</p>
+    <p style="margin:0 0 16px;font-size:18px;font-weight:700;color:#111827;">${params.displayName}</p>
+    <p style="margin:0 0 8px;font-size:14px;line-height:1.6;color:#374151;">
+      <strong>${pct}%</strong> of the previous document content was removed. This is likely a failed fetch (403, rate limit, JS-rendered page) rather than a real policy change.
+    </p>
+    <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#374151;">
+      This change has been held and will <strong>NOT</strong> be sent to users until you approve it.
+    </p>
+    <table role="presentation" cellpadding="0" cellspacing="0">
+      <tr><td style="border-radius:6px;background:#111827;">
+        <a href="${params.documentUrl}" target="_blank" style="display:inline-block;padding:10px 20px;font-size:13px;font-weight:600;color:#ffffff;text-decoration:none;">View document &rarr;</a>
+      </td></tr>
+    </table>
+  </td></tr>
+  <tr><td style="padding:0 24px 20px;">
+    <hr style="margin:0 0 12px;border:none;border-top:1px solid #e5e7eb;">
+    <p style="margin:0;font-size:11px;color:#9ca3af;">
+      Approve or dismiss via <code>POST /api/admin/review</code> with <code>{"changeId": "${params.changeId}", "action": "approve"}</code>
+    </p>
+  </td></tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>`,
+    });
+    console.log(`[notifier] Pending review notification sent to ${alertEmail} for ${params.displayName}`);
+  } catch (err) {
+    console.error('[notifier] Failed to send pending review notification:', err instanceof Error ? err.message : err);
+  }
+}
+
 async function deliverTeamAlertRoutes(
   change: ChangeNotification,
   riskLabel: string,
