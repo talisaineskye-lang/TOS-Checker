@@ -133,6 +133,15 @@ async function getData() {
     .order('contract_renewal_date', { ascending: true })
     .limit(5);
 
+  // Fetch 90-day non-noise change counts per vendor for stability indicator
+  const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
+  const { data: stabilityChanges } = await supabase
+    .from('changes')
+    .select('vendor_id')
+    .eq('is_noise', false)
+    .eq('pending_review', false)
+    .gte('detected_at', ninetyDaysAgo);
+
   return {
     vendors: (vendors ?? []) as Vendor[],
     documents: (documents ?? []) as Document[],
@@ -140,6 +149,7 @@ async function getData() {
     plan: profile?.plan || 'free',
     vendorTags: (vendorTags ?? []) as { id: string; vendor_id: string; tag_name: string }[],
     contracts: (contracts ?? []) as { id: string; vendor_id: string; contract_renewal_date: string; notice_period_days: number; auto_renews: boolean; contract_value: string | null; vendors: { name: string } | { name: string }[] | null }[],
+    stabilityChanges: (stabilityChanges ?? []) as { vendor_id: string }[],
   };
 }
 
@@ -149,9 +159,25 @@ export default async function Page() {
     redirect('/onboarding');
   }
 
-  const { vendors, documents, changes, plan, vendorTags, contracts } = await getData();
+  const { vendors, documents, changes, plan, vendorTags, contracts, stabilityChanges } = await getData();
   const isBusiness = hasAccess(plan, 'business');
   const documentMap = new Map(documents.map((d) => [d.id, d]));
+
+  // Build stability map: vendor_id -> count of non-noise changes in 90 days
+  type StabilityTier = 'stable' | 'active' | 'volatile';
+  const stabilityCountMap = new Map<string, number>();
+  stabilityChanges.forEach((c) => {
+    stabilityCountMap.set(c.vendor_id, (stabilityCountMap.get(c.vendor_id) || 0) + 1);
+  });
+  function getStabilityTier(vendorId: string): StabilityTier {
+    const count = stabilityCountMap.get(vendorId) || 0;
+    if (count >= 5) return 'volatile';
+    if (count >= 2) return 'active';
+    return 'stable';
+  }
+  const STABILITY_LABELS: Record<StabilityTier, string> = {
+    stable: 'Stable', active: 'Active', volatile: 'Volatile',
+  };
 
   // Group vendor tags by vendor
   const tagsByVendor = new Map<string, { id: string; tag_name: string }[]>();
@@ -179,8 +205,10 @@ export default async function Page() {
 
   // Stats
   const activeDocCount = documents.filter((d) => d.is_active).length;
-  const vendorsWithChanges = new Set(changes.map((c) => c.vendor_id));
-  const stableCount = vendors.filter((v) => !vendorsWithChanges.has(v.id)).length;
+
+  // Stability breakdown for stat row (90-day window)
+  const stabilityBreakdown = { stable: 0, active: 0, volatile: 0 };
+  vendors.forEach((v) => { stabilityBreakdown[getStabilityTier(v.id)]++; });
 
   // Map changes for client component
   const dashChanges: DashChange[] = changes.map((c) => {
@@ -217,6 +245,8 @@ export default async function Page() {
     statusClass: string;
     statusLabel: string;
     lastChecked: string;
+    stabilityTier: StabilityTier;
+    stabilityLabel: string;
   }
 
   const vendorRows: VendorRow[] = vendors.map((vendor) => {
@@ -254,6 +284,8 @@ export default async function Page() {
       .sort()
       .pop();
 
+    const tier = getStabilityTier(vendor.id);
+
     return {
       id: vendor.id,
       name: vendor.name,
@@ -267,6 +299,8 @@ export default async function Page() {
       statusClass,
       statusLabel,
       lastChecked: formatDate(lastChecked ?? null),
+      stabilityTier: tier,
+      stabilityLabel: STABILITY_LABELS[tier],
     };
   });
 
@@ -302,8 +336,14 @@ export default async function Page() {
             <div className="sc-label">Changes detected</div>
           </div>
           <div className="stat-card">
-            <div className="sc-value green">{stableCount}</div>
-            <div className="sc-label">Stable</div>
+            <div className="sc-value">
+              <span className="green">{stabilityBreakdown.stable}</span>
+              {' / '}
+              <span className="amber">{stabilityBreakdown.active}</span>
+              {' / '}
+              <span className="red">{stabilityBreakdown.volatile}</span>
+            </div>
+            <div className="sc-label">Stable / Active / Volatile</div>
           </div>
         </div>
 
@@ -365,6 +405,7 @@ export default async function Page() {
                       <span key={i} className={`vt-tag ${dt.cssClass}`}>{dt.short}</span>
                     ))}
                   </div>
+                  <span className={`vt-stability stab-${v.stabilityTier}`}>{v.stabilityLabel}</span>
                   <span className={`vt-status ${v.statusClass}`}>{v.statusLabel}</span>
                   <span className="vt-time">{v.lastChecked}</span>
                 </div>
