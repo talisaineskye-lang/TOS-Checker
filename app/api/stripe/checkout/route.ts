@@ -4,10 +4,12 @@ import { stripe } from '@/lib/stripe/client';
 import { STRIPE_PRICES, type PlanName, type Interval } from '@/lib/stripe/prices';
 import { rateLimit } from '@/lib/rate-limit';
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseAdmin() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 export async function POST(request: Request) {
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
@@ -23,7 +25,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
+  const { data: { user }, error: authError } = await getSupabaseAdmin().auth.getUser(token);
   if (authError || !user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -39,7 +41,7 @@ export async function POST(request: Request) {
   }
 
   // Look up or create Stripe customer
-  const { data: profile } = await supabaseAdmin
+  const { data: profile } = await getSupabaseAdmin()
     .from('user_profiles')
     .select('stripe_customer_id')
     .eq('id', user.id)
@@ -54,7 +56,7 @@ export async function POST(request: Request) {
     });
     customerId = customer.id;
 
-    await supabaseAdmin
+    await getSupabaseAdmin()
       .from('user_profiles')
       .update({ stripe_customer_id: customerId })
       .eq('id', user.id);
