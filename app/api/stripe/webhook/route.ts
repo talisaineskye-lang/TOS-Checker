@@ -4,13 +4,15 @@ import { stripe } from '@/lib/stripe/client';
 import { planFromPriceId } from '@/lib/stripe/prices';
 import type Stripe from 'stripe';
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseAdmin() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 async function updateProfile(customerId: string, fields: Record<string, unknown>) {
-  const { error, count } = await supabaseAdmin
+  const { error, count } = await getSupabaseAdmin()
     .from('user_profiles')
     .update(fields)
     .eq('stripe_customer_id', customerId);

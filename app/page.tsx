@@ -180,7 +180,7 @@ export default function LandingPage() {
           </div>
           <h1 className="hero-h1">
             They changed the rules.<br />
-            <span className="dim">Did you notice?</span>
+            <span className="hero-gradient">Did you notice?</span>
           </h1>
           <p className="hero-sub">
             Your vendors update their Terms of Service, Privacy Policies, and Pricing
