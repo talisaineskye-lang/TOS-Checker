@@ -352,13 +352,13 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
   {
     slug: 'durable',
     name: 'Durable',
-    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://durable.co',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://durable.com',
     category: 'ai_builders',
-    baseUrl: 'https://durable.co',
+    baseUrl: 'https://durable.com',
     documents: [
-      { type: 'tos', url: 'https://durable.co/terms-of-service' },
-      { type: 'privacy', url: 'https://durable.co/privacy-policy' },
-      { type: 'aup', url: 'https://durable.co/terms-of-service' },
+      { type: 'tos', url: 'https://durable.com/terms-of-service' },
+      { type: 'privacy', url: 'https://durable.com/privacy-policy' },
+      { type: 'aup', url: 'https://durable.com/terms-of-service' },
     ],
   },
 
