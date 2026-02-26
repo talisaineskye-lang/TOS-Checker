@@ -3399,6 +3399,9 @@ a { color: inherit; text-decoration: none; }
   font-size: 11px;
   color: var(--ip-text-faint);
 }
+.intel-page .f-links { display: flex; gap: 24px; }
+.intel-page .f-links a { font-size: 14px; color: var(--ip-text-faint); text-decoration: none; transition: color 0.15s; }
+.intel-page .f-links a:hover { color: #f0f0f0; }
 
 /* ═══ LOADING & EMPTY ═══ */
 .intel-page .ip-loading,
