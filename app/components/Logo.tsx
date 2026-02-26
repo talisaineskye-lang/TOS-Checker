@@ -14,7 +14,7 @@ export function Logo({ size = 'md' }: LogoProps) {
   return (
     <span className="logo-lockup">
       <img
-        src="/logo-600w.png"
+        src="/logo-600wt.png"
         alt="StackDrift"
         style={{ height: h, width: 'auto' }}
         className="logo-wordmark"
