@@ -15,7 +15,7 @@ export default function AboutPage() {
     '@type': 'Organization',
     name: 'StackDrift',
     url: 'https://www.stackdrift.app',
-    logo: 'https://www.stackdrift.app/logo-icon.png',
+    logo: 'https://www.stackdrift.app/icon-256x256.png',
     description:
       'StackDrift is a vendor policy monitoring platform for SaaS teams. It tracks changes to Terms of Service, privacy policies, and pricing pages with AI-powered severity scoring.',
     foundingDate: '2026',
