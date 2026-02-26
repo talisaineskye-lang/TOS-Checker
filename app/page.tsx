@@ -310,6 +310,11 @@ export default function LandingPage() {
                 <Link href="/privacy">Privacy</Link>
                 <Link href="/terms">Terms</Link>
               </div>
+              <div className="lp-footer-col">
+                <h4>Social</h4>
+                <a href="https://x.com/Trish_DIntel" target="_blank" rel="noopener noreferrer">X (Twitter)</a>
+                <a href="https://www.linkedin.com/in/trish-t-4670b93b2/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+              </div>
             </div>
           </div>
           <div className="lp-footer-copy">
