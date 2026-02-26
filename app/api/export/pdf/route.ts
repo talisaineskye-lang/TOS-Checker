@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
   doc.moveDown(3);
 
   doc.fontSize(28).fillColor('#e8e8ed').text('StackDrift', { align: 'center' });
-  doc.fontSize(12).fillColor('#4d8eff').text('Redline Change Report', { align: 'center' });
+  doc.fontSize(12).fillColor('#4fc3f7').text('Redline Change Report', { align: 'center' });
   doc.moveDown(1);
 
   doc.fontSize(10).fillColor('#888888').text(`Generated ${formatDate(new Date().toISOString())}`, { align: 'center' });
@@ -178,7 +178,7 @@ export async function POST(request: NextRequest) {
 
     // Summary section
     if (change.summary) {
-      doc.fontSize(11).fillColor('#4d8eff').text('Summary');
+      doc.fontSize(11).fillColor('#4fc3f7').text('Summary');
       doc.moveDown(0.2);
       doc.fontSize(10).fillColor('#cccccc').text(change.summary, { lineGap: 2 });
       doc.moveDown(0.5);
@@ -186,7 +186,7 @@ export async function POST(request: NextRequest) {
 
     // Impact
     if (change.impact) {
-      doc.fontSize(11).fillColor('#4d8eff').text('Why It Matters');
+      doc.fontSize(11).fillColor('#4fc3f7').text('Why It Matters');
       doc.moveDown(0.2);
       doc.fontSize(10).fillColor('#cccccc').text(change.impact, { lineGap: 2 });
       doc.moveDown(0.5);
@@ -194,7 +194,7 @@ export async function POST(request: NextRequest) {
 
     // Action
     if (change.action) {
-      doc.fontSize(11).fillColor('#4d8eff').text('Recommended Action');
+      doc.fontSize(11).fillColor('#4fc3f7').text('Recommended Action');
       doc.moveDown(0.2);
       doc.fontSize(10).fillColor('#cccccc').text(change.action, { lineGap: 2 });
       doc.moveDown(0.5);

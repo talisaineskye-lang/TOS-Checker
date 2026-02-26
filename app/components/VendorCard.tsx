@@ -41,7 +41,7 @@ export function VendorCard({ vendor, isSelected, onToggle }: VendorCardProps) {
         <svg viewBox="0 0 10 10" fill="none">
           <path
             d="M2 5.5L4 7.5L8 3"
-            stroke="#050505"
+            stroke="#030014"
             strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"
