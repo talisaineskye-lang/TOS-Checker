@@ -1,34 +1,28 @@
-import Image from 'next/image';
+/* eslint-disable @next/next/no-img-element */
 
 interface LogoProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
-const SIZES = {
-  sm: { wordmarkWidth: 200, wordmarkHeight: 28, iconSize: 32 },
-  md: { wordmarkWidth: 257, wordmarkHeight: 36, iconSize: 40 },
-  lg: { wordmarkWidth: 343, wordmarkHeight: 48, iconSize: 48 },
-};
+const HEIGHTS = { sm: 28, md: 36, lg: 48 };
+const ICON_SIZES = { sm: 32, md: 40, lg: 48 };
 
 export function Logo({ size = 'md' }: LogoProps) {
-  const { wordmarkWidth, wordmarkHeight, iconSize } = SIZES[size];
+  const h = HEIGHTS[size];
+  const iconSize = ICON_SIZES[size];
 
   return (
     <span className="logo-lockup">
-      <Image
+      <img
         src="/logo-600w.png"
         alt="StackDrift"
-        width={wordmarkWidth}
-        height={wordmarkHeight}
-        priority
+        style={{ height: h, width: 'auto' }}
         className="logo-wordmark"
       />
-      <Image
+      <img
         src="/icon-256x256.png"
         alt="StackDrift"
-        width={iconSize}
-        height={iconSize}
-        priority
+        style={{ height: iconSize, width: iconSize }}
         className="logo-icon"
       />
     </span>
