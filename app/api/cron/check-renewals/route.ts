@@ -88,7 +88,7 @@ export async function GET(request: NextRequest) {
               ${row.contract_value ? `<p><strong>Contract value:</strong> ${row.contract_value}</p>` : ''}
               ${row.notes ? `<p><strong>Notes:</strong> ${row.notes}</p>` : ''}
               <p style="margin-top: 24px;">
-                <a href="https://www.stackdrift.app/dashboard" style="color: #4d8eff;">View in StackDrift &rarr;</a>
+                <a href="https://www.stackdrift.app/dashboard" style="color: #4fc3f7;">View in StackDrift &rarr;</a>
               </p>
               <p><small style="color: #999;">This is an automated renewal reminder from StackDrift.</small></p>
             </div>

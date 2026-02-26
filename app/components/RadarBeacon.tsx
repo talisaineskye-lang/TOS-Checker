@@ -19,9 +19,9 @@ export function RadarBeacon({ size = 'md', className }: RadarBeaconProps) {
     <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} className={className}>
       <defs>
         <linearGradient id={id} x1="50%" y1="100%" x2="50%" y2="0%">
-          <stop offset="0%" stopColor="#00d4ff" />
-          <stop offset="45%" stopColor="#4d8eff" />
-          <stop offset="100%" stopColor="#7b2fff" />
+          <stop offset="0%" stopColor="#00e5ff" />
+          <stop offset="45%" stopColor="#4fc3f7" />
+          <stop offset="100%" stopColor="#9382ff" />
         </linearGradient>
       </defs>
       <circle cx={w / 2} cy={h * 0.33} r={22 * s} stroke={`url(#${id})`} strokeWidth={2 * s} fill="none" opacity="0.2" />

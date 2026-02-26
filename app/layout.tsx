@@ -1,34 +1,32 @@
 import './globals.css';
 import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
-import localFont from 'next/font/local';
-import { Exo_2, Space_Mono } from 'next/font/google';
+import { Outfit, JetBrains_Mono, Cormorant_Garamond } from 'next/font/google';
 import { AuthProvider } from './components/AuthProvider';
 import { Analytics } from '@vercel/analytics/react';
 
-// CODEX — wordmark only
-const codex = localFont({
-  src: [
-    { path: '../public/fonts/Codex-Regular.ttf', weight: '400', style: 'normal' },
-    { path: '../public/fonts/Codex-Italic.ttf', weight: '400', style: 'italic' },
-  ],
-  variable: '--font-codex',
-  display: 'swap',
-});
-
-// Exo 2 — primary UI font (replaces Inter)
-const exo2 = Exo_2({
+// Outfit — primary UI font (body, labels, navigation)
+const outfit = Outfit({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
+  weight: ['200', '300', '400', '500', '600', '700'],
   variable: '--font-sans',
   display: 'swap',
 });
 
-// Space Mono — labels, tags, meta (replaces JetBrains Mono)
-const spaceMono = Space_Mono({
+// JetBrains Mono — code, tags, metadata
+const jetbrains = JetBrains_Mono({
   subsets: ['latin'],
-  weight: ['400', '700'],
+  weight: ['300', '400', '500', '700'],
   variable: '--font-mono',
+  display: 'swap',
+});
+
+// Cormorant Garamond — display headings, editorial
+const cormorant = Cormorant_Garamond({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  style: ['normal', 'italic'],
+  variable: '--font-serif',
   display: 'swap',
 });
 
@@ -74,7 +72,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${codex.variable} ${exo2.variable} ${spaceMono.variable}`}>
+    <html lang="en" className={`${outfit.variable} ${jetbrains.variable} ${cormorant.variable}`}>
       <body>
         <AuthProvider>{children}</AuthProvider>
         <Analytics />
