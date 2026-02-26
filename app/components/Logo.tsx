@@ -4,8 +4,8 @@ interface LogoProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
-const HEIGHTS = { sm: 28, md: 36, lg: 48 };
-const ICON_SIZES = { sm: 32, md: 40, lg: 48 };
+const HEIGHTS = { sm: 36, md: 48, lg: 64 };
+const ICON_SIZES = { sm: 36, md: 48, lg: 64 };
 
 export function Logo({ size = 'md' }: LogoProps) {
   const h = HEIGHTS[size];
