@@ -8,7 +8,11 @@ export type VendorCategory =
   | 'cloud_infrastructure'
   | 'ai_ml'
   | 'ai_builders'
-  | 'developer_tools';
+  | 'developer_tools'
+  | 'automation'
+  | 'analytics'
+  | 'scraping'
+  | 'productivity';
 
 export type DocumentType = 'tos' | 'privacy' | 'aup' | 'pricing' | 'api_terms' | 'changelog';
 
@@ -18,6 +22,10 @@ export const CATEGORY_LABELS: Record<VendorCategory, string> = {
   ai_ml: 'AI & Machine Learning',
   ai_builders: 'AI Builders',
   developer_tools: 'Developer Tools',
+  automation: 'Automation & Workflow',
+  analytics: 'Analytics',
+  scraping: 'Scraping & Data',
+  productivity: 'Productivity & Business',
 };
 
 export const CATEGORY_DESCRIPTIONS: Record<VendorCategory, string> = {
@@ -26,6 +34,10 @@ export const CATEGORY_DESCRIPTIONS: Record<VendorCategory, string> = {
   ai_ml: 'AI APIs you integrate',
   ai_builders: 'AI tools you build with',
   developer_tools: 'Development and collaboration tools',
+  automation: 'Workflow automation and integration platforms',
+  analytics: 'Product analytics and event tracking',
+  scraping: 'Web scraping, crawling, and data extraction',
+  productivity: 'Team collaboration and business tools',
 };
 
 export const DOCUMENT_TYPE_LABELS: Record<DocumentType, string> = {

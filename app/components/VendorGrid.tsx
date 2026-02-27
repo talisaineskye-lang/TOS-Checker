@@ -43,6 +43,26 @@ const CATEGORY_CONFIG: Record<VendorCategory, {
     subtitle: 'Dev platforms & APIs',
     description: 'Source control, CI/CD, and tooling',
   },
+  automation: {
+    color: 'amber',
+    subtitle: 'Workflow automation',
+    description: 'Integration and automation platforms',
+  },
+  analytics: {
+    color: 'pink',
+    subtitle: 'Product analytics',
+    description: 'Event tracking and user insights',
+  },
+  scraping: {
+    color: 'cyan',
+    subtitle: 'Web scraping & data',
+    description: 'Crawling, extraction, and browser automation',
+  },
+  productivity: {
+    color: 'blue',
+    subtitle: 'Team & business tools',
+    description: 'Collaboration and productivity platforms',
+  },
 };
 
 export function VendorGrid() {

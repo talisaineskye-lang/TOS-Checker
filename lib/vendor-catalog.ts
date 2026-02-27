@@ -349,19 +349,6 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
       { type: 'aup', url: 'https://www.framer.com/legal/terms/' },
     ],
   },
-  {
-    slug: 'durable',
-    name: 'Durable',
-    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://durable.com',
-    category: 'ai_builders',
-    baseUrl: 'https://durable.com',
-    documents: [
-      { type: 'tos', url: 'https://durable.com/terms-of-service' },
-      { type: 'privacy', url: 'https://durable.com/privacy-policy' },
-      { type: 'aup', url: 'https://durable.com/terms-of-service' },
-    ],
-  },
-
   // ============ DEVELOPER TOOLS ============
   {
     slug: 'github',
@@ -377,6 +364,304 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
     ],
     isDefault: true,
   },
+
+  // ============ AUTOMATION & WORKFLOW ============
+  {
+    slug: 'n8n',
+    name: 'n8n',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://n8n.io',
+    category: 'automation',
+    baseUrl: 'https://n8n.io',
+    documents: [
+      { type: 'tos', url: 'https://n8n.io/legal/terms' },
+      { type: 'privacy', url: 'https://n8n.io/legal/privacy' },
+    ],
+  },
+  {
+    slug: 'zapier',
+    name: 'Zapier',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://zapier.com',
+    category: 'automation',
+    baseUrl: 'https://zapier.com',
+    documents: [
+      { type: 'tos', url: 'https://zapier.com/legal/terms-of-service' },
+      { type: 'privacy', url: 'https://zapier.com/privacy' },
+    ],
+  },
+  {
+    slug: 'make',
+    name: 'Make',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://make.com',
+    category: 'automation',
+    baseUrl: 'https://make.com',
+    documents: [
+      { type: 'tos', url: 'https://www.make.com/en/terms-of-service' },
+      { type: 'privacy', url: 'https://www.make.com/en/privacy-notice' },
+    ],
+  },
+
+  // ============ AI AGENTS & PLATFORMS ============
+  {
+    slug: 'manus',
+    name: 'Manus',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://manus.im',
+    category: 'ai_ml',
+    baseUrl: 'https://manus.im',
+    documents: [
+      { type: 'tos', url: 'https://manus.im/terms' },
+      { type: 'privacy', url: 'https://manus.im/privacy' },
+    ],
+  },
+  {
+    slug: 'openrouter',
+    name: 'OpenRouter',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://openrouter.ai',
+    category: 'ai_ml',
+    baseUrl: 'https://openrouter.ai',
+    documents: [
+      { type: 'tos', url: 'https://openrouter.ai/terms' },
+      { type: 'privacy', url: 'https://openrouter.ai/privacy' },
+    ],
+  },
+  {
+    slug: 'groq',
+    name: 'Groq',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://groq.com',
+    category: 'ai_ml',
+    baseUrl: 'https://groq.com',
+    documents: [
+      { type: 'tos', url: 'https://groq.com/terms-of-use/' },
+      { type: 'privacy', url: 'https://groq.com/privacy-policy/' },
+    ],
+  },
+  {
+    slug: 'mistral-ai',
+    name: 'Mistral AI',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://mistral.ai',
+    category: 'ai_ml',
+    baseUrl: 'https://mistral.ai',
+    documents: [
+      { type: 'tos', url: 'https://mistral.ai/terms/' },
+      { type: 'privacy', url: 'https://mistral.ai/terms/#privacy-policy' },
+    ],
+  },
+  {
+    slug: 'wispr-flow',
+    name: 'Wispr Flow',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://wisprflow.ai',
+    category: 'ai_ml',
+    baseUrl: 'https://wisprflow.ai',
+    documents: [
+      { type: 'tos', url: 'https://www.wisprflow.ai/terms' },
+      { type: 'privacy', url: 'https://www.wisprflow.ai/privacy' },
+    ],
+  },
+  {
+    slug: 'pinecone',
+    name: 'Pinecone',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://pinecone.io',
+    category: 'ai_ml',
+    baseUrl: 'https://pinecone.io',
+    documents: [
+      { type: 'tos', url: 'https://www.pinecone.io/terms/' },
+      { type: 'privacy', url: 'https://www.pinecone.io/privacy/' },
+    ],
+  },
+  {
+    slug: 'windsurf',
+    name: 'Windsurf',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://windsurf.com',
+    category: 'ai_builders',
+    baseUrl: 'https://windsurf.com',
+    documents: [
+      { type: 'tos', url: 'https://windsurf.com/terms-of-service' },
+      { type: 'privacy', url: 'https://windsurf.com/privacy-policy' },
+    ],
+  },
+
+  // ============ ANALYTICS ============
+  {
+    slug: 'posthog',
+    name: 'PostHog',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://posthog.com',
+    category: 'analytics',
+    baseUrl: 'https://posthog.com',
+    documents: [
+      { type: 'tos', url: 'https://posthog.com/terms' },
+      { type: 'privacy', url: 'https://posthog.com/privacy' },
+    ],
+  },
+  {
+    slug: 'plausible',
+    name: 'Plausible',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://plausible.io',
+    category: 'analytics',
+    baseUrl: 'https://plausible.io',
+    documents: [
+      { type: 'tos', url: 'https://plausible.io/terms' },
+      { type: 'privacy', url: 'https://plausible.io/privacy' },
+    ],
+  },
+  {
+    slug: 'mixpanel',
+    name: 'Mixpanel',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://mixpanel.com',
+    category: 'analytics',
+    baseUrl: 'https://mixpanel.com',
+    documents: [
+      { type: 'tos', url: 'https://mixpanel.com/legal/terms-of-use/' },
+      { type: 'privacy', url: 'https://mixpanel.com/legal/privacy-policy/' },
+    ],
+  },
+
+  // ============ SCRAPING & DATA ============
+  {
+    slug: 'apify',
+    name: 'Apify',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://apify.com',
+    category: 'scraping',
+    baseUrl: 'https://apify.com',
+    documents: [
+      { type: 'tos', url: 'https://apify.com/terms-of-use' },
+      { type: 'privacy', url: 'https://apify.com/privacy-policy' },
+    ],
+  },
+  {
+    slug: 'firecrawl',
+    name: 'Firecrawl',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://firecrawl.dev',
+    category: 'scraping',
+    baseUrl: 'https://firecrawl.dev',
+    documents: [
+      { type: 'tos', url: 'https://www.firecrawl.dev/terms' },
+      { type: 'privacy', url: 'https://www.firecrawl.dev/privacy' },
+    ],
+  },
+  {
+    slug: 'browserbase',
+    name: 'Browserbase',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://browserbase.com',
+    category: 'scraping',
+    baseUrl: 'https://browserbase.com',
+    documents: [
+      { type: 'tos', url: 'https://www.browserbase.com/terms-of-service' },
+      { type: 'privacy', url: 'https://www.browserbase.com/privacy-policy' },
+    ],
+  },
+
+  // ============ INFRASTRUCTURE & DEPLOY ============
+  {
+    slug: 'railway',
+    name: 'Railway',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://railway.app',
+    category: 'cloud_infrastructure',
+    baseUrl: 'https://railway.app',
+    documents: [
+      { type: 'tos', url: 'https://railway.app/legal/terms' },
+      { type: 'privacy', url: 'https://railway.app/legal/privacy' },
+    ],
+  },
+  {
+    slug: 'render',
+    name: 'Render',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://render.com',
+    category: 'cloud_infrastructure',
+    baseUrl: 'https://render.com',
+    documents: [
+      { type: 'tos', url: 'https://render.com/terms' },
+      { type: 'privacy', url: 'https://render.com/privacy' },
+    ],
+  },
+  {
+    slug: 'neon',
+    name: 'Neon',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://neon.tech',
+    category: 'cloud_infrastructure',
+    baseUrl: 'https://neon.tech',
+    documents: [
+      { type: 'tos', url: 'https://neon.tech/terms-of-service' },
+      { type: 'privacy', url: 'https://neon.tech/privacy-policy' },
+    ],
+  },
+  {
+    slug: 'resend',
+    name: 'Resend',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://resend.com',
+    category: 'cloud_infrastructure',
+    baseUrl: 'https://resend.com',
+    documents: [
+      { type: 'tos', url: 'https://resend.com/legal/terms-of-service' },
+      { type: 'privacy', url: 'https://resend.com/legal/privacy-policy' },
+    ],
+  },
+  {
+    slug: 'docker',
+    name: 'Docker',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://docker.com',
+    category: 'cloud_infrastructure',
+    baseUrl: 'https://docker.com',
+    documents: [
+      { type: 'tos', url: 'https://www.docker.com/legal/docker-terms-service/' },
+      { type: 'privacy', url: 'https://www.docker.com/legal/docker-privacy-policy/' },
+    ],
+  },
+
+  // ============ PRODUCTIVITY & BUSINESS ============
+  {
+    slug: 'notion',
+    name: 'Notion',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://notion.so',
+    category: 'productivity',
+    baseUrl: 'https://notion.so',
+    documents: [
+      { type: 'tos', url: 'https://www.notion.so/Terms-and-Privacy-28ffdd083dc3473e9c2da6ec011b58ac' },
+      { type: 'privacy', url: 'https://www.notion.so/Privacy-Policy-3468d120cf614d4c9014c09f6adc9091' },
+    ],
+  },
+  {
+    slug: 'lemon-squeezy',
+    name: 'Lemon Squeezy',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://lemonsqueezy.com',
+    category: 'payment_finance',
+    baseUrl: 'https://lemonsqueezy.com',
+    documents: [
+      { type: 'tos', url: 'https://www.lemonsqueezy.com/terms' },
+      { type: 'privacy', url: 'https://www.lemonsqueezy.com/privacy' },
+    ],
+  },
+  {
+    slug: 'cal-com',
+    name: 'Cal.com',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://cal.com',
+    category: 'productivity',
+    baseUrl: 'https://cal.com',
+    documents: [
+      { type: 'tos', url: 'https://cal.com/terms' },
+      { type: 'privacy', url: 'https://cal.com/privacy' },
+    ],
+  },
+  {
+    slug: 'linear',
+    name: 'Linear',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://linear.app',
+    category: 'productivity',
+    baseUrl: 'https://linear.app',
+    documents: [
+      { type: 'tos', url: 'https://linear.app/terms' },
+      { type: 'privacy', url: 'https://linear.app/privacy' },
+    ],
+  },
+  {
+    slug: 'slack',
+    name: 'Slack',
+    logoUrl: 'https://www.google.com/s2/favicons?sz=128&domain_url=https://slack.com',
+    category: 'productivity',
+    baseUrl: 'https://slack.com',
+    documents: [
+      { type: 'tos', url: 'https://slack.com/terms-of-service' },
+      { type: 'privacy', url: 'https://slack.com/privacy-policy' },
+    ],
+  },
 ];
 
 // Category order for display
@@ -386,6 +671,10 @@ export const CATEGORY_ORDER: VendorCategory[] = [
   'ai_ml',
   'ai_builders',
   'developer_tools',
+  'automation',
+  'analytics',
+  'scraping',
+  'productivity',
 ];
 
 // Get vendors grouped by category
@@ -396,6 +685,10 @@ export function getVendorsByCategory(): Record<VendorCategory, VendorTemplate[]>
     ai_ml: [],
     ai_builders: [],
     developer_tools: [],
+    automation: [],
+    analytics: [],
+    scraping: [],
+    productivity: [],
   };
 
   for (const vendor of VENDOR_CATALOG) {
