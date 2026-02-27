@@ -183,7 +183,7 @@ export function UserMenu() {
             <span className="ud-item-icon">{'\u{1F4CA}'}</span>
             Dashboard
           </a>
-          <a href="/dashboard" className="user-dropdown-item">
+          <a href="/dashboard/watchlist" className="user-dropdown-item">
             <span className="ud-item-icon">{'\u{1F4CB}'}</span>
             Watchlist
             <span className="ud-item-count">{watchlistCount}</span>

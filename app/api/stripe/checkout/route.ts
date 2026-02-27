@@ -67,6 +67,10 @@ export async function POST(request: Request) {
     mode: 'subscription',
     line_items: [{ price: priceId, quantity: 1 }],
     allow_promotion_codes: true,
+    subscription_data: {
+      trial_period_days: 7,
+    },
+    payment_method_collection: 'always',
     success_url: `${request.headers.get('origin')}/dashboard?checkout=success`,
     cancel_url: `${request.headers.get('origin')}/pricing`,
   });

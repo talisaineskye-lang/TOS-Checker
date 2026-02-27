@@ -18,6 +18,7 @@ export function DashboardNav() {
             <Logo size="sm" />
           </a>
           <a href="/dashboard" className="nav-link active">Dashboard</a>
+          <a href="/dashboard/watchlist" className="nav-link">Watchlist</a>
           <a href="/dashboard/history" className="nav-link">History</a>
           <a href="/dashboard/settings" className="nav-link">Settings</a>
           <a href="/intel" className="nav-link">Drift Intel</a>

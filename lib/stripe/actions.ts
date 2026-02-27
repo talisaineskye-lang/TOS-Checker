@@ -16,7 +16,7 @@ async function getToken(): Promise<string | null> {
 export async function goToCheckout(plan: PlanName, interval: Interval) {
   const token = await getToken();
   if (!token) {
-    window.location.href = '/onboarding';
+    window.location.href = '/login?redirectTo=/pricing';
     return;
   }
 
@@ -36,7 +36,7 @@ export async function goToCheckout(plan: PlanName, interval: Interval) {
 export async function goToPortal() {
   const token = await getToken();
   if (!token) {
-    window.location.href = '/onboarding';
+    window.location.href = '/login?redirectTo=/dashboard';
     return;
   }
 

@@ -15,6 +15,14 @@ export default function PricingPage() {
 
   const toggleBilling = () => setAnnual((prev) => !prev);
 
+  const handlePlanClick = (plan: PlanName) => {
+    if (!user) {
+      setShowLogin(true);
+      return;
+    }
+    goToCheckout(plan, annual ? 'annual' : 'monthly');
+  };
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
@@ -32,7 +40,7 @@ export default function PricingPage() {
           price: '9',
           priceCurrency: 'USD',
           priceValidUntil: '2026-12-31',
-          description: '29 curated vendors, up to 5 custom vendors, weekly digest, AI summaries.',
+          description: '54 curated vendors, up to 5 custom vendors, weekly digest, AI summaries.',
           url: 'https://www.stackdrift.app/pricing',
           availability: 'https://schema.org/InStock',
         },
@@ -138,12 +146,13 @@ export default function PricingPage() {
           <div className="pp-annual">
             {annual ? '$84/yr billed annually' : 'Switch to annual — save 20%'}
           </div>
-          <button className="pp-cta" onClick={() => goToCheckout('solo', annual ? 'annual' : 'monthly')}>Start monitoring</button>
+          <button className="pp-cta" onClick={() => handlePlanClick('solo')}>Start free trial</button>
+          <div className="pp-trial-note">7-day free trial &middot; cancel anytime</div>
           <div className="pp-divider" />
           <div className="pp-features">
             <div className="pp-feat">
               <span className="pp-fi yes">&#10003;</span>
-              <span className="pp-fl">29 curated vendors<span className="pp-fd">Payments, cloud, AI, dev tools</span></span>
+              <span className="pp-fl">54 curated vendors<span className="pp-fd">Payments, cloud, AI, dev tools &amp; more</span></span>
             </div>
             <div className="pp-feat">
               <span className="pp-fi yes">&#10003;</span>
@@ -156,10 +165,6 @@ export default function PricingPage() {
             <div className="pp-feat">
               <span className="pp-fi yes">&#10003;</span>
               <span className="pp-fl">AI-powered change summaries</span>
-            </div>
-            <div className="pp-feat">
-              <span className="pp-fi yes">&#10003;</span>
-              <span className="pp-fl">Full Intel feed access</span>
             </div>
             <div className="pp-feat">
               <span className="pp-fi yes">&#10003;</span>
@@ -193,7 +198,8 @@ export default function PricingPage() {
           <div className="pp-annual">
             {annual ? '$276/yr billed annually' : 'Switch to annual — save 20%'}
           </div>
-          <button className="pp-cta" onClick={() => goToCheckout('pro', annual ? 'annual' : 'monthly')}>Start monitoring</button>
+          <button className="pp-cta" onClick={() => handlePlanClick('pro')}>Start free trial</button>
+          <div className="pp-trial-note">7-day free trial &middot; cancel anytime</div>
           <div className="pp-divider" />
           <div className="pp-features">
             <div className="pp-feat">
@@ -298,10 +304,9 @@ export default function PricingPage() {
             </tr>
           </thead>
           <tbody>
-            <tr><td>Curated vendors</td><td className="pp-tv">29</td><td className="pp-tv">29</td><td className="pp-tv">29</td></tr>
+            <tr><td>Curated vendors</td><td className="pp-tv">54</td><td className="pp-tv">54</td><td className="pp-tv">54</td></tr>
             <tr><td>Custom vendors</td><td className="pp-tv">5</td><td className="pp-tv">20</td><td className="pp-tv">&infin;</td></tr>
             <tr><td>AI change summaries</td><td className="pp-tc">&#10003;</td><td className="pp-tc">&#10003;</td><td className="pp-tc">&#10003;</td></tr>
-            <tr><td>Intel feed</td><td className="pp-tc">&#10003;</td><td className="pp-tc">&#10003;</td><td className="pp-tc">&#10003;</td></tr>
             <tr><td>Personalized weekly digest</td><td className="pp-tc">&#10003;</td><td className="pp-tc">&#10003;</td><td className="pp-tc">&#10003;</td></tr>
             <tr><td>Real-time email alerts</td><td className="pp-td">&mdash;</td><td className="pp-tc">&#10003;</td><td className="pp-tc">&#10003;</td></tr>
             <tr><td>Webhooks &amp; JSON API</td><td className="pp-td">&mdash;</td><td className="pp-tc">&#10003;</td><td className="pp-tc">&#10003;</td></tr>
@@ -332,8 +337,8 @@ export default function PricingPage() {
         </div>
 
         <div className="pp-faq-item">
-          <div className="pp-faq-q">Which 29 vendors do you monitor?</div>
-          <div className="pp-faq-a">Major platforms across payments, cloud, AI, and dev tools &mdash; including Stripe, Vercel, Supabase, AWS, OpenAI, Anthropic, GitHub, Cloudflare, and more. The full list is visible on the dashboard.</div>
+          <div className="pp-faq-q">Which 54+ vendors do you monitor?</div>
+          <div className="pp-faq-a">Major platforms across payments, cloud, AI, dev tools, automation, analytics, and more &mdash; including Stripe, AWS, Vercel, OpenAI, Anthropic, GitHub, Cloudflare, Zapier, PostHog, and dozens more. The full list is visible on the dashboard.</div>
         </div>
 
         <div className="pp-faq-item">
@@ -359,9 +364,9 @@ export default function PricingPage() {
 
       {/* Bottom CTA */}
       <section className="pp-bottom-cta">
-        <h2>Start monitoring today.</h2>
-        <p>Set up in 2 minutes. No credit card required to explore.</p>
-        <a href="/onboarding" className="pp-btn">Get started &rarr;</a>
+        <h2>Start your free trial today.</h2>
+        <p>7 days free, then pick the plan that fits. Cancel anytime.</p>
+        <button className="pp-btn" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Choose a plan &uarr;</button>
       </section>
 
       {/* Footer */}

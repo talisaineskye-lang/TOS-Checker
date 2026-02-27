@@ -174,9 +174,10 @@ export default function LandingPage() {
           pages across your entire vendor stack. AI-powered. Real-time.
         </p>
         <div className="s1-cta">
-          <Link href="/onboarding" className="cta-btn-gradient">Start monitoring</Link>
+          <Link href="/pricing" className="cta-btn-gradient">Start free trial</Link>
           <Link href="/pricing" className="cta-btn">View plans</Link>
         </div>
+        <p className="s1-trial">7-day free trial &middot; no charge until day 8</p>
         <div className="s1-scroll">
           <span>Scroll</span>
           <div className="s1-scroll-line" />
@@ -256,8 +257,8 @@ export default function LandingPage() {
       <div className={`text-layer s6${activeScenes.scene6 ? ' active' : ''}`}>
         <div>
           <h2>Stop getting<br /><i>blindsided.</i></h2>
-          <p className="s6-sub">Start monitoring your vendor stack today. Free during early access.</p>
-          <Link href="/onboarding" className="cta-btn">Begin free trial</Link>
+          <p className="s6-sub">Start monitoring your vendor stack today. 7 days free.</p>
+          <Link href="/pricing" className="cta-btn">Start free trial</Link>
         </div>
       </div>
 
@@ -296,7 +297,7 @@ export default function LandingPage() {
               <div className="lp-footer-col">
                 <h4>Product</h4>
                 <Link href="/pricing">Pricing</Link>
-                <Link href="/onboarding">Get started</Link>
+                <Link href="/pricing">Get started</Link>
                 <Link href="/dashboard">Dashboard</Link>
               </div>
               <div className="lp-footer-col">
