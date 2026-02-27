@@ -223,7 +223,7 @@ export default function IntelPage() {
 
                 <p className="ip-hero-sub">
                   Curated intel from vendor blogs, AI trends and tech news
-                  &mdash; classified by AI, delivered every Monday.
+                  &mdash; classified by AI, delivered every Friday.
                 </p>
 
                 <div className="ip-hero-subscribe">
@@ -465,7 +465,7 @@ export default function IntelPage() {
                     <span className="ip-pulse-dot" />
                     DRIFT INTEL NEWSLETTER
                   </div>
-                  <h2>Get this in your inbox every Monday.</h2>
+                  <h2>Get this in your inbox every Friday.</h2>
                   <p>
                     A 5-minute read curated for indie devs and SaaS builders.
                     Vendor policy changes, tool launches, and market moves
@@ -475,7 +475,7 @@ export default function IntelPage() {
                     <SubscribeForm />
                   </div>
                   <div className="ip-nl-proof">
-                    Every Monday, 6am &middot; 5-min read &middot; Unsubscribe anytime
+                    Every Friday, 6am &middot; 5-min read &middot; Unsubscribe anytime
                   </div>
                 </div>
               </div>

@@ -333,7 +333,7 @@ export default function PricingPage() {
 
         <div className="pp-faq-item">
           <div className="pp-faq-q">What&apos;s the difference between the newsletter and the weekly digest?</div>
-          <div className="pp-faq-a">The Drift Intel newsletter is free editorial content &mdash; curated industry news delivered every Monday. The personalized weekly digest is a paid feature &mdash; a summary of changes specific to the vendors on your watchlist, delivered every Friday. One is broadcast, the other is tailored to your stack. Monday: what&apos;s happening in the industry. Friday: what changed in yours.</div>
+          <div className="pp-faq-a">The Drift Intel newsletter is free editorial content &mdash; curated industry news delivered every Friday. The personalized weekly digest is a paid feature &mdash; a summary of changes specific to the vendors on your watchlist, also delivered every Friday. One is broadcast, the other is tailored to your stack. The newsletter covers what&apos;s happening in the industry. The digest covers what changed in yours.</div>
         </div>
 
         <div className="pp-faq-item">
@@ -353,7 +353,7 @@ export default function PricingPage() {
 
         <div className="pp-faq-item">
           <div className="pp-faq-q">Is there a free tier?</div>
-          <div className="pp-faq-a">The Drift Intel newsletter is free for everyone &mdash; curated vendor intel every Monday on the Intel page. For personalized monitoring, change detection, and alerts, you&apos;ll need a paid plan.</div>
+          <div className="pp-faq-a">The Drift Intel newsletter is free for everyone &mdash; curated vendor intel every Friday on the Intel page. For personalized monitoring, change detection, and alerts, you&apos;ll need a paid plan.</div>
         </div>
 
         <div className="pp-faq-item">

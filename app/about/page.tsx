@@ -165,7 +165,7 @@ export default function AboutPage() {
             Drift Intel is StackDrift&apos;s free curated news feed and weekly
             newsletter covering vendor policy changes, SaaS industry trends, AI
             developments, and regulatory updates relevant to indie developers and
-            SaaS builders. Delivered every Monday, it provides a 5-minute briefing
+            SaaS builders. Delivered every Friday, it provides a 5-minute briefing
             on what moved in the vendor landscape.
           </p>
           <p>
