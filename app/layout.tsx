@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     template: '%s | StackDrift',
   },
   description:
-    'StackDrift monitors Terms of Service, Privacy Policies, and Pricing pages across 29+ SaaS vendors. Get AI-powered change detection, severity scoring, and real-time alerts. Built for indie devs and SaaS teams.',
+    'StackDrift monitors Terms of Service, Privacy Policies, and Pricing pages across 54+ SaaS vendors. Get AI-powered change detection, severity scoring, and real-time alerts. Built for indie devs and SaaS teams.',
   metadataBase: new URL('https://www.stackdrift.app'),
   alternates: { canonical: '/' },
   openGraph: {
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     siteName: 'StackDrift',
     title: 'StackDrift — Automated Vendor Policy Monitoring | Track TOS, Privacy & Pricing Changes',
     description:
-      'StackDrift monitors Terms of Service, Privacy Policies, and Pricing pages across 29+ SaaS vendors. AI-powered change detection, severity scoring, and real-time alerts.',
+      'StackDrift monitors Terms of Service, Privacy Policies, and Pricing pages across 54+ SaaS vendors. AI-powered change detection, severity scoring, and real-time alerts.',
     images: [
       {
         url: 'https://www.stackdrift.app/og-image.png',
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'StackDrift — Automated Vendor Policy Monitoring | Track TOS, Privacy & Pricing Changes',
     description:
-      'StackDrift monitors Terms of Service, Privacy Policies, and Pricing pages across 29+ SaaS vendors. AI-powered change detection with real-time alerts.',
+      'StackDrift monitors Terms of Service, Privacy Policies, and Pricing pages across 54+ SaaS vendors. AI-powered change detection with real-time alerts.',
     images: ['https://www.stackdrift.app/og-image.png'],
   },
   icons: {

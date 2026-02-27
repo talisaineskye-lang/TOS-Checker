@@ -107,8 +107,9 @@ export async function updateScannerIntelItems(): Promise<number> {
 
   const { data: changes } = await supabase
     .from('changes')
-    .select('*, vendors(name), documents(doc_type, url)')
+    .select('*, vendors!inner(name, is_active), documents(doc_type, url)')
     .eq('is_noise', false)
+    .eq('vendors.is_active', true)
     .neq('analysis_failed', true)
     .gte('detected_at', cutoff)
     .order('detected_at', { ascending: false });

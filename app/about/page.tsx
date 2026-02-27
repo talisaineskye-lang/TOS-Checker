@@ -4,7 +4,7 @@ import { Logo } from '@/app/components/Logo';
 export const metadata: Metadata = {
   title: 'About StackDrift — SaaS Vendor Policy Monitoring Platform',
   description:
-    'StackDrift is a vendor policy monitoring platform that tracks changes to Terms of Service, privacy policies, and pricing pages across 29+ SaaS vendors. Built for indie devs and SaaS teams.',
+    'StackDrift is a vendor policy monitoring platform that tracks changes to Terms of Service, privacy policies, and pricing pages across 54+ SaaS vendors. Built for indie devs and SaaS teams.',
   alternates: { canonical: '/about' },
   openGraph: { url: '/about' },
 };
@@ -114,25 +114,43 @@ export default function AboutPage() {
         <section className="about-section">
           <h2>What We Monitor</h2>
           <p>
-            StackDrift currently tracks <strong>29+ curated vendors</strong> across
-            four categories:
+            StackDrift currently tracks <strong>54+ curated vendors</strong> across
+            nine categories:
           </p>
           <ul>
             <li>
               <strong>Payments &amp; Finance:</strong> Stripe, PayPal, Square,
-              Wise, Gumroad, Paddle
+              Wise, Gumroad, Paddle, Lemon Squeezy
             </li>
             <li>
               <strong>Cloud &amp; Infrastructure:</strong> AWS, Google Cloud,
-              Azure, Cloudflare, Vercel, Netlify
+              Azure, Cloudflare, Vercel, Netlify, Railway, Render, Neon
             </li>
             <li>
               <strong>AI &amp; Machine Learning:</strong> OpenAI, Anthropic,
-              Google Gemini, Perplexity, Hugging Face, Replicate
+              Google Gemini, Perplexity, Hugging Face, Replicate, OpenRouter,
+              Groq, Mistral AI
             </li>
             <li>
-              <strong>AI Builders &amp; Dev Tools:</strong> GitHub, Cursor, Replit,
-              Bolt.new, Lovable, Webflow, Framer, Bubble, FlutterFlow, Durable
+              <strong>AI Builders:</strong> Lovable, Bolt.new, Cursor, Replit,
+              Vercel v0, Bubble, FlutterFlow, Webflow, Framer, Windsurf,
+              Wispr Flow, Manus
+            </li>
+            <li>
+              <strong>Developer Tools:</strong> GitHub, Docker, Resend, Pinecone
+            </li>
+            <li>
+              <strong>Automation &amp; Workflow:</strong> n8n, Zapier, Make
+            </li>
+            <li>
+              <strong>Analytics:</strong> PostHog, Plausible, Mixpanel
+            </li>
+            <li>
+              <strong>Scraping &amp; Data:</strong> Apify, Firecrawl, Browserbase
+            </li>
+            <li>
+              <strong>Productivity &amp; Business:</strong> Notion, Cal.com,
+              Linear, Slack
             </li>
           </ul>
           <p>

@@ -35,7 +35,7 @@ const FAQ_ITEMS = [
   },
   {
     q: 'Which vendors does StackDrift track?',
-    a: 'We monitor 29+ vendors across payments (Stripe, PayPal), cloud (AWS, Vercel, Cloudflare), AI (OpenAI, Anthropic), and developer tools (GitHub, Cursor). Pro and Business plans let you add custom vendors.',
+    a: 'We monitor 54+ vendors across payments (Stripe, PayPal), cloud (AWS, Vercel, Cloudflare), AI (OpenAI, Anthropic), developer tools (GitHub, Docker), automation (Zapier, n8n), analytics (PostHog, Mixpanel), and more. Pro and Business plans let you add custom vendors.',
   },
   {
     q: 'How is StackDrift different from a Google Alert?',
@@ -89,13 +89,13 @@ export default function LandingPage() {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
     name: 'StackDrift',
-    description: 'SaaS vendor policy monitoring platform that tracks changes to Terms of Service, Privacy Policies, and Pricing pages across 29+ SaaS vendors. Built for indie developers and small SaaS teams.',
+    description: 'SaaS vendor policy monitoring platform that tracks changes to Terms of Service, Privacy Policies, and Pricing pages across 54+ SaaS vendors. Built for indie developers and small SaaS teams.',
     applicationCategory: 'BusinessApplication',
     applicationSubCategory: 'Vendor Management, Policy Monitoring, Compliance',
     operatingSystem: 'Web',
     url: 'https://www.stackdrift.app',
     offers: [
-      { '@type': 'Offer', name: 'Solo', price: '9', priceCurrency: 'USD', priceValidUntil: '2026-12-31', description: 'Monitor 29 curated vendors with AI-powered change summaries' },
+      { '@type': 'Offer', name: 'Solo', price: '9', priceCurrency: 'USD', priceValidUntil: '2026-12-31', description: 'Monitor 54 curated vendors with AI-powered change summaries' },
       { '@type': 'Offer', name: 'Pro', price: '29', priceCurrency: 'USD', priceValidUntil: '2026-12-31', description: 'Webhooks, Slack integration, and full change history for workflow automation' },
       { '@type': 'Offer', name: 'Business', price: '99', priceCurrency: 'USD', priceValidUntil: '2026-12-31', description: 'Team seats, audit logs, redline PDF exports, and renewal reminders for compliance-ready teams' },
     ],
@@ -229,7 +229,7 @@ export default function LandingPage() {
           <h2 className="scene-heading" style={{ textAlign: 'center', marginBottom: 0 }}>Built with care</h2>
           <div className="s5-grid">
             <div className="s5-item">
-              <div className="s5-icon">29+</div>
+              <div className="s5-icon">54+</div>
               <h3>Vendors</h3>
               <p>Stripe, AWS, Vercel, OpenAI, and more. Monitored every 6 hours.</p>
             </div>
