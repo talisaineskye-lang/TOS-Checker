@@ -107,6 +107,10 @@ export function VendorGrid() {
       ai_ml: [],
       ai_builders: [],
       developer_tools: [],
+      automation: [],
+      analytics: [],
+      scraping: [],
+      productivity: [],
     };
     filteredVendors.forEach((v) => {
       grouped[v.category].push(v);
