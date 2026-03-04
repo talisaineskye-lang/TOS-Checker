@@ -4,10 +4,13 @@ import { sendChangeAlert } from '@/lib/notifier';
 import { DOCUMENT_TYPE_LABELS, DocumentType } from '@/lib/types';
 import { deliverWebhooks } from '@/lib/webhooks/deliver';
 import { deliverSlackNotifications } from '@/lib/webhooks/slack';
+import { requireAdmin } from '@/lib/api-auth';
 
 export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
+  const admin = await requireAdmin();
+  if (!admin.authorized) return admin.response;
   const { changeId, action } = await request.json();
 
   if (!changeId || !action) {
@@ -114,6 +117,8 @@ export async function POST(request: NextRequest) {
 
 // GET: List all pending review changes
 export async function GET() {
+  const admin = await requireAdmin();
+  if (!admin.authorized) return admin.response;
   const { data: pending, error } = await supabase
     .from('changes')
     .select('*, vendors(name), documents(doc_type, url)')
