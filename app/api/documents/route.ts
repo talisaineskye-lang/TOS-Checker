@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { requireAuth, requireAdmin } from '@/lib/api-auth';
 
 export const runtime = 'nodejs';
 
 export async function GET(request: NextRequest) {
+  const auth = await requireAuth();
+  if (!auth.authorized) return auth.response;
+
   const { searchParams } = new URL(request.url);
   const vendorId = searchParams.get('vendor_id');
   const active = searchParams.get('active');
@@ -31,6 +35,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const admin = await requireAdmin();
+  if (!admin.authorized) return admin.response;
+
   const body = await request.json();
 
   if (!body?.vendor_id || !body?.doc_type || !body?.url) {
@@ -59,6 +66,9 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
+  const admin = await requireAdmin();
+  if (!admin.authorized) return admin.response;
+
   const body = await request.json();
 
   if (!body?.id) {
@@ -85,6 +95,9 @@ export async function PATCH(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+  const admin = await requireAdmin();
+  if (!admin.authorized) return admin.response;
+
   const { searchParams } = new URL(request.url);
   let id = searchParams.get('id');
 

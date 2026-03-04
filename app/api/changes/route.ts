@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { requireAuth } from '@/lib/api-auth';
 
 export const runtime = 'nodejs';
 
 export async function GET(request: NextRequest) {
+  const auth = await requireAuth();
+  if (!auth.authorized) return auth.response;
   const { searchParams } = new URL(request.url);
   const serviceId = searchParams.get('service_id');
   const limit = Math.min(Number(searchParams.get('limit') ?? 20), 100);

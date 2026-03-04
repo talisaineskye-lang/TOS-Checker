@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { VendorTemplate, CustomVendor } from '@/lib/types';
+import { requireAdmin } from '@/lib/api-auth';
 
 export const runtime = 'nodejs';
 
@@ -10,6 +11,9 @@ interface OnboardingPayload {
 }
 
 export async function POST(request: NextRequest) {
+  const admin = await requireAdmin();
+  if (!admin.authorized) return admin.response;
+
   try {
     const body: OnboardingPayload = await request.json();
     const { vendors, customVendors } = body;
@@ -130,6 +134,8 @@ export async function POST(request: NextRequest) {
 
 // Check onboarding status
 export async function GET() {
+  const admin = await requireAdmin();
+  if (!admin.authorized) return admin.response;
   const { data, error } = await supabase
     .from('app_settings')
     .select('value')
