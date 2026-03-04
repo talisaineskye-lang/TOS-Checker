@@ -44,7 +44,11 @@ export async function GET(request: NextRequest) {
     query = query.lte('detected_at', until);
   }
   if (search) {
-    query = query.or(`summary.ilike.%${search}%,impact.ilike.%${search}%`);
+    // Sanitize search input: strip characters that have special meaning in PostgREST filter syntax
+    const sanitized = search.replace(/[%_,.()"'\\]/g, '');
+    if (sanitized.length > 0) {
+      query = query.or(`summary.ilike.%${sanitized}%,impact.ilike.%${sanitized}%`);
+    }
   }
 
   const { data, error, count } = await query;

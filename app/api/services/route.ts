@@ -66,7 +66,11 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: 'id is required' }, { status: 400 });
   }
 
-  const { id, ...updates } = body;
+  const allowedFields = ['name', 'tos_url', 'is_active'];
+  const updates: Record<string, unknown> = {};
+  for (const field of allowedFields) {
+    if (body[field] !== undefined) updates[field] = body[field];
+  }
   if (Object.keys(updates).length === 0) {
     return NextResponse.json({ error: 'No updates provided' }, { status: 400 });
   }
@@ -74,7 +78,7 @@ export async function PATCH(request: NextRequest) {
   const { data, error } = await supabase
     .from('services')
     .update(updates)
-    .eq('id', id)
+    .eq('id', body.id)
     .select()
     .single();
 

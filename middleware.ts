@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
-const ADMIN_EMAIL = 'talisaine.skye@gmail.com';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || '';
 
 export async function middleware(request: NextRequest) {
   // Skip auth if env vars are not configured yet
