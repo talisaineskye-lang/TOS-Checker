@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server';
 import { updateScannerIntelItems } from '@/lib/intel/store';
+import { requireAdmin } from '@/lib/api-auth';
 
 export const runtime = 'nodejs';
 
 export async function POST() {
+  const admin = await requireAdmin();
+  if (!admin.authorized) return admin.response;
   try {
     const count = await updateScannerIntelItems();
     console.log(`[refresh-intel] Refreshed scanner Intel items: ${count} items`);

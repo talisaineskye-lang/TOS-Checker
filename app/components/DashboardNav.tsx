@@ -4,7 +4,7 @@ import { Logo } from './Logo';
 import { UserMenu } from './UserMenu';
 import { useAuth } from './AuthProvider';
 
-const ADMIN_EMAIL = 'talisaine.skye@gmail.com';
+const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL || '';
 
 export function DashboardNav() {
   const { user } = useAuth();

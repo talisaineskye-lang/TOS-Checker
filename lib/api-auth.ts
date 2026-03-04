@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 
-const ADMIN_EMAIL = 'talisaine.skye@gmail.com';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || '';
 
 type AuthSuccess = { authorized: true; userId: string; email: string };
 type AuthFailure = { authorized: false; response: NextResponse };
