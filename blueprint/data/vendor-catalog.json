@@ -1,0 +1,518 @@
+[
+  {
+    "slug": "stripe",
+    "name": "Stripe",
+    "category": "payment",
+    "documents": [
+      { "type": "tos", "url": "https://stripe.com/legal/ssa", "label": "Services Agreement" },
+      { "type": "privacy", "url": "https://stripe.com/privacy", "label": "Privacy Policy" },
+      { "type": "aup", "url": "https://stripe.com/legal/restricted-businesses", "label": "Restricted Businesses" },
+      { "type": "pricing", "url": "https://stripe.com/pricing", "label": "Pricing" },
+      { "type": "api_terms", "url": "https://stripe.com/legal/spc", "label": "API Terms" }
+    ]
+  },
+  {
+    "slug": "paypal",
+    "name": "PayPal",
+    "category": "payment",
+    "documents": [
+      { "type": "tos", "url": "https://www.paypal.com/us/legalhub/useragreement-full", "label": "User Agreement" },
+      { "type": "privacy", "url": "https://www.paypal.com/us/legalhub/privacy-full", "label": "Privacy Policy" },
+      { "type": "aup", "url": "https://www.paypal.com/us/legalhub/acceptableuse-full", "label": "Acceptable Use" },
+      { "type": "pricing", "url": "https://www.paypal.com/us/webapps/mpp/merchant-fees", "label": "Merchant Fees" }
+    ]
+  },
+  {
+    "slug": "square",
+    "name": "Square",
+    "category": "payment",
+    "documents": [
+      { "type": "tos", "url": "https://squareup.com/us/en/legal/general/ua", "label": "User Agreement" },
+      { "type": "privacy", "url": "https://squareup.com/us/en/legal/general/privacy", "label": "Privacy Policy" },
+      { "type": "aup", "url": "https://squareup.com/us/en/legal/general/payment-terms", "label": "Payment Terms" },
+      { "type": "pricing", "url": "https://squareup.com/us/en/payments", "label": "Pricing" }
+    ]
+  },
+  {
+    "slug": "wise",
+    "name": "Wise",
+    "category": "payment",
+    "documents": [
+      { "type": "tos", "url": "https://wise.com/us/terms-of-use", "label": "Terms of Use" },
+      { "type": "privacy", "url": "https://wise.com/us/legal/privacy-policy", "label": "Privacy Policy" },
+      { "type": "aup", "url": "https://wise.com/acceptable-use-policy", "label": "Acceptable Use" }
+    ]
+  },
+  {
+    "slug": "gumroad",
+    "name": "Gumroad",
+    "category": "payment",
+    "documents": [
+      { "type": "tos", "url": "https://gumroad.com/terms", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://gumroad.com/privacy", "label": "Privacy Policy" },
+      { "type": "aup", "url": "https://gumroad.com/prohibited", "label": "Prohibited Items" },
+      { "type": "pricing", "url": "https://gumroad.com/features/pricing", "label": "Pricing" }
+    ]
+  },
+  {
+    "slug": "paddle",
+    "name": "Paddle",
+    "category": "payment",
+    "documents": [
+      { "type": "tos", "url": "https://www.paddle.com/legal/terms", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://www.paddle.com/legal/privacy", "label": "Privacy Policy" },
+      { "type": "aup", "url": "https://www.paddle.com/legal/aup", "label": "Acceptable Use" },
+      { "type": "pricing", "url": "https://www.paddle.com/pricing", "label": "Pricing" }
+    ]
+  },
+  {
+    "slug": "lemon-squeezy",
+    "name": "Lemon Squeezy",
+    "category": "payment",
+    "documents": [
+      { "type": "tos", "url": "https://www.lemonsqueezy.com/terms", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://www.lemonsqueezy.com/privacy", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "aws",
+    "name": "AWS",
+    "category": "cloud",
+    "documents": [
+      { "type": "tos", "url": "https://aws.amazon.com/service-terms/", "label": "Service Terms" },
+      { "type": "privacy", "url": "https://aws.amazon.com/privacy/", "label": "Privacy Policy" },
+      { "type": "aup", "url": "https://aws.amazon.com/aup/", "label": "Acceptable Use" }
+    ]
+  },
+  {
+    "slug": "google-cloud",
+    "name": "Google Cloud",
+    "category": "cloud",
+    "documents": [
+      { "type": "tos", "url": "https://cloud.google.com/terms", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://cloud.google.com/terms/cloud-privacy-notice", "label": "Privacy Notice" },
+      { "type": "aup", "url": "https://cloud.google.com/terms/aup", "label": "Acceptable Use" }
+    ]
+  },
+  {
+    "slug": "azure",
+    "name": "Azure",
+    "category": "cloud",
+    "documents": [
+      { "type": "tos", "url": "https://azure.microsoft.com/en-us/support/legal/", "label": "Legal Terms" },
+      { "type": "privacy", "url": "https://privacy.microsoft.com/en-us/privacystatement", "label": "Privacy Statement" },
+      { "type": "aup", "url": "https://www.microsoft.com/en-us/legal/terms-of-use", "label": "Terms of Use" }
+    ]
+  },
+  {
+    "slug": "cloudflare",
+    "name": "Cloudflare",
+    "category": "cloud",
+    "documents": [
+      { "type": "tos", "url": "https://www.cloudflare.com/terms/", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://www.cloudflare.com/privacypolicy/", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "vercel",
+    "name": "Vercel",
+    "category": "cloud",
+    "documents": [
+      { "type": "tos", "url": "https://vercel.com/legal/terms", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://vercel.com/legal/privacy-policy", "label": "Privacy Policy" },
+      { "type": "aup", "url": "https://vercel.com/legal/acceptable-use-policy", "label": "Acceptable Use" }
+    ]
+  },
+  {
+    "slug": "netlify",
+    "name": "Netlify",
+    "category": "cloud",
+    "documents": [
+      { "type": "tos", "url": "https://www.netlify.com/legal/terms-of-use/", "label": "Terms of Use" },
+      { "type": "privacy", "url": "https://www.netlify.com/privacy/", "label": "Privacy Policy" },
+      { "type": "aup", "url": "https://www.netlify.com/legal/acceptable-use-policy/", "label": "Acceptable Use" }
+    ]
+  },
+  {
+    "slug": "railway",
+    "name": "Railway",
+    "category": "cloud",
+    "documents": [
+      { "type": "tos", "url": "https://railway.app/legal/terms", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://railway.app/legal/privacy", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "render",
+    "name": "Render",
+    "category": "cloud",
+    "documents": [
+      { "type": "tos", "url": "https://render.com/terms", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://render.com/privacy", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "neon",
+    "name": "Neon",
+    "category": "cloud",
+    "documents": [
+      { "type": "tos", "url": "https://neon.tech/terms-of-service", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://neon.tech/privacy-policy", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "resend",
+    "name": "Resend",
+    "category": "cloud",
+    "documents": [
+      { "type": "tos", "url": "https://resend.com/legal/terms-of-service", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://resend.com/legal/privacy-policy", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "docker",
+    "name": "Docker",
+    "category": "cloud",
+    "documents": [
+      { "type": "tos", "url": "https://www.docker.com/legal/docker-terms-service/", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://www.docker.com/legal/docker-privacy-policy/", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "openai",
+    "name": "OpenAI",
+    "category": "ai-platform",
+    "documents": [
+      { "type": "tos", "url": "https://openai.com/policies/terms-of-use", "label": "Terms of Use" },
+      { "type": "privacy", "url": "https://openai.com/policies/privacy-policy", "label": "Privacy Policy" },
+      { "type": "aup", "url": "https://openai.com/policies/usage-policies", "label": "Usage Policies" },
+      { "type": "api_terms", "url": "https://openai.com/policies/business-terms", "label": "Business Terms" },
+      { "type": "changelog", "url": "https://platform.openai.com/docs/deprecations", "label": "Deprecations" }
+    ]
+  },
+  {
+    "slug": "anthropic",
+    "name": "Anthropic",
+    "category": "ai-platform",
+    "documents": [
+      { "type": "tos", "url": "https://www.anthropic.com/legal/consumer-terms", "label": "Consumer Terms" },
+      { "type": "privacy", "url": "https://www.anthropic.com/legal/privacy", "label": "Privacy Policy" },
+      { "type": "aup", "url": "https://www.anthropic.com/legal/aup", "label": "Acceptable Use" },
+      { "type": "api_terms", "url": "https://www.anthropic.com/legal/commercial-terms", "label": "Commercial Terms" },
+      { "type": "changelog", "url": "https://docs.anthropic.com/en/docs/about-claude/model-deprecations", "label": "Model Deprecations" }
+    ]
+  },
+  {
+    "slug": "google-gemini",
+    "name": "Google Gemini",
+    "category": "ai-platform",
+    "documents": [
+      { "type": "tos", "url": "https://policies.google.com/terms", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://policies.google.com/privacy", "label": "Privacy Policy" },
+      { "type": "aup", "url": "https://policies.google.com/terms/generative-ai", "label": "Generative AI Terms" },
+      { "type": "api_terms", "url": "https://ai.google.dev/terms", "label": "API Terms" },
+      { "type": "changelog", "url": "https://ai.google.dev/gemini-api/docs/deprecations", "label": "Deprecations" }
+    ]
+  },
+  {
+    "slug": "perplexity",
+    "name": "Perplexity",
+    "category": "ai-platform",
+    "documents": [
+      { "type": "tos", "url": "https://www.perplexity.ai/hub/legal/terms-of-service", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://www.perplexity.ai/hub/legal/privacy-policy", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "huggingface",
+    "name": "Hugging Face",
+    "category": "ai-platform",
+    "documents": [
+      { "type": "tos", "url": "https://huggingface.co/terms-of-service", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://huggingface.co/privacy", "label": "Privacy Policy" },
+      { "type": "aup", "url": "https://huggingface.co/content-guidelines", "label": "Content Guidelines" }
+    ]
+  },
+  {
+    "slug": "replicate",
+    "name": "Replicate",
+    "category": "ai-platform",
+    "documents": [
+      { "type": "tos", "url": "https://replicate.com/terms", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://replicate.com/privacy", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "manus",
+    "name": "Manus",
+    "category": "ai-platform",
+    "documents": [
+      { "type": "tos", "url": "https://manus.im/terms", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://manus.im/privacy", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "openrouter",
+    "name": "OpenRouter",
+    "category": "ai-platform",
+    "documents": [
+      { "type": "tos", "url": "https://openrouter.ai/terms", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://openrouter.ai/privacy", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "groq",
+    "name": "Groq",
+    "category": "ai-platform",
+    "documents": [
+      { "type": "tos", "url": "https://groq.com/terms-of-use/", "label": "Terms of Use" },
+      { "type": "privacy", "url": "https://groq.com/privacy-policy/", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "mistral-ai",
+    "name": "Mistral AI",
+    "category": "ai-platform",
+    "documents": [
+      { "type": "tos", "url": "https://mistral.ai/terms/", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://mistral.ai/terms/#privacy-policy", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "wispr-flow",
+    "name": "Wispr Flow",
+    "category": "ai-platform",
+    "documents": [
+      { "type": "tos", "url": "https://www.wisprflow.ai/terms", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://www.wisprflow.ai/privacy", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "pinecone",
+    "name": "Pinecone",
+    "category": "ai-platform",
+    "documents": [
+      { "type": "tos", "url": "https://www.pinecone.io/terms/", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://www.pinecone.io/privacy/", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "lovable",
+    "name": "Lovable",
+    "category": "ai-builder",
+    "documents": [
+      { "type": "tos", "url": "https://lovable.dev/terms", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://lovable.dev/privacy", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "bolt",
+    "name": "Bolt.new",
+    "category": "ai-builder",
+    "documents": [
+      { "type": "tos", "url": "https://bolt.new/terms", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://bolt.new/privacy", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "cursor",
+    "name": "Cursor",
+    "category": "ai-builder",
+    "documents": [
+      { "type": "tos", "url": "https://www.cursor.com/terms", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://www.cursor.com/privacy", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "replit",
+    "name": "Replit",
+    "category": "ai-builder",
+    "documents": [
+      { "type": "tos", "url": "https://replit.com/site/terms", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://replit.com/site/privacy", "label": "Privacy Policy" },
+      { "type": "aup", "url": "https://docs.replit.com/legal-and-security-info/trust-safety/community-standards", "label": "Community Standards" }
+    ]
+  },
+  {
+    "slug": "vercel-v0",
+    "name": "Vercel v0",
+    "category": "ai-builder",
+    "documents": [
+      { "type": "tos", "url": "https://vercel.com/legal/terms", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://vercel.com/legal/privacy-policy", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "bubble",
+    "name": "Bubble",
+    "category": "ai-builder",
+    "documents": [
+      { "type": "tos", "url": "https://bubble.io/terms", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://bubble.io/privacy", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "flutterflow",
+    "name": "FlutterFlow",
+    "category": "ai-builder",
+    "documents": [
+      { "type": "tos", "url": "https://flutterflow.io/terms-of-service", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://flutterflow.io/privacy-policy", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "webflow",
+    "name": "Webflow",
+    "category": "ai-builder",
+    "documents": [
+      { "type": "tos", "url": "https://webflow.com/legal/terms", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://webflow.com/legal/privacy", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "framer",
+    "name": "Framer",
+    "category": "ai-builder",
+    "documents": [
+      { "type": "tos", "url": "https://www.framer.com/legal/terms/", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://www.framer.com/legal/privacy/", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "windsurf",
+    "name": "Windsurf",
+    "category": "ai-builder",
+    "documents": [
+      { "type": "tos", "url": "https://windsurf.com/terms-of-service", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://windsurf.com/privacy-policy", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "github",
+    "name": "GitHub",
+    "category": "devtools",
+    "documents": [
+      { "type": "tos", "url": "https://docs.github.com/en/site-policy/github-terms/github-terms-of-service", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement", "label": "Privacy Statement" },
+      { "type": "aup", "url": "https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies", "label": "Acceptable Use" },
+      { "type": "api_terms", "url": "https://docs.github.com/en/site-policy/github-terms/github-terms-for-additional-products-and-features", "label": "Additional Products Terms" }
+    ]
+  },
+  {
+    "slug": "n8n",
+    "name": "n8n",
+    "category": "automation",
+    "documents": [
+      { "type": "tos", "url": "https://n8n.io/legal/terms", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://n8n.io/legal/privacy", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "zapier",
+    "name": "Zapier",
+    "category": "automation",
+    "documents": [
+      { "type": "tos", "url": "https://zapier.com/legal/terms-of-service", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://zapier.com/privacy", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "make",
+    "name": "Make",
+    "category": "automation",
+    "documents": [
+      { "type": "tos", "url": "https://www.make.com/en/terms-of-service", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://www.make.com/en/privacy-notice", "label": "Privacy Notice" }
+    ]
+  },
+  {
+    "slug": "posthog",
+    "name": "PostHog",
+    "category": "analytics",
+    "documents": [
+      { "type": "tos", "url": "https://posthog.com/terms", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://posthog.com/privacy", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "plausible",
+    "name": "Plausible",
+    "category": "analytics",
+    "documents": [
+      { "type": "tos", "url": "https://plausible.io/terms", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://plausible.io/privacy", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "mixpanel",
+    "name": "Mixpanel",
+    "category": "analytics",
+    "documents": [
+      { "type": "tos", "url": "https://mixpanel.com/legal/terms-of-use/", "label": "Terms of Use" },
+      { "type": "privacy", "url": "https://mixpanel.com/legal/privacy-policy/", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "apify",
+    "name": "Apify",
+    "category": "scraping",
+    "documents": [
+      { "type": "tos", "url": "https://apify.com/terms-of-use", "label": "Terms of Use" },
+      { "type": "privacy", "url": "https://apify.com/privacy-policy", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "firecrawl",
+    "name": "Firecrawl",
+    "category": "scraping",
+    "documents": [
+      { "type": "tos", "url": "https://www.firecrawl.dev/terms", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://www.firecrawl.dev/privacy", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "browserbase",
+    "name": "Browserbase",
+    "category": "scraping",
+    "documents": [
+      { "type": "tos", "url": "https://www.browserbase.com/terms-of-service", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://www.browserbase.com/privacy-policy", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "notion",
+    "name": "Notion",
+    "category": "productivity",
+    "documents": [
+      { "type": "tos", "url": "https://www.notion.so/Terms-and-Privacy-28ffdd083dc3473e9c2da6ec011b58ac", "label": "Terms & Privacy" },
+      { "type": "privacy", "url": "https://www.notion.so/Privacy-Policy-3468d120cf614d4c9014c09f6adc9091", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "cal-com",
+    "name": "Cal.com",
+    "category": "productivity",
+    "documents": [
+      { "type": "tos", "url": "https://cal.com/terms", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://cal.com/privacy", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "linear",
+    "name": "Linear",
+    "category": "productivity",
+    "documents": [
+      { "type": "tos", "url": "https://linear.app/terms", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://linear.app/privacy", "label": "Privacy Policy" }
+    ]
+  },
+  {
+    "slug": "slack",
+    "name": "Slack",
+    "category": "productivity",
+    "documents": [
+      { "type": "tos", "url": "https://slack.com/terms-of-service", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://slack.com/privacy-policy", "label": "Privacy Policy" }
+    ]
+  }
+]

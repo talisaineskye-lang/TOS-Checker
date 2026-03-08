@@ -1,0 +1,13 @@
+[
+  "aws",
+  "google-cloud",
+  "azure",
+  "cloudflare",
+  "vercel",
+  "netlify",
+  "railway",
+  "render",
+  "neon",
+  "resend",
+  "docker"
+]

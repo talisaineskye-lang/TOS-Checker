@@ -1,0 +1,20 @@
+[
+  "openai",
+  "anthropic",
+  "google-gemini",
+  "perplexity",
+  "huggingface",
+  "replicate",
+  "mistral-ai",
+  "groq",
+  "openrouter",
+  "manus",
+  "wispr-flow",
+  "pinecone",
+  "lovable",
+  "bolt",
+  "cursor",
+  "replit",
+  "vercel-v0",
+  "windsurf"
+]

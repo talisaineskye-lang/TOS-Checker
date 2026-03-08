@@ -1,0 +1,8 @@
+node_modules/
+.env
+
+# Scan data — your snapshots and changes stay local
+data/snapshots/
+data/changes/
+data/review-queue.json
+data/scan-log.json

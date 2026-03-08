@@ -1,0 +1,26 @@
+{
+  "name": "stackdrift-agent-blueprint",
+  "version": "1.0.0",
+  "description": "Standalone vendor policy monitoring agent — extracted from StackDrift production engine",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "scan": "npx tsx tools/run-scan.ts",
+    "scan:dry": "npx tsx tools/run-scan.ts --dry-run",
+    "scan:profile": "npx tsx tools/run-scan.ts --profile"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "cheerio": "^1.0.0",
+    "dotenv": "^16.4.7",
+    "resend": "^4.1.2"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
+  }
+}
