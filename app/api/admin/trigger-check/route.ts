@@ -8,6 +8,7 @@ import { DOCUMENT_TYPE_LABELS, DocumentType } from '@/lib/types';
 import { deliverWebhooks } from '@/lib/webhooks/deliver';
 import { deliverSlackNotifications } from '@/lib/webhooks/slack';
 import { logScanFailure, wasPreviousScanFailure } from '@/lib/scan-failures';
+import { requireAdmin } from '@/lib/api-auth';
 
 export const runtime = 'nodejs';
 export const maxDuration = 300; // 5 minutes for checking all docs
@@ -26,6 +27,8 @@ interface DocumentWithVendor {
 }
 
 export async function POST() {
+  const admin = await requireAdmin();
+  if (!admin.authorized) return admin.response;
   // Get all active documents with their vendor info
   const { data: documents, error } = await supabase
     .from('documents')

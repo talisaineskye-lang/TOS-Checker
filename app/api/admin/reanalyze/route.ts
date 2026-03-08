@@ -5,10 +5,13 @@ import { extractEffectiveDate } from '@/lib/fetcher';
 import { analyzeChanges } from '@/lib/analyzer';
 import { DOCUMENT_TYPE_LABELS, DocumentType } from '@/lib/types';
 import { updateScannerIntelItems } from '@/lib/intel/store';
+import { requireAdmin } from '@/lib/api-auth';
 
 export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
+  const admin = await requireAdmin();
+  if (!admin.authorized) return admin.response;
   const { changeId } = await request.json();
 
   if (!changeId) {

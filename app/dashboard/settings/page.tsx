@@ -115,6 +115,7 @@ export default function SettingsPage() {
   const [newKeyName, setNewKeyName] = useState('');
   const [newKeyRaw, setNewKeyRaw] = useState<string | null>(null);
   const [keyLoading, setKeyLoading] = useState(false);
+  const [keyError, setKeyError] = useState<string | null>(null);
 
   // Slack state
   const [slackIntegration, setSlackIntegration] = useState<SlackIntegration | null>(null);
@@ -339,16 +340,23 @@ export default function SettingsPage() {
   // ── API key handlers ──
   const createApiKey = async () => {
     setKeyLoading(true);
-    const res = await fetch('/api/api-keys', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: newKeyName || 'Untitled key' }),
-    });
-    const data = await res.json();
-    if (res.ok) {
-      setNewKeyRaw(data.key.rawKey);
-      setNewKeyName('');
-      fetchApiKeys();
+    setKeyError(null);
+    try {
+      const res = await fetch('/api/api-keys', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: newKeyName || 'Untitled key' }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setNewKeyRaw(data.key.rawKey);
+        setNewKeyName('');
+        fetchApiKeys();
+      } else {
+        setKeyError(data.error || `Failed to generate key (${res.status})`);
+      }
+    } catch (err) {
+      setKeyError('Network error — could not reach the server');
     }
     setKeyLoading(false);
   };
@@ -698,6 +706,13 @@ export default function SettingsPage() {
                     {keyLoading ? 'Creating...' : 'Generate key'}
                   </button>
                 </div>
+
+                {keyError && (
+                  <div className="sett-key-reveal" style={{ color: '#ef4444', border: '1px solid #ef4444', background: 'rgba(239,68,68,0.08)' }}>
+                    <p>{keyError}</p>
+                    <button className="pill pill-ghost pill-sm" onClick={() => setKeyError(null)}>Dismiss</button>
+                  </div>
+                )}
 
                 {newKeyRaw && (
                   <div className="sett-key-reveal">
