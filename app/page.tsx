@@ -135,6 +135,28 @@ export default function LandingPage() {
             <Link href="/" className="nav-logo">
               <Logo size="sm" />
             </Link>
+            <div className="nav-products">
+              <button className="nav-products-trigger">
+                Products
+                <svg className="nav-products-chevron" viewBox="0 0 10 10" fill="none">
+                  <path d="M2 4L5 7L8 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+              <div className="nav-products-dropdown">
+                <Link href="/" className="nav-products-item">
+                  <span className="nav-products-item-name">Vendor Monitor</span>
+                  <span className="nav-products-item-desc">Managed service &middot; from $9/mo</span>
+                </Link>
+                <Link href="/blueprint" className="nav-products-item">
+                  <span className="nav-products-item-name">Vendor Watch Blueprint</span>
+                  <span className="nav-products-item-desc">One-time &middot; $49</span>
+                </Link>
+              </div>
+            </div>
+            <div className="nav-products-mobile">
+              <Link href="/" className="nav-link">Monitor</Link>
+              <Link href="/blueprint" className="nav-link">Blueprint</Link>
+            </div>
             <Link href="/pricing" className="nav-link">Pricing</Link>
             <Link href="/intel" className="nav-link">Drift Intel</Link>
             <Link href="/about" className="nav-link">About</Link>
@@ -264,6 +286,37 @@ export default function LandingPage() {
 
       {/* Post-scroll content */}
       <div className="post-scroll">
+        {/* Choose your path */}
+        <section className="cyp-section">
+          <h2 className="cyp-heading">Choose your path</h2>
+          <div className="cyp-grid">
+            <div className="cyp-card">
+              <div className="cyp-label managed">MANAGED SERVICE</div>
+              <h3 className="cyp-title">We watch. You get alerted.</h3>
+              <p className="cyp-body">
+                StackDrift monitors 54+ vendors across your stack and alerts
+                you the moment something changes. No setup. No maintenance.
+              </p>
+              <div className="cyp-cta-wrap">
+                <Link href="/pricing" className="cyp-btn-primary">Start Free Trial</Link>
+                <span className="cyp-sublabel">From $9/mo &middot; 7-day free trial</span>
+              </div>
+            </div>
+            <div className="cyp-card">
+              <div className="cyp-label blueprint">ONE-TIME PURCHASE</div>
+              <h3 className="cyp-title">Own the agent. Run it yourself.</h3>
+              <p className="cyp-body">
+                The exact monitoring engine powering StackDrift, packaged as
+                a Claude Code blueprint. 54 vendors, 7 safeguards, $1&ndash;3/mo in API costs.
+              </p>
+              <div className="cyp-cta-wrap">
+                <Link href="/blueprint" className="cyp-btn-secondary">Get the Blueprint &mdash; $49</Link>
+                <span className="cyp-sublabel">One-time &middot; Deploy in 30 min &middot; Keep forever</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* FAQ */}
         <section className="lp-faq">
           <h2>Common questions</h2>
