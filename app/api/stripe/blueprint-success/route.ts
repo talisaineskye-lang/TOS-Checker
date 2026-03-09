@@ -24,6 +24,9 @@ export async function GET(request: NextRequest) {
     hasLiveSecretKey: !!process.env.STRIPE_SECRET_KEY,
     hasTestPriceId: !!process.env.STRIPE_TEST_BLUEPRINT_PRICE_ID,
     hasLivePriceId: !!process.env.STRIPE_BLUEPRINT_PRICE_ID,
+    hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+    supabaseUrlPrefix: process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0, 20) || '(not set)',
+    hasSupabaseServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
   };
 
   try {
