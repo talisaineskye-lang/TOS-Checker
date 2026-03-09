@@ -57,6 +57,7 @@ export async function goToBlueprintCheckout() {
     headers: { 'Content-Type': 'application/json' },
   });
 
-  const { url } = await res.json();
-  if (url) window.location.href = url;
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Checkout failed');
+  if (data.url) window.location.href = data.url;
 }

@@ -30,9 +30,9 @@ function BlueprintContent() {
     setPurchasing(true);
     try {
       await goToBlueprintCheckout();
-    } catch {
+    } catch (err) {
       setPurchasing(false);
-      alert('Something went wrong. Please try again.');
+      alert(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
     }
   }
 
