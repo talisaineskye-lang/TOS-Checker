@@ -13,6 +13,8 @@ export const STRIPE_PRICES = {
   },
 } as const;
 
+export const BLUEPRINT_PRICE_ID = process.env.STRIPE_BLUEPRINT_PRICE_ID || '';
+
 export type PlanName = keyof typeof STRIPE_PRICES;
 export type Interval = 'monthly' | 'annual';
 
