@@ -95,6 +95,11 @@ function BlueprintContent() {
             Payment could not be verified. Please try again or contact support.
           </div>
         )}
+        {error === 'download_failed' && (
+          <div className="bp-error">
+            Download link could not be generated. Please contact support@stackdrift.app.
+          </div>
+        )}
       </section>
 
       {/* What's included */}

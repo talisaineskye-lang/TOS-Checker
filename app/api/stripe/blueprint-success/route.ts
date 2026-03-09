@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getStripe } from '@/lib/stripe/client';
+import { getSupabase } from '@/lib/supabase';
+
+const BUCKET = 'blueprint-downloads';
+const FILE = 'vendor-watch-blueprint-v1.0.zip';
+const SIGNED_URL_EXPIRY = 86400; // 24 hours
 
 export async function GET(request: NextRequest) {
   const sessionId = request.nextUrl.searchParams.get('session_id');
@@ -12,12 +17,26 @@ export async function GET(request: NextRequest) {
     const stripe = getStripe();
     const session = await stripe.checkout.sessions.retrieve(sessionId);
 
-    if (session.payment_status === 'paid') {
-      return NextResponse.redirect('https://stackdrift.gumroad.com/l/liddai');
+    if (session.payment_status !== 'paid') {
+      return NextResponse.redirect(new URL('/blueprint?error=payment_failed', request.url));
     }
 
-    return NextResponse.redirect(new URL('/blueprint?error=payment_failed', request.url));
-  } catch {
+    const supabase = getSupabase();
+    const { data, error } = await supabase.storage
+      .from(BUCKET)
+      .createSignedUrl(FILE, SIGNED_URL_EXPIRY);
+
+    if (error || !data?.signedUrl) {
+      console.error('Signed URL error:', error);
+      return NextResponse.redirect(new URL('/blueprint?error=download_failed', request.url));
+    }
+
+    const downloadUrl = new URL('/blueprint/download', request.url);
+    downloadUrl.searchParams.set('url', data.signedUrl);
+
+    return NextResponse.redirect(downloadUrl.toString());
+  } catch (err) {
+    console.error('Blueprint success error:', err);
     return NextResponse.redirect(new URL('/blueprint?error=payment_failed', request.url));
   }
 }
