@@ -45,6 +45,14 @@ export async function GET(request: NextRequest) {
     }
 
     const supabase = getSupabase();
+
+    // List bucket contents for debugging
+    const { data: listData, error: listError } = await supabase.storage
+      .from(BUCKET)
+      .list('', { limit: 20 });
+    debug.bucketFiles = listData?.map((f) => f.name) || [];
+    debug.bucketListError = listError?.message || null;
+
     const { data, error } = await supabase.storage
       .from(BUCKET)
       .createSignedUrl(FILE, SIGNED_URL_EXPIRY);
