@@ -9,6 +9,7 @@ import { deliverWebhooks } from '@/lib/webhooks/deliver';
 import { deliverSlackNotifications } from '@/lib/webhooks/slack';
 import { logScanFailure, wasPreviousScanFailure } from '@/lib/scan-failures';
 import { requireAdmin } from '@/lib/api-auth';
+import { isSpaDocument } from '@/lib/spa-documents';
 
 export const runtime = 'nodejs';
 export const maxDuration = 300; // 5 minutes for checking all docs
@@ -48,6 +49,32 @@ export async function POST() {
     const displayName = `${vendorName} - ${docTypeLabel}`;
 
     try {
+      // --- SPA document guard: skip known JS-rendered pages ---
+      if (isSpaDocument(doc.url)) {
+        await logScanFailure({
+          documentId: doc.id,
+          vendorId: doc.vendor_id,
+          url: doc.url,
+          failure: {
+            ok: false,
+            reason: 'spa_not_supported',
+            httpStatus: null,
+            contentLength: null,
+            errorMessage: `Skipped: ${doc.url} is a known SPA/JS-rendered page`,
+          },
+        });
+        // Still update last_checked_at so diagnostics show accurate scan times
+        await supabase
+          .from('documents')
+          .update({ last_checked_at: new Date().toISOString() })
+          .eq('id', doc.id);
+        results.push({
+          document: displayName,
+          status: 'spa_not_supported',
+        });
+        continue;
+      }
+
       // --- Safeguard 5: Fetch with retry (up to 3 attempts, 5s delay) ---
       const fetchResult = await fetchWithRetry(doc.url);
 
@@ -60,6 +87,11 @@ export async function POST() {
           url: doc.url,
           failure: fetchResult,
         });
+        // Update last_checked_at even on failure for accurate diagnostic timestamps
+        await supabase
+          .from('documents')
+          .update({ last_checked_at: new Date().toISOString() })
+          .eq('id', doc.id);
         results.push({
           document: displayName,
           status: 'fetch_failed',

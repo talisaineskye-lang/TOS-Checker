@@ -210,6 +210,16 @@ export default async function Page() {
   const stabilityBreakdown = { stable: 0, active: 0, volatile: 0 };
   vendors.forEach((v) => { stabilityBreakdown[getStabilityTier(v.id)]++; });
 
+  // Severity breakdown for stat row (based on recent changes)
+  const severityBreakdown = { critical: 0, warning: 0, notice: 0, stable: 0 };
+  vendors.forEach((v) => {
+    const vc = changesByVendor.get(v.id) || [];
+    if (vc.some((c) => c.risk_priority === 'critical')) severityBreakdown.critical++;
+    else if (vc.some((c) => c.risk_priority === 'high')) severityBreakdown.warning++;
+    else if (vc.some((c) => c.risk_priority === 'medium')) severityBreakdown.notice++;
+    else severityBreakdown.stable++;
+  });
+
   // Map changes for client component
   const dashChanges: DashChange[] = changes.map((c) => {
     const vendorName = c.vendors?.name || 'Unknown';
@@ -257,11 +267,17 @@ export default async function Page() {
     let statusLabel = 'Stable';
 
     if (vendorChanges.some((c) => c.risk_priority === 'critical')) {
-      statusClass = 'changed';
-      statusLabel = 'Changed';
-    } else if (vendorChanges.some((c) => c.risk_priority === 'high' || c.risk_priority === 'medium')) {
+      statusClass = 'critical';
+      statusLabel = 'Critical';
+    } else if (vendorChanges.some((c) => c.risk_priority === 'high')) {
       statusClass = 'warning';
       statusLabel = 'Warning';
+    } else if (vendorChanges.some((c) => c.risk_priority === 'medium')) {
+      statusClass = 'notice';
+      statusLabel = 'Notice';
+    } else if (vendorChanges.some((c) => c.risk_priority === 'low')) {
+      statusClass = 'stable';
+      statusLabel = 'Low';
     }
 
     const changedDocTypes = new Set(
@@ -304,9 +320,9 @@ export default async function Page() {
     };
   });
 
-  // Sort: changed first, then warning, then stable
-  const statusOrder: Record<string, number> = { changed: 0, warning: 1, stable: 2 };
-  vendorRows.sort((a, b) => (statusOrder[a.statusClass] ?? 2) - (statusOrder[b.statusClass] ?? 2));
+  // Sort: critical first, then warning, notice, stable/low
+  const statusOrder: Record<string, number> = { critical: 0, warning: 1, notice: 2, stable: 3 };
+  vendorRows.sort((a, b) => (statusOrder[a.statusClass] ?? 3) - (statusOrder[b.statusClass] ?? 3));
 
   return (
     <main className="dashboard-page">
@@ -337,13 +353,15 @@ export default async function Page() {
           </div>
           <div className="stat-card">
             <div className="sc-value">
-              <span className="green">{stabilityBreakdown.stable}</span>
+              <span className="red">{severityBreakdown.critical}</span>
               {' / '}
-              <span className="amber">{stabilityBreakdown.active}</span>
+              <span className="amber">{severityBreakdown.warning}</span>
               {' / '}
-              <span className="red">{stabilityBreakdown.volatile}</span>
+              <span className="blue">{severityBreakdown.notice}</span>
+              {' / '}
+              <span className="green">{severityBreakdown.stable}</span>
             </div>
-            <div className="sc-label">Stable / Active / Volatile</div>
+            <div className="sc-label">Critical / Warning / Notice / Stable</div>
           </div>
         </div>
 

@@ -11,7 +11,8 @@ export type FetchFailureReason =
   | 'http_error'
   | 'timeout'
   | 'network_error'
-  | 'content_too_short';
+  | 'content_too_short'
+  | 'spa_not_supported';
 
 export interface FetchSuccess {
   ok: true;
