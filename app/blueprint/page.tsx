@@ -24,6 +24,17 @@ function BlueprintContent() {
   const error = searchParams.get('error');
   const { user, loading: authLoading } = useAuth();
   const [showLogin, setShowLogin] = useState(false);
+  const [purchasing, setPurchasing] = useState(false);
+
+  async function handlePurchase() {
+    setPurchasing(true);
+    try {
+      await goToBlueprintCheckout();
+    } catch {
+      setPurchasing(false);
+      alert('Something went wrong. Please try again.');
+    }
+  }
 
   return (
     <main className="blueprint-page">
@@ -124,8 +135,8 @@ function BlueprintContent() {
 
       {/* CTA */}
       <section className="bp-cta">
-        <button className="bp-cta-btn" onClick={goToBlueprintCheckout}>
-          Get the Blueprint &mdash; $49
+        <button className="bp-cta-btn" onClick={handlePurchase} disabled={purchasing}>
+          {purchasing ? 'Redirecting\u2026' : 'Get the Blueprint \u2014 $49'}
         </button>
         <p className="bp-cta-sub">
           One-time purchase &middot; Deploy in 30 min &middot; Keep forever
