@@ -14,10 +14,20 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    console.log('[blueprint-success] Verifying session:', sessionId);
+    console.log('[blueprint-success] VERCEL_ENV:', process.env.VERCEL_ENV);
+
     const stripe = getStripe();
     const session = await stripe.checkout.sessions.retrieve(sessionId);
 
+    console.log('[blueprint-success] Session retrieved:', {
+      id: session.id,
+      payment_status: session.payment_status,
+      status: session.status,
+    });
+
     if (session.payment_status !== 'paid') {
+      console.log('[blueprint-success] Payment not completed, status:', session.payment_status);
       return NextResponse.redirect(new URL('/blueprint?error=payment_failed', request.url));
     }
 
@@ -35,8 +45,10 @@ export async function GET(request: NextRequest) {
     downloadUrl.searchParams.set('url', data.signedUrl);
 
     return NextResponse.redirect(downloadUrl.toString());
-  } catch (err) {
-    console.error('Blueprint success error:', err);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    const type = err instanceof Error ? err.constructor.name : typeof err;
+    console.error('[blueprint-success] Error:', { type, message, err });
     return NextResponse.redirect(new URL('/blueprint?error=payment_failed', request.url));
   }
 }
