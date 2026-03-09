@@ -81,6 +81,28 @@ export default function PricingPage() {
             <a className="nav-logo" href="/">
               <Logo size="sm" />
             </a>
+            <div className="nav-products">
+              <button className="nav-products-trigger">
+                Products
+                <svg className="nav-products-chevron" viewBox="0 0 10 10" fill="none">
+                  <path d="M2 4L5 7L8 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+              <div className="nav-products-dropdown">
+                <a href="/" className="nav-products-item">
+                  <span className="nav-products-item-name">Vendor Monitor</span>
+                  <span className="nav-products-item-desc">Managed service &middot; from $9/mo</span>
+                </a>
+                <a href="/blueprint" className="nav-products-item">
+                  <span className="nav-products-item-name">Vendor Watch Blueprint</span>
+                  <span className="nav-products-item-desc">One-time &middot; $49</span>
+                </a>
+              </div>
+            </div>
+            <div className="nav-products-mobile">
+              <a href="/" className="nav-link">Monitor</a>
+              <a href="/blueprint" className="nav-link">Blueprint</a>
+            </div>
             <a href="/intel" className="nav-link">Drift Intel</a>
             <a href="/#how" className="nav-link">How it works</a>
             <a href="/pricing" className="nav-link active">Pricing</a>
@@ -367,6 +389,17 @@ export default function PricingPage() {
         <h2>Start your free trial today.</h2>
         <p>7 days free, then pick the plan that fits. Cancel anytime.</p>
         <button className="pp-btn" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Choose a plan &uarr;</button>
+      </section>
+
+      {/* Blueprint footnote */}
+      <section className="pp-blueprint-footnote">
+        <hr className="pp-blueprint-footnote-divider" />
+        <h3>Rather own it outright?</h3>
+        <p>
+          The Vendor Watch Blueprint is a one-time purchase &mdash; no subscription,
+          no account needed. Buy the agent, deploy it yourself, run it forever.
+        </p>
+        <a href="/blueprint" className="pp-blueprint-footnote-btn">Get the Blueprint &mdash; $49</a>
       </section>
 
       {/* Footer */}
