@@ -7,16 +7,13 @@ function getStripeKey(): string {
   const liveKey = process.env.STRIPE_SECRET_KEY;
 
   if (isLiveMode) {
-    console.log('[Stripe] Production mode, using live key');
     return liveKey!;
   }
 
   if (testKey) {
-    console.log('[Stripe] Non-production mode, using test key');
     return testKey;
   }
 
-  console.log('[Stripe] Non-production mode, no test key found, falling back to live key');
   return liveKey!;
 }
 
@@ -24,9 +21,7 @@ let _stripe: Stripe | null = null;
 
 export function getStripe(): Stripe {
   if (!_stripe) {
-    const key = getStripeKey();
-    console.log('[Stripe] Initializing client, key prefix:', key?.substring(0, 8) || 'MISSING');
-    _stripe = new Stripe(key, {
+    _stripe = new Stripe(getStripeKey(), {
       apiVersion: '2026-01-28.clover',
     });
   }
