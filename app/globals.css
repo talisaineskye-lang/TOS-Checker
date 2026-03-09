@@ -1723,7 +1723,8 @@ a { color: inherit; text-decoration: none; }
 /* ── Nav ── */
 .landing-page .lp-nav,
 .pricing-page .lp-nav,
-.login-page .lp-nav {
+.login-page .lp-nav,
+.blueprint-page .lp-nav {
   position: fixed;
   top: 0;
   left: 0;
@@ -1737,7 +1738,8 @@ a { color: inherit; text-decoration: none; }
 
 .landing-page .lp-nav .inner,
 .pricing-page .lp-nav .inner,
-.login-page .lp-nav .inner {
+.login-page .lp-nav .inner,
+.blueprint-page .lp-nav .inner {
   max-width: 1120px;
   margin: 0 auto;
   padding: 0 40px;
@@ -1749,7 +1751,8 @@ a { color: inherit; text-decoration: none; }
 
 .landing-page .nav-left,
 .pricing-page .nav-left,
-.login-page .nav-left {
+.login-page .nav-left,
+.blueprint-page .nav-left {
   display: flex;
   align-items: center;
   gap: 28px;
@@ -1757,7 +1760,8 @@ a { color: inherit; text-decoration: none; }
 
 .landing-page .nav-logo,
 .pricing-page .nav-logo,
-.login-page .nav-logo {
+.login-page .nav-logo,
+.blueprint-page .nav-logo {
   font-family: var(--lp-font);
   font-weight: 500;
   font-size: 14px;
@@ -1780,7 +1784,8 @@ a { color: inherit; text-decoration: none; }
 
 .landing-page .nav-link,
 .pricing-page .nav-link,
-.login-page .nav-link {
+.login-page .nav-link,
+.blueprint-page .nav-link {
   font-size: 14px;
   color: var(--lp-white-faint);
   text-decoration: none;
@@ -1790,19 +1795,23 @@ a { color: inherit; text-decoration: none; }
 
 .landing-page .nav-link:hover,
 .pricing-page .nav-link:hover,
-.login-page .nav-link:hover { color: var(--lp-white-muted); }
+.login-page .nav-link:hover,
+.blueprint-page .nav-link:hover { color: var(--lp-white-muted); }
 
 .landing-page .nav-link.active,
 .pricing-page .nav-link.active,
-.login-page .nav-link.active { color: var(--wd-white-dim); }
+.login-page .nav-link.active,
+.blueprint-page .nav-link.active { color: var(--wd-white-dim); }
 
 .landing-page .nav-right,
 .pricing-page .nav-right,
-.login-page .nav-right { display: flex; align-items: center; }
+.login-page .nav-right,
+.blueprint-page .nav-right { display: flex; align-items: center; }
 
 .landing-page .nav-cta,
 .pricing-page .nav-cta,
-.login-page .nav-cta {
+.login-page .nav-cta,
+.blueprint-page .nav-cta {
   padding: 9px 22px;
   border-radius: 8px;
   font-size: 11px;
@@ -1819,7 +1828,8 @@ a { color: inherit; text-decoration: none; }
 }
 .landing-page .nav-cta:hover,
 .pricing-page .nav-cta:hover,
-.login-page .nav-cta:hover {
+.login-page .nav-cta:hover,
+.blueprint-page .nav-cta:hover {
   background: rgba(0, 229, 255, 0.08);
   box-shadow: 0 0 20px rgba(0, 229, 255, 0.15);
 }
@@ -2809,7 +2819,8 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 1000px) {
   .landing-page .lp-nav .inner,
   .pricing-page .lp-nav .inner,
-  .login-page .lp-nav .inner { padding: 0 24px; }
+  .login-page .lp-nav .inner,
+  .blueprint-page .lp-nav .inner { padding: 0 24px; }
 }
 
 @media (max-width: 860px) {
