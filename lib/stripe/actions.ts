@@ -50,3 +50,13 @@ export async function goToPortal() {
   const { url } = await res.json();
   if (url) window.location.href = url;
 }
+
+export async function goToBlueprintCheckout() {
+  const res = await fetch('/api/stripe/blueprint-checkout', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  const { url } = await res.json();
+  if (url) window.location.href = url;
+}
