@@ -197,7 +197,7 @@ Note: Omit the "signal" key entirely if no new document or deprecation is detect
   const callSonnet = () =>
     anthropic.messages.create({
       model: 'claude-sonnet-4-20250514',
-      max_tokens: 800,
+      max_tokens: 1024,
       messages: [{ role: 'user', content: prompt }],
     });
 
@@ -225,6 +225,19 @@ Note: Omit the "signal" key entirely if no new document or deprecation is detect
           details: string;
         };
       };
+
+      // Validate signal shape — reject malformed signal objects
+      if (llmResult.signal !== undefined) {
+        const s = llmResult.signal;
+        if (
+          (s.type !== 'NEW_DOCUMENT' && s.type !== 'DEPRECATED') ||
+          !s.documentName?.trim() ||
+          !s.details?.trim()
+        ) {
+          console.warn(`[analyzer] Ignoring malformed signal from Sonnet for "${serviceName}":`, JSON.stringify(s));
+          llmResult.signal = undefined;
+        }
+      }
 
       // Guard against missing fields — Sonnet might use different key names
       if (!llmResult.summary || !llmResult.impact || !llmResult.suggestedRiskLevel) {
