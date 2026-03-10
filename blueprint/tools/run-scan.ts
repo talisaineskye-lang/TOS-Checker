@@ -15,7 +15,7 @@ import { fileURLToPath } from 'url';
 import { fetchVendorDoc } from './fetch-vendor-doc.js';
 import { cleanContent } from './clean-content.js';
 import { hashContent, hasChanged, diffSentences, getRemovalRatio, isFullReplacement } from './diff-sentences.js';
-import { analyzeChange } from './analyze-change.js';
+import { analyzeChange, buildSignalPrefix } from './analyze-change.js';
 import { getSnapshot, saveSnapshot, saveChange, addToReviewQueue, logScan, wasPreviousScanFailure as checkPreviousFailure } from './store-result.js';
 import { dispatchAlert } from './dispatch-alert.js';
 
@@ -102,7 +102,10 @@ async function main() {
   let failures = 0;
 
   for (const v of vendors) {
-    for (const doc of v.documents) {
+    const sortedDocs = [...v.documents].sort((a, b) =>
+      a.type === 'changelog' ? -1 : b.type === 'changelog' ? 1 : 0
+    );
+    for (const doc of sortedDocs) {
       const displayName = `${v.name} - ${doc.label || doc.type}`;
       scanned++;
 
@@ -199,6 +202,19 @@ async function main() {
         const diff = diffSentences(snapshot.content, content);
         const analysis = await analyzeChange(v.name, doc.label || doc.type, diff.added, diff.removed);
 
+        // --- Signal detection: new document or deprecation notice ---
+        let finalSummary = analysis.summary;
+        let signalPendingReview = false;
+        if (analysis.signal) {
+          const prefix = buildSignalPrefix(analysis.signal);
+          finalSummary = `${prefix}\n${analysis.summary}`;
+          signalPendingReview = true;
+          console.log(`\n  🔔 [SIGNAL:${analysis.signal.type}] ${v.name} - ${doc.label || doc.type}`);
+          console.log(`     Document: ${analysis.signal.documentName}`);
+          console.log(`     Details:  ${analysis.signal.details}`);
+          console.log(`     → Add this URL to data/vendor-catalog.json if not already tracked.\n`);
+        }
+
         const isNoise = analysis.isNoise;
         const effectiveRiskLevel = isNoise ? 'low' : analysis.riskLevel;
 
@@ -207,10 +223,12 @@ async function main() {
         // Save change record
         saveChange({
           vendorSlug: v.slug, vendorName: v.name, docType: doc.type,
-          summary: analysis.summary, impact: analysis.impact, action: analysis.action,
+          summary: finalSummary, impact: analysis.impact, action: analysis.action,
           riskLevel: effectiveRiskLevel, riskBucket: analysis.riskBucket,
           categories: analysis.categories, isNoise, analysisFailed: analysis.analysisFailed,
           detectedAt: new Date().toISOString(),
+          pendingReview: signalPendingReview || undefined,
+          signal: analysis.signal,
           diffExcerpt: { added: diff.added.slice(0, 10), removed: diff.removed.slice(0, 10) },
         });
 
@@ -223,7 +241,7 @@ async function main() {
         if (effectiveRiskLevel !== 'low' && !isNoise) {
           await dispatchAlert({
             vendorSlug: v.slug, vendorName: v.name, docType: doc.label || doc.type,
-            summary: analysis.summary, impact: analysis.impact, action: analysis.action,
+            summary: finalSummary, impact: analysis.impact, action: analysis.action,
             riskLevel: effectiveRiskLevel, categories: analysis.categories,
             detectedAt: new Date(),
           });

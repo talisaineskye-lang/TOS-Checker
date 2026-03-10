@@ -23,6 +23,16 @@ export interface AnalysisResult {
   categories: string[];
   isNoise: boolean;
   analysisFailed: boolean;
+  signal?: {
+    type: 'NEW_DOCUMENT' | 'DEPRECATED';
+    documentName: string;
+    details: string;
+  };
+}
+
+/** Build a deterministic [SIGNAL:TYPE] prefix string from a detected signal. */
+export function buildSignalPrefix(signal: NonNullable<AnalysisResult['signal']>): string {
+  return `[SIGNAL:${signal.type}] ${signal.documentName} — ${signal.details}`;
 }
 
 const MAX_DIFF_CHARS = 12_000;
@@ -116,8 +126,18 @@ Analyze this change and respond with JSON only (no markdown, no backticks):
   "impact": "One to two sentences — who is affected and how.",
   "action": "One sentence — what to do right now.",
   "suggestedRiskLevel": "low" | "medium" | "high" | "critical",
-  "isNoise": true | false
+  "isNoise": true | false,
+  "signal": { "type": "NEW_DOCUMENT" | "DEPRECATED", "documentName": "...", "details": "..." }
 }
+Note: Omit the "signal" key entirely if no new document or deprecation is detected.
+- signal: (optional) Populate ONLY when the diff explicitly mentions:
+  a) A new policy document being introduced — e.g. "New subscriptions will be governed by [Document Name]", "We've added [Policy Name] to our terms", "See our new [Document]"
+  b) An existing document being deprecated or superseded — e.g. "This document is deprecated as of [date]", "replaced by [Document Name]", "superseded by [New Policy]"
+  When present, set:
+    - type: "NEW_DOCUMENT" if a new document is referenced, "DEPRECATED" if an existing one is retiring
+    - documentName: exact name of the new or deprecated document as it appears in the text
+    - details: brief context string, e.g. "supersedes Copilot Product Specific Terms as of March 5, 2026"
+  Omit the signal field entirely if neither condition is met.
 
 Risk levels:
 - low: Minor wording changes, clarifications — no material impact
@@ -130,7 +150,7 @@ IMPORTANT: Language translations with no substantive policy changes = "low" risk
   const callSonnet = () =>
     anthropic.messages.create({
       model: 'claude-sonnet-4-20250514',
-      max_tokens: 800,
+      max_tokens: 1024,
       messages: [{ role: 'user', content: prompt }],
     });
 
@@ -148,10 +168,28 @@ IMPORTANT: Language translations with no substantive policy changes = "low" risk
         action: string;
         suggestedRiskLevel: 'low' | 'medium' | 'high' | 'critical';
         isNoise: boolean;
+        signal?: {
+          type: 'NEW_DOCUMENT' | 'DEPRECATED';
+          documentName: string;
+          details: string;
+        };
       };
 
       if (!llmResult.summary || !llmResult.impact || !llmResult.suggestedRiskLevel) {
         throw new Error('Sonnet returned incomplete JSON');
+      }
+
+      // Validate signal shape — reject malformed signal objects
+      if (llmResult.signal !== undefined) {
+        const s = llmResult.signal;
+        if (
+          (s.type !== 'NEW_DOCUMENT' && s.type !== 'DEPRECATED') ||
+          !s.documentName?.trim() ||
+          !s.details?.trim()
+        ) {
+          console.warn(`[analyze] Ignoring malformed signal from Sonnet for "${vendorName}":`, JSON.stringify(s));
+          llmResult.signal = undefined;
+        }
       }
 
       console.log(`[analyze] "${vendorName}" → risk=${llmResult.suggestedRiskLevel}, noise=${llmResult.isNoise}`);
@@ -165,6 +203,7 @@ IMPORTANT: Language translations with no substantive policy changes = "low" risk
         categories: classification.buckets,
         isNoise: llmResult.isNoise,
         analysisFailed: false,
+        signal: llmResult.signal,
       };
     } catch (err) {
       lastError = err;

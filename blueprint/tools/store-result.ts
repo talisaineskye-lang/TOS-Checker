@@ -82,6 +82,12 @@ export interface ChangeRecord {
   isNoise: boolean;
   analysisFailed: boolean;
   detectedAt: string;
+  pendingReview?: boolean;        // true when a signal was detected
+  signal?: {                      // the detected signal, if any
+    type: 'NEW_DOCUMENT' | 'DEPRECATED';
+    documentName: string;
+    details: string;
+  };
   diffExcerpt?: {
     added: string[];
     removed: string[];
