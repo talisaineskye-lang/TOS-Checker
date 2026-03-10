@@ -17,6 +17,16 @@ export interface AnalysisResult {
   title: string;
   isNoise: boolean;
   analysisFailed: boolean;
+  signal?: {
+    type: 'NEW_DOCUMENT' | 'DEPRECATED';
+    documentName: string;
+    details: string;
+  };
+}
+
+/** Build a deterministic [SIGNAL:TYPE] prefix string from a detected signal. */
+export function buildSignalPrefix(signal: NonNullable<AnalysisResult['signal']>): string {
+  return `[SIGNAL:${signal.type}] ${signal.documentName} — ${signal.details}`;
 }
 
 const MAX_DIFF_CHARS = 12_000;
@@ -118,6 +128,14 @@ Analyze this change and respond with the following fields:
 - action: One sentence — what to do right now. Be specific (e.g., "Check your settings at X", "Budget for the Pro tier before DATE", "No action needed — this doesn't affect paid plans").
 - suggestedRiskLevel: "low", "medium", "high", or "critical"
 - isNoise: true if this is a non-substantive change (language translations, tracking ID rotations, session tokens, minor whitespace/formatting, internal reference numbers). false for everything else — even low-risk changes like contact email updates are NOT noise.
+- signal: (optional) Populate ONLY when the diff explicitly mentions:
+  a) A new policy document being introduced — e.g. "New subscriptions will be governed by [Document Name]", "We've added [Policy Name] to our terms", "See our new [Document]"
+  b) An existing document being deprecated or superseded — e.g. "This document is deprecated as of [date]", "replaced by [Document Name]", "superseded by [New Policy]"
+  When present, set:
+    - type: "NEW_DOCUMENT" if a new document is referenced, "DEPRECATED" if an existing one is retiring
+    - documentName: exact name of the new or deprecated document as it appears in the text
+    - details: brief context string, e.g. "supersedes Copilot Product Specific Terms as of March 5, 2026"
+  Omit the signal field entirely if neither condition is met.
 
 Risk levels:
 - low: Minor wording changes, clarifications, contact info updates — no material impact on your business
@@ -171,8 +189,10 @@ Respond with JSON only (no markdown, no backticks):
   "impact": "...",
   "action": "...",
   "suggestedRiskLevel": "low" | "medium" | "high" | "critical",
-  "isNoise": true | false
-}`;
+  "isNoise": true | false,
+  "signal": { "type": "NEW_DOCUMENT" | "DEPRECATED", "documentName": "...", "details": "..." }
+}
+Note: Omit the "signal" key entirely if no new document or deprecation is detected.`;
 
   const callSonnet = () =>
     anthropic.messages.create({
@@ -199,6 +219,11 @@ Respond with JSON only (no markdown, no backticks):
         action: string;
         suggestedRiskLevel: 'low' | 'medium' | 'high' | 'critical';
         isNoise: boolean;
+        signal?: {
+          type: 'NEW_DOCUMENT' | 'DEPRECATED';
+          documentName: string;
+          details: string;
+        };
       };
 
       // Guard against missing fields — Sonnet might use different key names
@@ -230,6 +255,7 @@ Respond with JSON only (no markdown, no backticks):
         title,
         isNoise: llmResult.isNoise,
         analysisFailed: false,
+        signal: llmResult.signal,
       };
     } catch (err) {
       lastError = err;
