@@ -211,6 +211,10 @@ Delete the entry from `data/vendor-catalog.json`. Existing snapshots in `data/sn
 
 `payment`, `cloud`, `ai-platform`, `ai-builder`, `devtools`, `automation`, `analytics`, `scraping`, `productivity`
 
+## Known Limitations
+
+The scanner catches changes to documents it's already tracking. It can't detect brand-new policy pages published at untracked URLs, JS-rendered pages that require a headless browser, or PDF-only documents. See [docs/how-scanning-works.md](../docs/how-scanning-works.md) for a full breakdown of what the scanner catches vs. doesn't catch, the changelog URL strategy, and a quarterly audit checklist.
+
 ---
 
 **Want a dashboard, team alerts, and webhook integrations without managing any of this?** Check out [StackDrift](https://stackdrift.app) — the hosted version with a full UI.
