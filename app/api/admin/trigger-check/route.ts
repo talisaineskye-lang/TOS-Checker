@@ -314,7 +314,7 @@ export async function POST() {
       if (isFirstComparison && (isNoise || effectiveRiskLevel === 'low')) {
         console.log(`[trigger-check] First-scan calibration for "${displayName}" — ${effectiveRiskLevel} change suppressed`);
         if (signalPendingReview) {
-          console.warn(`[trigger-check] SIGNAL suppressed by first-scan calibration for "${displayName}" — signal was: ${analysis.signal?.type} / ${analysis.signal?.documentName}`);
+          console.warn(`[trigger-check] SIGNAL suppressed by first-scan calibration for "${displayName}" — signal was: ${analysis.signal!.type} / ${analysis.signal!.documentName}`);
         }
         await supabase
           .from('documents')

@@ -327,7 +327,7 @@ export async function GET(request: NextRequest) {
       if (isFirstComparison && (isNoise || effectiveRiskLevel === 'low')) {
         console.log(`[check-tos] First-scan calibration for "${displayName}" — ${effectiveRiskLevel} change suppressed`);
         if (signalPendingReview) {
-          console.warn(`[check-tos] SIGNAL suppressed by first-scan calibration for "${displayName}" — signal was: ${analysis.signal?.type} / ${analysis.signal?.documentName}`);
+          console.warn(`[check-tos] SIGNAL suppressed by first-scan calibration for "${displayName}" — signal was: ${analysis.signal!.type} / ${analysis.signal!.documentName}`);
         }
         await supabase
           .from('documents')
