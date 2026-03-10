@@ -19,7 +19,8 @@ export type FetchFailureReason =
   | 'http_error'
   | 'timeout'
   | 'network_error'
-  | 'content_too_short';
+  | 'content_too_short'
+  | 'spa_not_supported';
 
 export interface FetchSuccess {
   ok: true;
@@ -100,14 +101,37 @@ function isRetryableFailure(failure: FetchFailure): boolean {
   return false;
 }
 
+// Known SPA/JS-rendered URL prefixes that return empty shells via standard HTTP
+const SPA_URL_PREFIXES = [
+  'https://bolt.new/',
+  'https://gumroad.com/',
+  'https://bubble.io/',
+];
+
+function isSpaDocument(url: string): boolean {
+  return SPA_URL_PREFIXES.some((prefix) => url.startsWith(prefix));
+}
+
 /**
  * Fetch a vendor document URL with retry logic.
  *
+ * - Skips known SPA pages that require headless browser rendering
  * - Up to 3 attempts, 5-second delay between retries
  * - Only retries on transient errors (429, 5xx, timeout, network)
  * - Returns raw HTML on success — pass to cleanContent() next
  */
 export async function fetchVendorDoc(url: string): Promise<FetchResult> {
+  // SPA guard: skip known JS-rendered pages
+  if (isSpaDocument(url)) {
+    return {
+      ok: false,
+      reason: 'spa_not_supported',
+      httpStatus: null,
+      contentLength: null,
+      errorMessage: `Skipped: ${url} is a known SPA/JS-rendered page (requires headless browser)`,
+    };
+  }
+
   let lastResult: FetchResult | null = null;
 
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {

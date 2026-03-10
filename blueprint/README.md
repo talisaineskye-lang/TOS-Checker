@@ -176,6 +176,7 @@ These protect you from false positives. They're the result of running this engin
 | Safeguard | What it does | Why it exists |
 |-----------|-------------|---------------|
 | **Content floor** | Rejects pages < 500 chars | Catches login walls, CAPTCHAs, JS shells |
+| **SPA document skipping** | Skips known JS-rendered pages (Gumroad, Bolt.new, Bubble) | These return HTTP 200 but empty shells; need headless browser |
 | **90% removal gate** | Holds for review if > 90% content gone | Catches 403s, rate limits, rendering failures |
 | **First scan baseline** | Never alerts on first scan | Establishes baseline, not a "change" |
 | **Recovery baseline** | After a failure, next success is silent | Prevents alert storms after intermittent outages |

@@ -111,8 +111,9 @@ async function main() {
         const fetchResult = await fetchVendorDoc(doc.url);
 
         if (!fetchResult.ok) {
-          console.log(`  ✗ ${displayName}: fetch failed (${fetchResult.reason})`);
-          logScan({ timestamp: new Date().toISOString(), vendorSlug: v.slug, vendorName: v.name, docType: doc.type, docUrl: doc.url, status: 'fetch_failed', details: { reason: fetchResult.reason, httpStatus: fetchResult.httpStatus } });
+          const isSpa = fetchResult.reason === 'spa_not_supported';
+          console.log(`  ${isSpa ? '○' : '✗'} ${displayName}: ${isSpa ? 'SPA (skipped)' : `fetch failed (${fetchResult.reason})`}`);
+          logScan({ timestamp: new Date().toISOString(), vendorSlug: v.slug, vendorName: v.name, docType: doc.type, docUrl: doc.url, status: isSpa ? 'spa_not_supported' : 'fetch_failed', details: { reason: fetchResult.reason, httpStatus: fetchResult.httpStatus } });
           failures++;
           continue;
         }

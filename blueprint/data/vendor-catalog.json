@@ -39,7 +39,7 @@
     "category": "payment",
     "documents": [
       { "type": "tos", "url": "https://wise.com/us/terms-of-use", "label": "Terms of Use" },
-      { "type": "privacy", "url": "https://wise.com/us/legal/privacy-policy", "label": "Privacy Policy" },
+      { "type": "privacy", "url": "https://wise.com/gb/legal/privacy-notice-personal-en", "label": "Privacy Policy" },
       { "type": "aup", "url": "https://wise.com/acceptable-use-policy", "label": "Acceptable Use" }
     ]
   },
@@ -319,7 +319,7 @@
     "name": "Cursor",
     "category": "ai-builder",
     "documents": [
-      { "type": "tos", "url": "https://www.cursor.com/terms", "label": "Terms of Service" },
+      { "type": "tos", "url": "https://www.cursor.com/terms-of-service", "label": "Terms of Service" },
       { "type": "privacy", "url": "https://www.cursor.com/privacy", "label": "Privacy Policy" }
     ]
   },
@@ -330,7 +330,7 @@
     "documents": [
       { "type": "tos", "url": "https://replit.com/site/terms", "label": "Terms of Service" },
       { "type": "privacy", "url": "https://replit.com/site/privacy", "label": "Privacy Policy" },
-      { "type": "aup", "url": "https://docs.replit.com/legal-and-security-info/trust-safety/community-standards", "label": "Community Standards" }
+      { "type": "aup", "url": "https://docs.replit.com/legal-and-security-info/usage", "label": "Usage Policy" }
     ]
   },
   {
@@ -356,8 +356,8 @@
     "name": "FlutterFlow",
     "category": "ai-builder",
     "documents": [
-      { "type": "tos", "url": "https://flutterflow.io/terms-of-service", "label": "Terms of Service" },
-      { "type": "privacy", "url": "https://flutterflow.io/privacy-policy", "label": "Privacy Policy" }
+      { "type": "tos", "url": "https://flutterflow.io/tos", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://flutterflow.io/privacy", "label": "Privacy Policy" }
     ]
   },
   {
@@ -374,8 +374,9 @@
     "name": "Framer",
     "category": "ai-builder",
     "documents": [
-      { "type": "tos", "url": "https://www.framer.com/legal/terms/", "label": "Terms of Service" },
-      { "type": "privacy", "url": "https://www.framer.com/legal/privacy/", "label": "Privacy Policy" }
+      { "type": "tos", "url": "https://www.framer.com/legal/terms-of-service/", "label": "Terms of Service" },
+      { "type": "privacy", "url": "https://www.framer.com/legal/privacy-statement/", "label": "Privacy Statement" },
+      { "type": "aup", "url": "https://www.framer.com/legal/acceptable-use-policy/", "label": "Acceptable Use Policy" }
     ]
   },
   {

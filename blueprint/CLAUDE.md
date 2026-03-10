@@ -44,7 +44,10 @@ If the stored snapshot is >30 days old, the document is treated as reactivated. 
 ### 5. Full Replacement Detection
 If >80% of sentences changed AND >100 total sentences are affected, this is likely a page redesign, language swap, or major restructure. Saved as a new baseline without analysis or alerts.
 
-### 6. Retry Logic
+### 6. SPA Document Skipping
+If the document URL is a known Single Page Application that renders content client-side (Gumroad, Bolt.new, Bubble.io), the fetch is skipped entirely and logged as `spa_not_supported`. These pages return HTTP 200 but contain only an empty JS shell. Headless browser support is needed to scan them. Known SPA URL prefixes are maintained in both `tools/fetch-vendor-doc.ts` (blueprint) and `lib/spa-documents.ts` (production).
+
+### 7. Retry Logic
 3 attempts maximum with 5-second delay between retries. Only retries on transient errors:
 - HTTP 429 (rate limited)
 - HTTP 5xx (server errors)
@@ -54,8 +57,9 @@ If >80% of sentences changed AND >100 total sentences are affected, this is like
 Does NOT retry on:
 - HTTP 4xx (except 429) — deterministic client errors
 - `content_too_short` — deterministic content issue
+- `spa_not_supported` — known JS-rendered page
 
-### 7. Noise Suppression
+### 8. Noise Suppression
 If Claude Sonnet flags a change as noise (`isNoise: true`), the risk level is forced to `low` and no alerts are dispatched. Noise includes: language translations, tracking ID rotations, session tokens, minor formatting changes.
 
 ## File Structure

@@ -9,6 +9,7 @@ This is the main scan workflow. It fetches every tracked vendor document, checks
 2. **For each vendor, for each document in their `documents[]` array:**
 
    a. **Fetch the document.** Call the `fetch-vendor-doc` tool with the document URL.
+      - If the URL is a known SPA (Gumroad, Bolt.new, Bubble.io), the fetch is automatically skipped and logged as `spa_not_supported`. These pages require headless browser support.
       - If the fetch fails (HTTP error, timeout, network error), log the failure to `data/scan-log.json` and skip to the next document.
 
    b. **Clean the content.** Call the `clean-content` tool with the raw HTML.
