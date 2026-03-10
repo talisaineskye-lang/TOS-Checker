@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { fetchWithRetry, extractEffectiveDate } from '@/lib/fetcher';
 import { hashContent, hasChanged, getBasicDiff, getRemovalRatio } from '@/lib/differ';
-import { analyzeChanges } from '@/lib/analyzer';
+import { analyzeChanges, buildSignalPrefix } from '@/lib/analyzer';
 import { sendChangeAlert, notifyAdminPendingReview } from '@/lib/notifier';
 import { DOCUMENT_TYPE_LABELS, DocumentType } from '@/lib/types';
 import { deliverWebhooks } from '@/lib/webhooks/deliver';
@@ -43,7 +43,11 @@ export async function POST() {
 
   const results: Array<Record<string, unknown>> = [];
 
-  for (const doc of documents as DocumentWithVendor[]) {
+  const sortedDocuments = [...(documents as DocumentWithVendor[])].sort((a, b) =>
+    a.doc_type === 'changelog' ? -1 : b.doc_type === 'changelog' ? 1 : 0
+  );
+
+  for (const doc of sortedDocuments) {
     const vendorName = doc.vendors.name;
     const docTypeLabel = DOCUMENT_TYPE_LABELS[doc.doc_type] || doc.doc_type;
     const displayName = `${vendorName} - ${docTypeLabel}`;
@@ -292,6 +296,16 @@ export async function POST() {
       const effectiveDate = extractEffectiveDate(content);
       const analysis = await analyzeChanges(displayName, diff.added, diff.removed, effectiveDate);
 
+      // --- Signal detection: new document or deprecation notice ---
+      let finalSummary = analysis.summary;
+      let signalPendingReview = false;
+      if (analysis.signal) {
+        const prefix = buildSignalPrefix(analysis.signal);
+        finalSummary = `${prefix}\n${analysis.summary}`;
+        signalPendingReview = true;
+        console.log(`[trigger-check] SIGNAL:${analysis.signal.type} detected in "${displayName}" — ${analysis.signal.documentName}`);
+      }
+
       // Safety Net 3 (existing): For noise changes, force risk_level to 'low'
       const isNoise = analysis.isNoise ?? false;
       const effectiveRiskLevel = isNoise ? 'low' : analysis.riskLevel;
@@ -299,6 +313,9 @@ export async function POST() {
       // First-scan noise suppression
       if (isFirstComparison && (isNoise || effectiveRiskLevel === 'low')) {
         console.log(`[trigger-check] First-scan calibration for "${displayName}" — ${effectiveRiskLevel} change suppressed`);
+        if (signalPendingReview) {
+          console.warn(`[trigger-check] SIGNAL suppressed by first-scan calibration for "${displayName}" — signal was: ${analysis.signal?.type} / ${analysis.signal?.documentName}`);
+        }
         await supabase
           .from('documents')
           .update({ last_changed_at: new Date().toISOString() })
@@ -312,7 +329,7 @@ export async function POST() {
         document_id: doc.id,
         old_snapshot_id: lastSnapshot.id,
         new_snapshot_id: newSnapshot.id,
-        summary: analysis.summary,
+        summary: finalSummary,
         impact: analysis.impact,
         action: analysis.action,
         risk_level: effectiveRiskLevel,
@@ -320,7 +337,7 @@ export async function POST() {
         risk_priority: isNoise ? 'low' : analysis.riskPriority,
         categories: analysis.categories,
         is_noise: isNoise,
-        pending_review: false,
+        pending_review: signalPendingReview,
       };
 
       // Try with analysis_failed column; fall back without it if column doesn't exist yet
@@ -348,7 +365,7 @@ export async function POST() {
         await sendChangeAlert({
           serviceName: displayName,
           docType: docTypeLabel,
-          summary: analysis.summary,
+          summary: finalSummary,
           impact: analysis.impact || undefined,
           action: analysis.action || undefined,
           riskLevel: effectiveRiskLevel,
@@ -371,7 +388,7 @@ export async function POST() {
             vendorName,
             documentType: docTypeLabel,
             severity: effectiveRiskLevel,
-            summary: analysis.summary,
+            summary: finalSummary,
             impact: analysis.impact || '',
             action: analysis.action || '',
             tags: analysis.categories,
