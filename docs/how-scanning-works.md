@@ -63,7 +63,7 @@ When a changelog page is tracked (`doc_type: 'changelog'`), the scanner processe
 
 ## Signal Detection
 
-> **Status: Implemented in production (StackDrift app). Planned for blueprint.**
+> **Status: Implemented in production and blueprint.**
 
 When the analyzer detects language indicating a **new policy document** or a **deprecated document**, it emits a structured signal alongside the normal analysis.
 
