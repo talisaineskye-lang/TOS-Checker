@@ -312,9 +312,28 @@ export async function POST() {
 
       // First-scan noise suppression
       if (isFirstComparison && (isNoise || effectiveRiskLevel === 'low')) {
-        console.log(`[trigger-check] First-scan calibration for "${displayName}" — ${effectiveRiskLevel} change suppressed`);
+        // If a signal was detected, preserve it for admin review even during first-scan calibration
         if (signalPendingReview) {
-          console.warn(`[trigger-check] SIGNAL suppressed by first-scan calibration for "${displayName}" — signal was: ${analysis.signal!.type} / ${analysis.signal!.documentName}`);
+          console.warn(`[trigger-check] SIGNAL detected during first-scan calibration for "${displayName}" — preserving for review: ${analysis.signal!.type} / ${analysis.signal!.documentName}`);
+          await supabase
+            .from('changes')
+            .insert({
+              vendor_id: doc.vendor_id,
+              document_id: doc.id,
+              old_snapshot_id: lastSnapshot.id,
+              new_snapshot_id: newSnapshot.id,
+              summary: finalSummary,
+              impact: analysis.impact,
+              action: analysis.action,
+              risk_level: 'low',
+              risk_bucket: analysis.riskBucket,
+              risk_priority: 'low',
+              categories: analysis.categories,
+              is_noise: true,
+              pending_review: true,
+            });
+        } else {
+          console.log(`[trigger-check] First-scan calibration for "${displayName}" — ${effectiveRiskLevel} change suppressed`);
         }
         await supabase
           .from('documents')
