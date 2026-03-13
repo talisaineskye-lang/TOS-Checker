@@ -51,7 +51,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
     baseUrl: 'https://wise.com',
     documents: [
       { type: 'tos', url: 'https://wise.com/us/terms-of-use' },
-      { type: 'privacy', url: 'https://wise.com/us/legal/privacy-policy' },
+      { type: 'privacy', url: 'https://wise.com/gb/legal/privacy-notice-personal-en' },
       { type: 'aup', url: 'https://wise.com/acceptable-use-policy' },
     ],
   },
@@ -272,7 +272,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
     category: 'ai_builders',
     baseUrl: 'https://cursor.com',
     documents: [
-      { type: 'tos', url: 'https://www.cursor.com/terms' },
+      { type: 'tos', url: 'https://www.cursor.com/terms-of-service' },
       { type: 'privacy', url: 'https://www.cursor.com/privacy' },
       { type: 'aup', url: 'https://www.cursor.com/terms' },
     ],
@@ -286,7 +286,7 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
     documents: [
       { type: 'tos', url: 'https://replit.com/site/terms' },
       { type: 'privacy', url: 'https://replit.com/site/privacy' },
-      { type: 'aup', url: 'https://docs.replit.com/legal-and-security-info/trust-safety/community-standards' },
+      { type: 'aup', url: 'https://docs.replit.com/legal-and-security-info/usage' },
     ],
   },
   {
@@ -320,9 +320,9 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
     category: 'ai_builders',
     baseUrl: 'https://flutterflow.io',
     documents: [
-      { type: 'tos', url: 'https://flutterflow.io/terms-of-service' },
-      { type: 'privacy', url: 'https://flutterflow.io/privacy-policy' },
-      { type: 'aup', url: 'https://flutterflow.io/terms-of-service' },
+      { type: 'tos', url: 'https://flutterflow.io/tos' },
+      { type: 'privacy', url: 'https://flutterflow.io/privacy' },
+      { type: 'aup', url: 'https://flutterflow.io/tos' },
     ],
   },
   {
@@ -344,9 +344,9 @@ export const VENDOR_CATALOG: VendorTemplate[] = [
     category: 'ai_builders',
     baseUrl: 'https://framer.com',
     documents: [
-      { type: 'tos', url: 'https://www.framer.com/legal/terms/' },
-      { type: 'privacy', url: 'https://www.framer.com/legal/privacy/' },
-      { type: 'aup', url: 'https://www.framer.com/legal/terms/' },
+      { type: 'tos', url: 'https://www.framer.com/legal/terms-of-service/' },
+      { type: 'privacy', url: 'https://www.framer.com/legal/privacy-statement/' },
+      { type: 'aup', url: 'https://www.framer.com/legal/acceptable-use-policy/' },
     ],
   },
   // ============ DEVELOPER TOOLS ============

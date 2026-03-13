@@ -49,7 +49,8 @@ async function fetchSafe(url: string): Promise<FetchResult> {
     const response = await fetch(url, {
       signal: controller.signal,
       headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; StackDriftAgent/1.0)',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Language': 'en-US,en;q=0.9',
       },
     });
@@ -93,11 +94,14 @@ async function fetchSafe(url: string): Promise<FetchResult> {
   }
 }
 
-function isRetryableFailure(failure: FetchFailure): boolean {
+function isRetryableFailure(failure: FetchFailure, attempt: number): boolean {
   if (failure.reason === 'timeout' || failure.reason === 'network_error') return true;
   if (failure.reason === 'http_error' && failure.httpStatus !== null) {
     return failure.httpStatus === 429 || failure.httpStatus >= 500;
   }
+  // Retry content_too_short once — some sites intermittently return
+  // short error/rate-limit pages with HTTP 200
+  if (failure.reason === 'content_too_short' && attempt === 1) return true;
   return false;
 }
 
@@ -141,7 +145,7 @@ export async function fetchVendorDoc(url: string): Promise<FetchResult> {
 
     lastResult = result;
 
-    if (!isRetryableFailure(result) || attempt === MAX_ATTEMPTS) break;
+    if (!isRetryableFailure(result, attempt) || attempt === MAX_ATTEMPTS) break;
 
     console.log(`[fetch] Retry ${attempt}/${MAX_ATTEMPTS - 1} for ${url} (${result.reason}), waiting ${RETRY_DELAY_MS}ms...`);
     await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));

@@ -67,7 +67,7 @@ export function cleanContent(html: string): CleanResult {
   $('[class*="tracking"], [class*="beacon"], [class*="pixel"]').remove();
   $('[src*="tracking"], [src*="beacon"], [src*="pixel"]').remove();
 
-  const rawText = $('main, article, .content, .legal, .terms, body')
+  const rawText = $('main, article, [role="main"], .content, .legal, .legal-content, .policy-content, .terms, .terms-content, .prose, .page-content, body')
     .first()
     .text();
 
