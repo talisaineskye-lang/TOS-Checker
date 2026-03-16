@@ -15,8 +15,23 @@ export const SPA_URL_PREFIXES: string[] = [
 ];
 
 /**
+ * Known vendors that actively block automated HTTP fetches (403 on all URL paths).
+ * These are skipped during scans and logged as 'spa_not_supported' until the vendor
+ * opens up or an alternative fetch strategy is available.
+ *
+ * Last verified: 2026-03-16 — all perplexity.ai paths return 403 regardless of URL.
+ */
+export const BLOCKED_URL_PREFIXES: string[] = [
+  'https://www.perplexity.ai/',
+  'https://perplexity.ai/',
+];
+
+/**
  * Check if a document URL is a known SPA page.
  */
 export function isSpaDocument(url: string): boolean {
-  return SPA_URL_PREFIXES.some((prefix) => url.startsWith(prefix));
+  return (
+    SPA_URL_PREFIXES.some((prefix) => url.startsWith(prefix)) ||
+    BLOCKED_URL_PREFIXES.some((prefix) => url.startsWith(prefix))
+  );
 }
