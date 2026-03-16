@@ -10,6 +10,7 @@ import { deliverSlackNotifications } from '@/lib/webhooks/slack';
 import { logScanFailure, wasPreviousScanFailure } from '@/lib/scan-failures';
 import { requireAdmin } from '@/lib/api-auth';
 import { isSpaDocument } from '@/lib/spa-documents';
+import { isInAlertCooldown } from '@/lib/alert-cooldown';
 
 export const runtime = 'nodejs';
 export const maxDuration = 300; // 5 minutes for checking all docs
@@ -379,8 +380,12 @@ export async function POST() {
         changeRecord = d1;
       }
 
-      // Send alert for medium/high risk changes — skip noise
-      if (effectiveRiskLevel !== 'low' && !isNoise) {
+      // Send alert for medium/high risk changes — skip noise and cooldown
+      const inCooldown = effectiveRiskLevel !== 'low' && !isNoise
+        ? await isInAlertCooldown(doc.id)
+        : false;
+
+      if (effectiveRiskLevel !== 'low' && !isNoise && !inCooldown) {
         await sendChangeAlert({
           serviceName: displayName,
           docType: docTypeLabel,
@@ -434,6 +439,8 @@ export async function POST() {
         document: displayName,
         status: analysis.analysisFailed ? 'analysis_failed' : (isNoise ? 'noise' : 'changed'),
         riskLevel: effectiveRiskLevel,
+        alertSent: effectiveRiskLevel !== 'low' && !isNoise && !inCooldown,
+        ...(inCooldown && { cooldown: true }),
       });
     } catch (err) {
       results.push({
