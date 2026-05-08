@@ -20,6 +20,10 @@ export function AdminActions({
   const [result, setResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const [isIngesting, setIsIngesting] = useState(false);
+  const [ingestResult, setIngestResult] = useState<string | null>(null);
+  const [ingestError, setIngestError] = useState<string | null>(null);
+
   const [selectedVendor, setSelectedVendor] = useState('');
   const [reanalyzing, setReanalyzing] = useState(false);
   const [reanalyzeProgress, setReanalyzeProgress] = useState('');
@@ -47,6 +51,34 @@ export function AdminActions({
       setError(err instanceof Error ? err.message : 'Something went wrong');
     } finally {
       setIsRunning(false);
+    }
+  };
+
+  const handleRunIngest = async () => {
+    setIsIngesting(true);
+    setIngestResult(null);
+    setIngestError(null);
+
+    try {
+      const response = await fetch('/api/admin/trigger-ingest', { method: 'POST' });
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Ingest failed');
+      }
+
+      const summary = [
+        `Stored ${data.stored ?? 0} new items.`,
+        data.cost && data.cost !== '$0.00' ? `Cost: ${data.cost}.` : '',
+        data.duration ? `Took ${data.duration}.` : '',
+        data.log?.length ? `Log: ${data.log.join(' → ')}` : '',
+      ].filter(Boolean).join(' ');
+
+      setIngestResult(summary);
+    } catch (err) {
+      setIngestError(err instanceof Error ? err.message : 'Something went wrong');
+    } finally {
+      setIsIngesting(false);
     }
   };
 
@@ -136,6 +168,21 @@ export function AdminActions({
         </p>
         {result && <p className="action-result success">{result}</p>}
         {error && <p className="action-result error">{error}</p>}
+      </div>
+
+      <div className="admin-action-group">
+        <button
+          className="pill pill-solid"
+          onClick={handleRunIngest}
+          disabled={isIngesting}
+        >
+          {isIngesting ? 'Running ingest...' : 'Run Intel Ingest Now'}
+        </button>
+        <p className="action-hint">
+          Fetch, classify, and store new Drift Intel items. Same as the 6-hour cron job.
+        </p>
+        {ingestResult && <p className="action-result success">{ingestResult}</p>}
+        {ingestError && <p className="action-result error">{ingestError}</p>}
       </div>
 
       <div className="admin-action-group">
