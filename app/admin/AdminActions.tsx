@@ -24,6 +24,9 @@ export function AdminActions({
   const [ingestResult, setIngestResult] = useState<string | null>(null);
   const [ingestError, setIngestError] = useState<string | null>(null);
 
+  const [isDiagnosing, setIsDiagnosing] = useState(false);
+  const [diagResult, setDiagResult] = useState<string | null>(null);
+
   const [selectedVendor, setSelectedVendor] = useState('');
   const [reanalyzing, setReanalyzing] = useState(false);
   const [reanalyzeProgress, setReanalyzeProgress] = useState('');
@@ -51,6 +54,27 @@ export function AdminActions({
       setError(err instanceof Error ? err.message : 'Something went wrong');
     } finally {
       setIsRunning(false);
+    }
+  };
+
+  const handleDiagnostics = async () => {
+    setIsDiagnosing(true);
+    setDiagResult(null);
+    try {
+      const response = await fetch('/api/admin/diagnostics');
+      if (!response.ok && response.headers.get('content-type')?.includes('text/html')) {
+        setDiagResult(`HTTP ${response.status} — server returned HTML (route may not be deployed yet)`);
+        return;
+      }
+      const data = await response.json();
+      const lines = Object.entries(data.results as Record<string, { ok: boolean; detail: string }>)
+        .map(([key, val]) => `${val.ok ? '✓' : '✗'} ${key}: ${val.detail}`)
+        .join(' | ');
+      setDiagResult(lines);
+    } catch (err) {
+      setDiagResult(err instanceof Error ? err.message : 'Failed');
+    } finally {
+      setIsDiagnosing(false);
     }
   };
 
@@ -168,6 +192,20 @@ export function AdminActions({
         </p>
         {result && <p className="action-result success">{result}</p>}
         {error && <p className="action-result error">{error}</p>}
+      </div>
+
+      <div className="admin-action-group">
+        <button
+          className="pill pill-ghost"
+          onClick={handleDiagnostics}
+          disabled={isDiagnosing}
+        >
+          {isDiagnosing ? 'Checking...' : 'Run Diagnostics'}
+        </button>
+        <p className="action-hint">
+          Tests Supabase service role key, Anthropic API key, and external fetch connectivity.
+        </p>
+        {diagResult && <p className="action-result" style={{ color: 'var(--wd-white-muted)', fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>{diagResult}</p>}
       </div>
 
       <div className="admin-action-group">
