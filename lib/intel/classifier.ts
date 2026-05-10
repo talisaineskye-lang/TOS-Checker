@@ -15,16 +15,17 @@ export async function classifyBatch(
 ): Promise<ClassifiedItem[]> {
   if (items.length === 0) return [];
 
-  const allClassified: ClassifiedItem[] = [];
   const batchSize = 20;
-
+  const chunks: RawFeedItem[][] = [];
   for (let i = 0; i < items.length; i += batchSize) {
-    const chunk = items.slice(i, i + batchSize);
-    const classified = await classifyChunk(chunk, trackedVendors);
-    allClassified.push(...classified);
+    chunks.push(items.slice(i, i + batchSize));
   }
 
-  return allClassified.filter((item) => item.isRelevant);
+  const results = await Promise.all(
+    chunks.map((chunk) => classifyChunk(chunk, trackedVendors))
+  );
+
+  return results.flat().filter((item) => item.isRelevant);
 }
 
 async function classifyChunk(

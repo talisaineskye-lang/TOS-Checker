@@ -9,7 +9,7 @@ import { calculateHeatScore } from '@/lib/intel/heat-scorer';
 import { requireAdmin } from '@/lib/api-auth';
 
 export const runtime = 'nodejs';
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 export async function POST() {
   const admin = await requireAdmin();
