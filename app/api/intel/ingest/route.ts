@@ -8,6 +8,7 @@ import { getKnownUrls, storeItems } from '@/lib/intel/store';
 import { calculateHeatScore } from '@/lib/intel/heat-scorer';
 
 export const runtime = 'nodejs';
+export const maxDuration = 60;
 
 export async function GET(request: NextRequest) {
   // Auth

@@ -1,16 +1,25 @@
 import { RawFeedItem } from './types';
 
 const HN_API = 'https://hacker-news.firebaseio.com/v0';
+const HN_TIMEOUT_MS = 8000;
 
 export async function fetchHackerNews(): Promise<RawFeedItem[]> {
   try {
-    const res = await fetch(`${HN_API}/topstories.json`);
+    const res = await fetch(`${HN_API}/topstories.json`, {
+      signal: AbortSignal.timeout(HN_TIMEOUT_MS),
+    });
     const ids: number[] = await res.json();
 
     const stories = await Promise.all(
       ids.slice(0, 50).map(async (id) => {
-        const r = await fetch(`${HN_API}/item/${id}.json`);
-        return r.json();
+        try {
+          const r = await fetch(`${HN_API}/item/${id}.json`, {
+            signal: AbortSignal.timeout(HN_TIMEOUT_MS),
+          });
+          return r.json();
+        } catch {
+          return null;
+        }
       })
     );
 

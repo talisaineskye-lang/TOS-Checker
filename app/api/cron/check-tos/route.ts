@@ -13,6 +13,7 @@ import { isSpaDocument } from '@/lib/spa-documents';
 import { isInAlertCooldown } from '@/lib/alert-cooldown';
 
 export const runtime = 'nodejs';
+export const maxDuration = 300;
 
 interface DocumentWithVendor {
   id: string;
